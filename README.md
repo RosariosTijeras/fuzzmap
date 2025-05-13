@@ -6,7 +6,7 @@
 
 ## 📋 Tabla de Contenidos
 
-- [Descripción](#descripción)  
+- [Descripción](https://github.com/RosariosTijeras/fuzzmap/#-descripci%C3%B3n)  
 - [Equipo de Desarrollo](#equipo-de-desarrollo)  
 - [Características Principales](#características-principales)  
 - [Estructura de Carpetas](#estructura-de-carpetas)  
