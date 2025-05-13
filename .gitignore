@@ -136,6 +136,13 @@ ENV/
 env.bak/
 venv.bak/
 
+# Archivos y carpetas de Conda
+env/
+envs/
+*.conda
+*.env
+*.yml
+
 # Spyder project settings
 .spyderproject
 .spyproject
