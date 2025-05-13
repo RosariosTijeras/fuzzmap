@@ -1,0 +1,19 @@
+# Extracción de contenido PDF
+PyPDF2
+pdfminer.six
+
+# Procesamiento de Lenguaje Natural
+spacy
+nltk
+
+# Lógica Difusa
+scikit-fuzzy
+
+# Visualización de Grafos
+networkx
+
+# Interfaz de Usuario
+streamlit
+
+# Pruebas
+#pytest
