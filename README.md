@@ -78,7 +78,6 @@ FuzzMap/
 │   ├── datastructures/  # Árboles, grafos, pilas y colas
 │   ├── fuzzy/           # Módulo de lógica difusa
 │   └── ui/              # Interfaz gráfica Streamlit
-├── tests/               # Pruebas unitarias e integración
 ├── requirements.txt     # Dependencias
 └── README.md            # Este archivo
 ```
