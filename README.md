@@ -6,14 +6,14 @@
 
 ## 📋 Tabla de Contenidos
 
-- [Descripción](https://github.com/RosariosTijeras/fuzzmap/#-descripci%C3%B3n)  
-- [Equipo de Desarrollo](#equipo-de-desarrollo)  
-- [Características Principales](#características-principales)  
-- [Estructura de Carpetas](#estructura-de-carpetas)  
-- [Cronograma (2 Meses)](#cronograma-2-meses)  
-- [Asignación de Tareas](#asignación-de-tareas)  
-- [Tecnologías y Librerías](#tecnologías-y-librerías)  
-- [Cómo Empezar](#cómo-empezar)  
+- [Descripción](https://github.com/RosariosTijeras/fuzzmap#-descripci%C3%B3n)  
+- [Equipo de Desarrollo](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-equipo-de-desarrollo)  
+- [Características Principales](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-caracter%C3%ADsticas-principales)  
+- [Estructura de Carpetas](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-estructura-de-carpetas)  
+- [Cronograma (2 Meses)](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-cronograma-2-meses)  
+- [Asignación de Tareas](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-asignaci%C3%B3n-de-tareas)  
+- [Tecnologías y Librerías](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#%EF%B8%8F-tecnolog%C3%ADas-y-librer%C3%ADas)  
+- [Cómo Empezar](https://github.com/RosariosTijeras/fuzzmap?tab=readme-ov-file#-c%C3%B3mo-empezar)  
 
 ---
 
@@ -130,9 +130,7 @@ FuzzMap/
 
 Puedes instalar y ejecutar FuzzMap usando `pip` o `conda`, según tu entorno preferido.
 
----
-
-### ✅ Opción A: Usando `pip` (entorno virtual con `venv`)
+#### ✅ Opción A: Usando `pip` (entorno virtual con `venv`)
 
 1. **Clonar el repositorio:**
    ```bash
@@ -152,7 +150,7 @@ Puedes instalar y ejecutar FuzzMap usando `pip` o `conda`, según tu entorno pre
 
 ---
 
-### ✅ Opción B: Usando conda
+#### ✅ Opción B: Usando conda
 
 1. **Clonar el repositorio:**
   ```bash
