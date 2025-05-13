@@ -136,8 +136,9 @@ ENV/
 env.bak/
 venv.bak/
 
-# Ignorar el enlace simbólico de pyarrow
+# Ignorar el enlace simbólico de pyarrow y pandas
 pyarrow
+pandas
 
 # Spyder project settings
 .spyderproject
