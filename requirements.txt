@@ -1,0 +1,10 @@
+scikit-fuzzy
+nltk
+pdfminer.six
+PyPDF2
+networkx
+pandas
+numpy
+altair
+matplotlib
+jupyter
