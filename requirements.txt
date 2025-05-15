@@ -1,4 +1,6 @@
+#streamlit
 scikit-fuzzy
+#spacy
 nltk
 pdfminer.six
 PyPDF2
