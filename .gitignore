@@ -141,7 +141,7 @@ env/
 envs/
 *.conda
 *.env
-*.yml
+#*.yml
 
 # Spyder project settings
 .spyderproject
