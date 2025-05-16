@@ -173,38 +173,38 @@ Tienes dos opciones: usar Python venv o Conda.
 
 ---
 
-### Opción A: Usar Python venv (nativo de Python)
+#### Opción A: Usar Python venv (nativo de Python)
 
 **Crear entorno:**
-'''bash
+```bash
 python -m venv .venv
-'''
+```
 
 #### Activar entorno:
 
 - **En Linux/macOS:**
-'''bash
+```bash
 source .venv/bin/activate
-'''
+```
 
 - **En Windows (CMD o PowerShell):**
-'''bash
+```bash
 .\.venv\Scripts\activate
-'''
+```
 
 ---
 
 ### Opción B: Usar Conda
 
 **Crear entorno con nombre personalizado (por ejemplo fuzzmap):**
-'''bash
+```bash
 conda create -n fuzzmap python=3.11
-'''
+```
 
 **Activar entorno:**
-'''bash
+```bash
 conda activate fuzzmap
-'''
+```
 
 
 ---
@@ -212,9 +212,9 @@ conda activate fuzzmap
 3. **Instalar dependencias desde `requirements.txt`**
 
 Con el entorno virtual activado (ya sea venv o conda), ejecuta:
-'''bash
+```bash
 pip install -r requirements.txt
-'''
+```
 
 > Asegúrate de estar ubicado dentro de la carpeta fuzzmap/ al momento de ejecutar este comando.
 
