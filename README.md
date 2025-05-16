@@ -129,10 +129,11 @@ flowchart TD
 
 ```text
 FuzzMap/
-├── data/
+├── Ejemplo/
+├── Datos/
 │   ├── Habilidades_Vida/
 │   └── Ciencia_Datos/
-├── Módulos/
+├── Modulos/
 │   ├── extraction/
 │   │   ├── __init__.py
 │   │   └── pdf_extractor.py
@@ -150,6 +151,7 @@ FuzzMap/
 │       └── app.py
 ├── Notebooks/
 ├── main.py
+├── requirements.txt
 └── README.md
 ```
 
