@@ -162,15 +162,61 @@ FuzzMap/
    git clone https://github.com/RosariosTijeras/fuzzmap.git
    cd fuzzmap
    ```
-2. **Crear y activar un entorno virtual (venv)**  
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate   # Linux/macOS
-   .\.venv\Scripts\activate  # Windows
-   ```
-3. **Instalar dependencias**  
-   ```bash
-   pip install -r requirements.txt
-   ```
+
+---
+
+
+2. **Crear y activar un entorno virtual**
+
+Tienes dos opciones: usar Python venv o Conda.
+
+
+---
+
+### Opción A: Usar Python venv (nativo de Python)
+
+**Crear entorno:**
+'''bash
+python -m venv .venv
+'''
+
+#### Activar entorno:
+
+- **En Linux/macOS:**
+'''bash
+source .venv/bin/activate
+'''
+
+- **En Windows (CMD o PowerShell):**
+'''bash
+.\.venv\Scripts\activate
+'''
+
+---
+
+### Opción B: Usar Conda
+
+**Crear entorno con nombre personalizado (por ejemplo fuzzmap):**
+'''bash
+conda create -n fuzzmap python=3.11
+'''
+
+**Activar entorno:**
+'''bash
+conda activate fuzzmap
+'''
+
+
+---
+
+3. **Instalar dependencias desde `requirements.txt`**
+
+Con el entorno virtual activado (ya sea venv o conda), ejecuta:
+'''bash
+pip install -r requirements.txt
+'''
+
+> Asegúrate de estar ubicado dentro de la carpeta fuzzmap/ al momento de ejecutar este comando.
+
 
 ---
