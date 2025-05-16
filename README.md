@@ -1,6 +1,6 @@
 # FuzzMap
 
-> **Asisten> **Asistente de Estudio Inteligente** para estudiantes universitarios, que automatiza la organización, evaluación y recomendación de contenido educativo utilizando árboles AVL, lógica difusa y técnicas de PLN.
+> **Asistente de Estudio Inteligente** para estudiantes universitarios, que automatiza la organización, evaluación y recomendación de contenido educativo utilizando árboles AVL, lógica difusa y técnicas de PLN.
 
 ---
 
