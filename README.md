@@ -6,7 +6,7 @@
 
 ## 📋 Tabla de Contenidos
 
-- [Tema de Investigación](#tema-de-investigación)
+- [Tema de Investigación](#https://github.com/RosariosTijeras/FuzzMap#-tema-de-investigaci%C3%B3n)
 - [Descripción del Proyecto](#descripción-del-proyecto)
 - [Equipo de Desarrollo](#equipo-de-desarrollo)
 - [Diagrama de Flujo](#diagrama-de-flujo)
