@@ -129,15 +129,28 @@ flowchart TD
 
 ```text
 FuzzMap/
-├── data/               # PDFs y textos extraídos
-├── src/
-│   ├── extraction/     # Módulo de lectura de PDF
-│   ├── nlp/            # Procesamiento de texto y clasificación
-│   ├── avltree/        # Implementación del árbol AVL
-│   ├── fuzzylogic/     # Evaluación con lógica difusa
-│   └── ui/             # Aplicación web con Streamlit
-├── tests/              # Pruebas unitarias
-├── README.md           # Documentación principal
+├── data/
+│   ├── Habilidades_Vida/
+│   └── Ciencia_Datos/
+├── Módulos/
+│   ├── extraction/
+│   │   ├── __init__.py
+│   │   └── pdf_extractor.py
+│   ├── nlp/
+│   │   ├── __init__.py
+│   │   └── text_classifier.py
+│   ├── avltree/
+│   │   ├── __init__.py
+│   │   └── avl_tree.py
+│   ├── fuzzylogic/
+│   │   ├── __init__.py
+│   │   └── fuzzy_evaluator.py
+│   └── ui/
+│       ├── __init__.py
+│       └── app.py
+├── Notebooks/
+├── main.py
+└── README.md
 ```
 
 ---
