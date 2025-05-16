@@ -97,7 +97,7 @@ streamlit run main.py
 
 * Abre la carpeta `example/` en VSCode.
 * Abre una terminal integrada.
-* Asegúrate de que el entorno activo sea `fuzzmap-example`.
+* Asegúrate de tener el entorno activo.
 * Ejecuta:
 
 ```bash
@@ -109,6 +109,9 @@ streamlit run main.py
 * Selecciona una materia (por ejemplo, Ciencia\_Datos).
 * Presiona **Comenzar Test**.
 * Responde las preguntas que aparecen.
+* Las repuestas son:
+    * Guido van Rossum
+    * Es un lenguaje de programacion
 * Pulsa **Finalizar Test** para ver:
 
   * Respuestas correctas

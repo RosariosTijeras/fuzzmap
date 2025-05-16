@@ -6,15 +6,16 @@
 
 ## 📋 Tabla de Contenidos
 
-- [Tema de Investigación](#tema-de-investigación)
-- [Descripción del Proyecto](#descripción-del-proyecto)
-- [Equipo de Desarrollo](#equipo-de-desarrollo)
-- [Diagrama de Flujo](#diagrama-de-flujo)
-- [Características Principales](#características-principales)
-- [Estructura de Carpetas](#estructura-de-carpetas)
-- [Asignación de Tareas](#asignación-de-tareas)
-- [Tecnologías y Librerías](#tecnologías-y-librerías)
-- [Cómo Empezar](#cómo-empezar)
+- [Tema de Investigación](https://github.com/RosariosTijeras/FuzzMap#-tema-de-investigaci%C3%B3n)
+- [Descripción del Proyecto](https://github.com/RosariosTijeras/FuzzMap#-descripci%C3%B3n-del-proyecto)
+- [Equipo de Desarrollo](https://github.com/RosariosTijeras/FuzzMap#-equipo-de-desarrollo)
+- [Diagrama de Flujo](https://github.com/RosariosTijeras/FuzzMap#-diagrama-de-flujo)
+- [Características Principales](https://github.com/RosariosTijeras/FuzzMap#-caracter%C3%ADsticas-principales)
+- [Estructura de Carpetas](https://github.com/RosariosTijeras/FuzzMap#-estructura-de-carpetas)
+- [Cómo Empezar](https://github.com/RosariosTijeras/FuzzMap#%EF%B8%8F-c%C3%B3mo-empezar)
+<!-- [Asignación de Tareas](#asignación-de-tareas)
+- [Tecnologías y Librerías](#tecnologías-y-librerías) --> 
+
 
 ---
 
