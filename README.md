@@ -1,6 +1,6 @@
 # FuzzMap
 
-> **Asistente de Estudio Inteligente** para estudiantes universitarios, que automatiza la organización, evaluación y recomendación de contenido educativo utilizando árboles AVL, lógica difusa y técnicas de PLN.
+> **Asisten> **Asistente de Estudio Inteligente** para estudiantes universitarios, que automatiza la organización, evaluación y recomendación de contenido educativo utilizando árboles AVL, lógica difusa y técnicas de PLN.
 
 ---
 
@@ -12,9 +12,10 @@
 - [Diagrama de Flujo](https://github.com/RosariosTijeras/FuzzMap#-diagrama-de-flujo)
 - [Características Principales](https://github.com/RosariosTijeras/FuzzMap#-caracter%C3%ADsticas-principales)
 - [Estructura de Carpetas](https://github.com/RosariosTijeras/FuzzMap#-estructura-de-carpetas)
-<!-- [Asignación de Tareas](#asignación-de-tareas)
-- [Tecnologías y Librerías](#tecnologías-y-librerías) -->
 - [Cómo Empezar](https://github.com/RosariosTijeras/FuzzMap#%EF%B8%8F-c%C3%B3mo-empezar)
+<!-- [Asignación de Tareas](#asignación-de-tareas)
+- [Tecnologías y Librerías](#tecnologías-y-librerías) --> 
+
 
 ---
 
