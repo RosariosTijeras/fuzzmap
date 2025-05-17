@@ -1,9 +1,33 @@
 {
-  "juan": {
+  "prueba1": {
     "password": "1234",
     "nombre": "Juan Carlos",
     "apellido": "Pérez López",
     "edad": 25,
     "sexo": "Masculino"
+  },
+  "juan": {
+    "usuario": "juan",
+    "contrasena": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "edad": 30,
+    "sexo": "M"
+  },
+  "maria": {
+    "usuario": "maria",
+    "contrasena": "88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589",
+    "nombre": "María",
+    "apellido": "Gómez",
+    "edad": 28,
+    "sexo": "F"
+  },
+  "luis": {
+    "usuario": "luis",
+    "contrasena": "f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75",
+    "nombre": "Luis",
+    "apellido": "García",
+    "edad": 28,
+    "sexo": "M"
   }
 }
