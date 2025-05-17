@@ -1,0 +1,9 @@
+{
+  "juan": {
+    "password": "1234",
+    "nombre": "Juan Carlos",
+    "apellido": "Pérez López",
+    "edad": 25,
+    "sexo": "Masculino"
+  }
+}
