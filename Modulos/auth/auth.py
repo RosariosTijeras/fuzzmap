@@ -84,7 +84,7 @@ def _guardar_usuarios (usuarios: dict) -> None:
     la funcion json.dumps: convierte un diccionario a un string JSON
     y como argmentos le pasamos:
     - usuarios: que es el diccionario a convertir
-    - indent=4: para que el json tenga una sangria de 2 espacios
+    - indent=2: para que el json tenga una sangria de 2 espacios
     - ensure_ascii=False: para que el json soporte caracteres especiales
     """
     # y ahora escribimos el string JSON en el archivo
