@@ -1,3 +1,8 @@
+"""
+Modulo para autentificar, registrar y guardar usuarios
+Ruta de este archivo: Modulos/ui/auth.py
+"""
+
 import json # se usa para leer y guardar informacion de los usuarios en un archivo json
 import hashlib # se usa para encriptar la contrasena del usuario
 from pathlib import Path # se usa para cargar el json desde la carpeta de datos
