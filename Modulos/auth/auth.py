@@ -4,7 +4,7 @@ Ruta de este archivo: Modulos/ui/auth.py
 """
 
 import json # se usa para leer y guardar informacion de los usuarios en un archivo json
-import hashlib # se usa para encriptar la contrasena del usuario
+import bcrypt # se usa para encriptar la contrasena del usuario
 from pathlib import Path # se usa para cargar el json desde la carpeta de datos
 
 """
@@ -102,15 +102,16 @@ def hash_contrasena (contrasena: str) -> str:
     
     """
     encripta la contrasena del usuario
-    y retorna un hash SHA256 de la contrasena
+    y retorna un hash bcrypt de la contrasena
     """
     # codificamos la contrasena a bytes
-    return hashlib.sha256(contrasena.encode("utf-8")).hexdigest()
+    return bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     """
-    la funcion hashlib.sha256: crea un hash SHA256 de la contrasena
+    la funcion bcrypt.hashpw: crea un hash bcrypt de la contrasena
     y como argmentos le pasamos:
     - contrasena.encode("utf-8"): que es la contrasena a encriptar
-    - hexdigest(): convierte el hash a un string hexadecimal
+    - bcrypt.gensalt(): genera una sal aleatoria para el hash
+    - decode("utf-8"): convierte el hash a un string
     """
 
 
@@ -175,7 +176,7 @@ def autenticar_usuario (usuario: str, contrasena: str) -> bool:
     else: 
         
         store_hash = usuarios[usuario]["contrasena"]
-        return hash_contrasena(contrasena) == store_hash
+        return bcrypt.checkpw(contrasena.encode("utf-8"), store_hash.encode("utf-8"))
         """
         si el hash de la contrasena es igual al hash guardado en el archivo
         entonces la contrasena es correcta y retorna True caso contrario retorna False
