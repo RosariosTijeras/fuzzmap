@@ -8,6 +8,7 @@ from Modulos.auth.auth import registrar_usuario, autenticar_usuario # Funciones 
 from PIL import Image # Librería para manejar imágenes
 from streamlit_toggle import st_toggle_switch # Librería para crear un switch de toggle
 
+
 """
 Paginas de la aplicación:
 - Login: sera el punto de entrada para los usuarios no registrados
@@ -19,8 +20,9 @@ Paginas de la aplicación:
 """
 
 
+logo = Image.open("../fuzzmap/Modulos/ui/src/Logo.png")
 # esto configura la página de Streamlit
-st.set_page_config(page_title = "FuzzMap", layout = "wide")
+st.set_page_config(page_title = "FuzzMap", layout = "wide", page_icon = logo)
 """
 st.set_page_config() sirve para configurar la página de Streamlit
 - page_title: Titulo de la página que se mostrará en la pestaña del navegador
@@ -64,9 +66,7 @@ def pagina_login(questions = None) -> None:
         
         with logo_col:
             
-            
             # Cargar y mostrar el logo
-            logo = Image.open("../fuzzmap/Modulos/ui/src/Logo.png")
             st.image(logo, width=100, use_container_width=True)
             
         with title_col:
@@ -75,18 +75,59 @@ def pagina_login(questions = None) -> None:
             st.markdown("<h1 style='color: #0dabda;'>FuzzMap</h1>", unsafe_allow_html=True)
             
             # mostrar el slogan de la aplicación de color gris
-            st.markdown("<h5 style='color: #d1cfcf;'>Asistente inteligente de estudio</h5>", unsafe_allow_html=True)
+            st.markdown("<h5 style='color: #f26def;'>Asistente inteligente de estudio</h5>", unsafe_allow_html=True)
             
         # Formulario de inicio de sesión
-        usuario = st.text_input("Usuario", icon="👤", key="login_user")
-        contraseña = st.text_input("Contraseña", type="password", icon="🔑", key="login_pwd")
-        # boton con texto de fondo color gris
-        st.markdown("")
-        if st.button(label="Iniciar sesión", icon="🔓", key="login_btn"):
-            st.success("Inicio de sesión exitoso")
+        usuario = st.text_input("Usuario", icon="👤", key="usr_input_login")
+        contraseña = st.text_input("Contraseña", type="password", icon="🔑", key="pass_input_login")
+        
+        # la variable sesion_activa guarda el estado de la sesión
+        # con esto se puede saber si el usuario ha iniciado sesión o no, asi se mestra el dashboard o la pagina de login
+        # sin tener que hacer un login cada vez que se recarga la página
+        sesion_activa = st.session_state.get("login_triggered", False)
+        
+        col_btlogin, col_btregistro = st.columns([1.5, 2], border=True, gap="small")
+        """
+        boton_login y boton_registro son columnas que permiten alinear los botones de inicio de sesión y registro
+        - boton_login: columna para el botón de inicio de sesión
+        - boton_registro: columna para el botón de registro
+        los parametros [1, 2] indican el tamaño de cada columna
+        """
+        
+        # Crear un botón de inicio de sesión y un botón de registro
+        with col_btlogin:
+            
+            if st.button("Iniciar Sesión", key="login_btn", icon="🔓") or sesion_activa:
 
-        # Enlace para registrarse
-        st.markdown("¿No tienes una cuenta? [Regístrate aquí](#)", unsafe_allow_html=True)
+                """
+                Si el usuario y la contraseña son correctos, se inicia sesión
+                - Se guarda el usuario en la sesión
+                - Se cambia la página activa a Dashboard
+                - Se muestra un mensaje de bienvenida
+                - Se recarga la página
+                """
+
+                # Si el usuario y la contraseña son correctos, se inicia sesión
+                if autenticar_usuario(usuario, contraseña):
+
+                    # Se guarda el usuario en la sesión
+                    # y se cambia la página activa a Dashboard
+                    st.session_state.user = usuario
+                    st.success(f"¡Bienvenido, {usuario}!")
+                    st.session_state.active_page = "🏠 Dashboard"
+                    st.rerun()
+
+                else:
+                    # Si el usuario y la contraseña son incorrectos, se muestra un mensaje de error
+                    st.error("Usuario o contraseña incorrectos.")
+                    st.session_state.login_triggered = False
+        
+        with col_btregistro:
+            
+            # Crear un botón para ir a la pagina de registro
+            # Si el usuario no tiene cuenta, se le da la opción de registrarse
+            st.markdown("¿No tienes una cuenta?", unsafe_allow_html=True)
+            st.button("Regístrate aquí", key="register_btn", icon="📝", on_click=lambda: st.session_state.update({"active_page": "📝 Registro"}))
 
     with col2:
         
@@ -95,26 +136,6 @@ def pagina_login(questions = None) -> None:
         st.image(imagen, use_container_width = True)
 
 
-
-"""
-def login_pagina (questions=None):
-    
-    
-    st.title("🔐 Iniciar Sesión en FuzzMap")
-    user = st.text_input("Usuario", key="login_user")
-    pwd  = st.text_input("Contraseña", type="password", key="login_pwd")
-    login_triggered = st.session_state.get("login_triggered", False)
-
-    if st.button("Entrar", key="login_btn") or login_triggered:
-        if autenticar_usuario(user, pwd):
-            st.session_state.user = user
-            st.session_state.active_page = "🏠 Dashboard"
-            st.success(f"¡Bienvenido, {user}!")
-            st.rerun()
-        else:
-            st.error("Usuario o contraseña incorrectos.")
-            st.session_state.login_triggered = False
-"""
 
 def register_page(questions=None):
     st.title("📝 Registro de Nuevo Usuario")
@@ -139,6 +160,8 @@ def register_page(questions=None):
                 st.rerun()
             else:
                 st.error("El usuario ya existe.")
+                
+    st.button("Volver al Login", key="back_to_login", on_click=lambda: st.session_state.update({"active_page": "🔐 Login"}))
 
 
 def dashboard_page(questions=None):
@@ -173,10 +196,29 @@ def run_app(questions):
     
     if "user" not in st.session_state:
         st.session_state.user = None
+        
     if "active_page" not in st.session_state:
         st.session_state.active_page = "🔐 Login" if st.session_state.user is None else "🏠 Dashboard"
-
+        
     
+    # selecionar pagina con match-case
+    match st.session_state.active_page:
+        case "🔐 Login":
+            pagina_login(questions)
+        case "📝 Registro":
+            register_page(questions)
+        case "🏠 Dashboard":
+            dashboard_page(questions)
+        case "🧪 Test":
+            test_page(questions)
+        case "📜 Historial":
+            history_page(questions)
+        case "⚙️ Configuración":
+            settings_page(questions)
+        case "🔓 Cerrar sesión":
+            logout(questions)
+    
+    """
     if st.session_state.user:
         pages = {
             "🏠 Dashboard": dashboard_page,
@@ -191,10 +233,10 @@ def run_app(questions):
             "📝 Registro": register_page
         }
 
-    selected = st.sidebar.radio("Menú", list(pages.keys()), index=list(pages.keys()).index(st.session_state.active_page), key=f"menu_selector_{st.session_state.active_page}")
+    selected = st.sidebar.radio("Menú", 
+                                list(pages.keys()), 
+                                index=list(pages.keys()).index(st.session_state.active_page),
+                                key=f"sidebar_{st.session_state.user}")
     st.session_state.active_page = selected
     pages[selected](questions)
-
-# Punto de entrada
-questions = {"Demo": [("¿Qué es FuzzMap?", "Asistente inteligente de estudio") ]}
-run_app(questions)
+    """
