@@ -1,5 +1,5 @@
 # Importa Flask y el blueprint de la UI
-from flask import Flask
+from flask import Flask, session, redirect, url_for
 from Modulos.ui.app import ui
 from datetime import timedelta
 
@@ -16,7 +16,6 @@ app.register_blueprint(ui, url_prefix='/')
 # Ruta raíz que redirige a login o dashboard
 @app.route('/')
 def index():
-    from flask import session, redirect, url_for
     if 'user' in session:
         return redirect(url_for('ui.dashboard'))
     else:
@@ -24,4 +23,5 @@ def index():
 
 # Ejecuta la aplicación si este archivo es el principal
 if __name__ == '__main__':
+    app.run(debug=True)_':
     app.run(debug=True)
