@@ -96,7 +96,13 @@
           <img src="{{ url_for('ui.static', filename='Logo.png') }}" class="logo" alt="Logo">
           <h2 class="mb-0">
             🏠 Bienvenido,
-            {{ nombre }} {{ apellido }}
+            <span style="color:#0dabda;">
+              {% if nombre or apellido %}
+                {{ nombre }} {{ apellido }}
+              {% else %}
+                {{ usuario.split('@')[0] if usuario else '' }}
+              {% endif %}
+            </span>
           </h2>
         </div>
         <a href="{{ url_for('ui.logout') }}" class="btn btn-danger">Cerrar sesión</a>
