@@ -1,4 +1,4 @@
-streamlit
+flask
 scikit-fuzzy
 spacy
 nltk
