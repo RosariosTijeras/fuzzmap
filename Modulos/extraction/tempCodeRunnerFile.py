@@ -1,2 +1,1 @@
-
-# Palabras o frases a excluir
+# (File removed entirely)
