@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>FuzzMap – Login</title>
+  <!-- Icono de la pestaña del navegador -->
+  <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    /* Fondo con degradado oscuro y centrado vertical/horizontal */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(120deg, rgba(137,247,254,0.55) 0%, rgba(102,166,255,0.65) 50%, rgba(60,40,120,0.75) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Contenedor principal del login */
+    .login-container {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Tarjeta del formulario de login */
+    .login-form-card {
+      background: rgba(255,255,255,0.45); /* Blanco translúcido */
+      border-radius: 22px;
+      box-shadow: 0 4px 32px #66a6ff44;
+      padding: 2.5rem 2rem;
+      min-width: 370px;
+      max-width: 440px;
+      width: 100%;
+      border: 2px solid #66a6ff33;
+      backdrop-filter: blur(2px);
+      transition: box-shadow 0.2s;
+    }
+
+    /* Efecto hover para la tarjeta */
+    .login-form-card:hover {
+      box-shadow: 0 8px 40px #0dabda55;
+      border-color: #0dabda66;
+    }
+
+    /* Logo superior */
+    .logo {
+      width: 80px;
+    }
+
+    /* Imagen de fondo (wallpaper) a la derecha */
+    .wallpaper-img {
+      width: 100%;
+      max-width: 720px;
+      min-width: 320px;
+      border-radius: 18px;
+      box-shadow: 0 2px 24px #2224;
+      margin-left: 2vw;
+      margin-top: 0;
+      object-fit: cover;
+    }
+
+    /* Botón principal con degradado */
+    .btn-primary {
+      background: linear-gradient(90deg, #66a6ff 0%, #0dabda 100%);
+      border: none;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #66a6ff33;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(90deg, #0dabda 0%, #66a6ff 100%);
+      box-shadow: 0 4px 16px #0dabda44;
+    }
+
+    /* Efecto de foco en los campos de formulario */
+    .form-control:focus {
+      border-color: #0dabda;
+      box-shadow: 0 0 0 0.2rem #66a6ff33;
+    }
+
+    /* Etiquetas de los campos */
+    .form-label {
+      color: #0dabda;
+      font-weight: 500;
+    }
+
+    /* Oculta el wallpaper en pantallas pequeñas */
+    @media (max-width: 991px) {
+      .wallpaper-img { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container login-container">
+    <div class="row w-100 justify-content-center align-items-center">
+
+      <!-- Columna izquierda: formulario de inicio de sesión -->
+      <div class="col-lg-5 col-md-7 col-12 d-flex justify-content-center">
+        <div class="login-form-card">
+
+          <!-- Logo y título -->
+          <div class="text-center mb-4">
+            <img src="{{ url_for('ui.static', filename='Logo.png') }}" class="logo" alt="Logo">
+            <h2 class="mt-2">🔐 Iniciar Sesión</h2>
+            <p>Completa tus credenciales para continuar</p>
+          </div>
+
+          <!-- Mensajes flash para mostrar errores o avisos -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-sm">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <!-- Formulario de login -->
+          <form method="POST" action="{{ url_for('ui.login') }}">
+            <div class="mb-3">
+              <!-- Cambiado: ahora se pide solo la primera parte del correo institucional -->
+              <label for="correo" class="form-label">📧 Correo institucional</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  name="correo"
+                  id="correo"
+                  class="form-control"
+                  placeholder="ejemplo.apellido"
+                  pattern="^[a-zA-Z0-9._-]+$"
+                  title="Solo la parte antes de @unach.edu.ec"
+                  required
+                />
+                <span class="input-group-text">@unach.edu.ec</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="contrasena" class="form-label">🔑 Contraseña</label>
+              <input
+                type="password"
+                name="contrasena"
+                id="contrasena"
+                class="form-control"
+                placeholder="Tu contraseña 🔒"
+                required
+              />
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+              <button type="submit" class="btn btn-primary">🚀 Entrar</button>
+            </div>
+          </form>
+
+          <hr/>
+
+          <!-- Enlace a registro -->
+          <div class="d-grid">
+            <a href="{{ url_for('ui.register') }}" class="btn btn-link">📝 ¿No tienes cuenta? Regístrate aquí</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Columna derecha: imagen decorativa grande -->
+      <div class="col-lg-7 col-md-5 d-none d-md-flex justify-content-center align-items-center">
+        <img src="{{ url_for('ui.static', filename='wallpaper.png') }}" class="wallpaper-img" alt="Fondo"/>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
