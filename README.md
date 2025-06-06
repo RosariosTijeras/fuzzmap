@@ -56,18 +56,18 @@ Este enfoque permite un aprendizaje guiado y adaptativo, ofreciendo una herramie
 flowchart TD
   subgraph Roles
     R1["Lenin:
-- Leer PDFs y extraer texto
-- Guardar contenido en JSON/BD"]
+      - Leer PDFs y extraer texto
+      - Guardar contenido en JSON/BD"]
     R2["Yoryhi:
-- Extraer pares pregunta-respuesta
-- Clasificar preguntas por materia"]
+      - Extraer pares pregunta-respuesta
+      - Clasificar preguntas por materia"]
     R3["Héctor:
-- Construir Árbol AVL
-- Aplicar MergeSort y Búsqueda Binaria"]
+      - Construir Árbol AVL
+      - Aplicar MergeSort y Búsqueda Binaria"]
     R4["Mario:
-- Desarrollar UI en Flask
-- Registrar respuestas
-- Analizar con lógica difusa"]
+      - Desarrollar UI en Flask
+      - Registrar respuestas
+      - Analizar con lógica difusa"]
   end
 
   R1 -.-> Start
