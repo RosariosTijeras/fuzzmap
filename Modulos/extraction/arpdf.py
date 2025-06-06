@@ -4,10 +4,15 @@ import re
 import PyPDF2
 
 # Ruta de la carpeta que contiene los archivos PDF
-ruta_carpeta = r'E:\Unach\Semestre2\EstructuraDatos\PRG_Formativa\fuzzmap'
+
+ruta_carpeta = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'Datos', 'Habilidades_Vida')
 # Nombre del archivo JSON de salida global
+print(f"Ruta de la carpeta: {ruta_carpeta}")  # Debug
 nombre_archivo_json_global = 'bancodepreguntas_global.json'
-ruta_archivo_json_global = os.path.join(ruta_carpeta, nombre_archivo_json_global)
+ruta_archivo_json_global = os.path.join(
+    os.path.dirname(ruta_carpeta),  # Esto apunta a la carpeta 'Datos'
+    nombre_archivo_json_global
+)
 
 # Caracteres especiales a eliminar
 caracteres_a_eliminar = ["", "'", ";", ""]
@@ -29,11 +34,13 @@ palabras_a_excluir = [
 todas_las_lineas = []
 
 def should_start_new_item(line):
+    print(f"should_start_new_item called with: {line}")  # Debug
     return line.strip().startswith("¿") or line.strip().startswith("a.") or line.strip().startswith("b.") or line.strip().startswith("c.") or line.strip().startswith("La respuesta correcta es:")
 
 # Iterar sobre todos los archivos en la carpeta especificada
 for nombre_archivo in os.listdir(ruta_carpeta):
     if nombre_archivo.lower().endswith(".pdf"):
+        print(f"Leyendo archivo PDF: {nombre_archivo}")  # Nuevo print
         ruta_archivo_pdf = os.path.join(ruta_carpeta, nombre_archivo)
         nombre_archivo_base = os.path.splitext(nombre_archivo)[0]
         nombre_archivo_json_individual = f"{nombre_archivo_base}_bancodepreguntas.json"
