@@ -33,7 +33,7 @@
 2. **Procesar el contenido** usando técnicas de procesamiento de lenguaje natural (PLN) para clasificar las preguntas según la materia.  
 3. **Organizar y almacenar las preguntas** en un **árbol AVL**, permitiendo búsquedas eficientes y ordenadas.  
 4. **Evaluar respuestas del usuario** utilizando **lógica difusa**, lo cual permite una calificación más flexible y contextual.  
-5. **Generar recomendaciones personalizadas** de estudio a través de una interfaz web interactiva construida con **Streamlit**.
+5. **Generar recomendaciones personalizadas** de estudio a través de una interfaz web interactiva construida con **Flask**.
 
 Este enfoque permite un aprendizaje guiado y adaptativo, ofreciendo una herramienta útil y eficiente para estudiantes universitarios.
 
@@ -43,7 +43,7 @@ Este enfoque permite un aprendizaje guiado y adaptativo, ofreciendo una herramie
 
 | Integrante | Rol                                    |
 |------------|----------------------------------------|
-| Mario      | Interfaz (Streamlit) y Lógica Difusa   |
+| Mario      | Interfaz (Flask) y Lógica Difusa   |
 | Lenin      | Extracción de PDFs y Preprocesamiento  |
 | Yoryhi     | Procesamiento de Lenguaje Natural (PLN)|
 | Héctor     | Estructuras de Datos (Árbol AVL, Algoritmos) |
@@ -65,7 +65,7 @@ flowchart TD
 - Construir Árbol AVL
 - Aplicar MergeSort y Búsqueda Binaria"]
     R4["Mario:
-- Desarrollar UI en Streamlit
+- Desarrollar UI en Flask
 - Registrar respuestas
 - Analizar con lógica difusa"]
   end
@@ -121,7 +121,7 @@ flowchart TD
 4. **Evaluación con Lógica Difusa**  
    - A través de `scikit-fuzzy`, analizamos el rendimiento del estudiante no sólo por exactitud, sino por cercanía o calidad de sus respuestas.
 
-5. **Interfaz Web (Streamlit)**  
+5. **Interfaz Web (Flask)**  
    - El usuario puede elegir una materia, responder preguntas y recibir recomendaciones desde una aplicación web simple e intuitiva.
 
 ---
