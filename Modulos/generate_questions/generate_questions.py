@@ -33,7 +33,7 @@ import random
 import os
 
 class QuestionExpander:
-    def __init__(self, model_name: str = "llama3:instruct", explanation_model: str = "phi3:mini"):
+    def __init__(self, model_name: str = "mistral:7b-instruct-q4_K_M", explanation_model: str = "phi3:mini"):
         self.model = model_name
         self.explanation_model = explanation_model  # Modelo especializado en explicaciones
         self._response_cache = lru_cache(maxsize=20)(self._cache_response)
@@ -42,29 +42,22 @@ class QuestionExpander:
     def _cache_response(self, key: str, response: str) -> str:
         return response
 
-    def _prepare_prompt(self, context: str, num_questions: int) -> str:
-        """Prompt optimizado para diversidad y explicaciones"""
+    def _prepare_prompt(self, preguntas_originales: str, resumen: str, num_questions: int) -> str:
+        """Prompt avanzado para máxima calidad y diversidad"""
         return (
-            f"Eres un experto en creación de evaluaciones universitarias. Genera {num_questions} preguntas únicas "
-            f"basadas en el siguiente contexto. Cada pregunta debe incluir:\n"
-            "1. Enunciado claro y único\n"
-            "2. 4 opciones con formato: A) ... , B) ... , C) ... , D) ...\n"
-            "3. Respuesta correcta (coincidiendo con una opción)\n"
-            "4. Explicación detallada de 1-2 oraciones\n"
-            "5. Dificultad (baja/media/alta)\n"
-            "6. Tema específico\n\n"
-            "**Formato de salida EXCLUSIVAMENTE JSON:**\n"
-            "[\n"
-            "  {\n"
-            '    "pregunta": "...",\n'
-            '    "opciones": ["A) ...", "B) ...", "C) ...", "D) ..."],\n'
-            '    "respuesta_correcta": "A) ...",\n'
-            '    "explicacion": "...",\n'
-            '    "dificultad": "media",\n'
-            '    "tema": "..."\n'
-            "  }\n"
-            "]\n\n"
-            f"**Contexto:**\n{context[:2500]}{'... [truncado]' if len(context) > 2500 else ''}"
+            f"Eres un experto en educación universitaria y generación de evaluaciones. Tienes dos fuentes de información:\n"
+            f"1. Lista de preguntas originales:\n{preguntas_originales}\n\n"
+            f"2. Extracto del PDF de resumen:\n{resumen}\n\n"
+            f"Tu tarea es generar {num_questions} preguntas nuevas, únicas y variadas, combinando ambos contextos. Cada pregunta debe:\n"
+            f"- Ser clara y relevante para estudiantes universitarios.\n"
+            f"- Tener 4 opciones de respuesta (A, B, C, D), bien redactadas y plausibles.\n"
+            f"- Indicar la respuesta correcta (debe coincidir exactamente con una de las opciones).\n"
+            f"- Incluir una breve explicación (1-2 oraciones) de por qué la respuesta es correcta.\n"
+            f"- Indicar el nivel de dificultad (baja, media o alta).\n"
+            f"- Indicar el tema específico.\n\n"
+            f"**Formato de salida exclusivamente JSON:**\n"
+            f"[\n  {{\n    'pregunta': '...',\n    'opciones': ['A) ...', 'B) ...', 'C) ...', 'D) ...'],\n    'respuesta_correcta': 'A) ...',\n    'explicacion': '...',\n    'dificultad': 'media',\n    'tema': '...'}}\n]\n\n"
+            f"Genera las preguntas en español y asegúrate de que sean diferentes a las originales."
         )
 
     async def generate_explanations(self, questions: List[Dict]) -> List[Dict]:
@@ -87,10 +80,10 @@ class QuestionExpander:
             explained_questions.append(q)
         return explained_questions
 
-    async def generate_new_questions(self, context_text: str, num_questions: int = 10) -> List[Dict]:
+    async def generate_new_questions(self, preguntas_originales: str, resumen: str, num_questions: int = 10) -> List[Dict]:
         """Genera preguntas con manejo de duplicados y explicaciones"""
         print(f"[DEBUG] (Preguntas) Modelo de generación en uso: {self.model}")
-        prompt = self._prepare_prompt(context_text, num_questions)
+        prompt = self._prepare_prompt(preguntas_originales, resumen, num_questions)
         
         # Generar preguntas en lotes
         preguntas = []
@@ -195,20 +188,6 @@ if __name__ == "__main__":
     import asyncio
     import os
 
-    # Párrafos resumen sintetizados para cada materia
-    resumenes_sintetizados = {
-        "Ciencia_Datos": (
-            "La Ciencia de Datos es una disciplina interdisciplinaria que combina estadística, matemáticas, informática y algoritmos para analizar grandes volúmenes de datos, extraer información relevante y apoyar la toma de decisiones. "
-            "Su evolución ha estado marcada por el avance de la informática y la inteligencia artificial, permitiendo automatizar procesos, identificar patrones y predecir comportamientos en áreas como la salud, finanzas y tecnología. "
-            "El objetivo principal es transformar datos en conocimiento útil, facilitando la innovación y el progreso en diversos campos."
-        ),
-        "Habilidades_Vida": (
-            "Las Habilidades para la Vida son un conjunto de capacidades esenciales que permiten a las personas afrontar de manera efectiva los retos y demandas de la vida diaria, especialmente en el contexto universitario. "
-            "Incluyen la gestión del estrés y la ansiedad, el autocuidado, la adaptabilidad, la toma de decisiones y la comunicación asertiva. "
-            "Practicar técnicas como la respiración profunda, el mindfulness y la relajación muscular progresiva contribuye al bienestar psicológico, mejora el rendimiento académico y fortalece la resiliencia ante situaciones adversas."
-        )
-    }
-
     materias = [
         {
             "nombre": "Ciencia_Datos",
@@ -226,39 +205,55 @@ if __name__ == "__main__":
 
     for materia in materias:
         ruta_base = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), materia["carpeta"])
+        ruta_resumen = os.path.join(ruta_base, materia["resumen"])
         ruta_banco = os.path.join(ruta_base, materia["banco"])
         ruta_salida = os.path.join(ruta_base, f"preguntas_generadas_{materia['nombre'].lower()}.json")
 
-        # Usar el resumen sintetizado en vez del PDF
-        resumen = resumenes_sintetizados[materia["nombre"]]
-        # Leer banco de preguntas
-        preguntas_existentes = []
+        # Leer resumen desde el archivo JSON
+        resumen = ""
+        if os.path.exists(ruta_resumen):
+            with open(ruta_resumen, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                resumen = data.get("resumen", "")
+        if not resumen:
+            print(f"[ADVERTENCIA] No se encontró resumen en {ruta_resumen}, se omite materia {materia['nombre']}")
+            continue
+
+        # Leer preguntas originales del banco si existe
+        preguntas_originales = []
         if os.path.exists(ruta_banco):
             with open(ruta_banco, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 lineas = data.get("lineas", [])
-                preguntas_existentes = [l for l in lineas if l.strip() and l.strip().startswith("¿")]
-        # Unir contexto
-        contexto = resumen + "\n\n" + "\n".join(preguntas_existentes)
+                preguntas_originales = [l for l in lineas if l.strip().startswith("¿")]  # Solo preguntas
+        preguntas_originales_str = "\n".join(preguntas_originales)
+
         print(f"\nGenerando preguntas para {materia['nombre']}...")
         expander = QuestionExpander(
-            model_name="llama3:instruct",
+            model_name="mistral:7b-instruct-q4_K_M",
             explanation_model="phi3:mini"
         )
         print(f"[DEBUG] Modelo de generación: {expander.model} | Modelo de explicación: {expander.explanation_model}")
-        preguntas = asyncio.run(expander.generate_new_questions(contexto, 10))
-        # Eliminar duplicados por enunciado
-        preguntas_unicas = []
+
+        # Forzar generación hasta obtener 10 preguntas únicas
+        preguntas = []
         vistos = set()
-        for p in preguntas:
-            enunciado = p['pregunta'].strip().lower()
-            if enunciado not in vistos:
-                preguntas_unicas.append(p)
-                vistos.add(enunciado)
+        while len(preguntas) < 10:
+            nuevas = asyncio.run(expander.generate_new_questions(preguntas_originales_str, resumen, 10 - len(preguntas)))
+            for p in nuevas:
+                enunciado = p['pregunta'].strip().lower()
+                if enunciado not in vistos:
+                    preguntas.append(p)
+                    vistos.add(enunciado)
+            if not nuevas:
+                print("[ERROR] No se pudieron generar más preguntas únicas. Se detiene para evitar bucle infinito.")
+                break
+        if len(preguntas) < 10:
+            print(f"[ADVERTENCIA] Solo se generaron {len(preguntas)} preguntas para {materia['nombre']}")
         # Guardar en JSON limpio solo si hay preguntas
-        if preguntas_unicas:
+        if preguntas:
             with open(ruta_salida, 'w', encoding='utf-8') as f:
-                json.dump(preguntas_unicas, f, indent=2, ensure_ascii=False)
+                json.dump(preguntas, f, indent=2, ensure_ascii=False)
             print(f"Preguntas guardadas en {ruta_salida}")
         else:
             print(f"[ADVERTENCIA] No se generó ninguna pregunta válida para {materia['nombre']}")
