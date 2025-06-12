@@ -10,3 +10,4 @@ numpy
 altair
 matplotlib
 jupyter
+ollama
