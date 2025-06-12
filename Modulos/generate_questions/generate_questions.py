@@ -6,7 +6,7 @@ Este código fue probado y ejecutado en una laptop ASUS TUF A15 FA506NF con los 
 - GPU: NVIDIA GeForce GTX 2050 (4GB VRAM)
 - RAM: 16GB DDR5
 - Almacenamiento: SSD NVMe
-Tiempo de ejecución de ejemplo en este equipo: 37 minutos (37.914s)
+Tiempo de ejecución de ejemplo en este equipo: 46m (10.483s)
 
 Modelos de IA utilizados:
 - llama3:instruct (~8GB en disco, modelo grande, requiere GPU para inferencia eficiente)

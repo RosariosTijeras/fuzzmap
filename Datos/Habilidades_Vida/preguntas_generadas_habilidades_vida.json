@@ -1,132 +1,71 @@
 [
   {
-    "pregunta": "¿Cuál es el primer paso para manejar el estrés y la ansiedad?",
+    "pregunta": "¿Qué se recomienda hacer si la mente se distrae durante la práctica de mindfulness?",
     "opciones": [
-      "A) Identificar las fuentes de estrés",
-      "B) Implementar técnicas de meditación",
-      "C) Buscar apoyo social inmediatamente",
-      "D) Ignorar el problema"
+      "A) Sigue con la práctica sin importar lo que pase",
+      "B) Intenta distrayendo la mente con un tema agradable",
+      "C) Deja de practicar y vuelve más tarde",
+      "D) Realiza una pausa y se enfoca en la respiración"
     ],
-    "respuesta_correcta": "A) Identificar las fuentes de estrés",
-    "explicacion": "Es fundamental identificar las causas del estrés y la ansiedad para poder abordarlas efectivamente.",
+    "respuesta_correcta": "D) Realiza una pausa y se enfoca en la respiración",
+    "explicacion": "La práctica de mindfulness requiere estar presente en el momento y no distraerse. Si la mente se distrae, es importante detenerse y volver a enfocarse en la respiración para seguir adelante.",
     "dificultad": "baja",
-    "tema": "Técnicas para el manejo de estrés y ansiedad"
+    "tema": "Mindfulness"
   },
   {
-    "pregunta": "¿Cuál es un tipo de estrés que se caracteriza por ser provocado por la percepción de un desafío o una amenaza?",
+    "pregunta": "¿Cómo se define la ansiedad según Williams, T.? ",
     "opciones": [
-      "A) Estrés académico",
-      "B) Estrés físico",
-      "C) Estrés emocional",
-      "D) Estrés por cambio"
+      "A) La ansiedad es una respuesta natural al estrés",
+      "B) La ansiedad es un trastorno mental que puede ser tratado con medicamentos",
+      "C) La ansiedad es el miedo a algo específico que puede ser superado",
+      "D) No se define la ansiedad"
     ],
-    "respuesta_correcta": "A) Estrés académico",
-    "explicacion": "El estrés académico se produce cuando una persona percibe un desafío o una amenaza en su entorno académico.",
-    "dificultad": "media",
-    "tema": "Tipos de estrés"
-  },
-  {
-    "pregunta": "¿Cuál es una característica importante para manejar el estrés y la ansiedad?",
-    "opciones": [
-      "A) Negación",
-      "B) Control",
-      "C) Adaptabilidad",
-      "D) Frustración"
-    ],
-    "respuesta_correcta": "C) Adaptabilidad",
-    "explicacion": "La adaptabilidad es crucial para manejar el estrés y la ansiedad, ya que permite ser flexibles y responder de manera efectiva a los cambios y desafíos.",
-    "dificultad": "media",
-    "tema": "Capacidad para adaptarse y enfrentar desafíos"
-  },
-  {
-    "pregunta": "¿Cuál es una estrategia práctica para manejar el estrés y la ansiedad?",
-    "opciones": [
-      "A) Hacer ejercicio",
-      "B) Practicar meditación",
-      "C) Buscar apoyo social",
-      "D) Evitar los problemas"
-    ],
-    "respuesta_correcta": "B) Practicar meditación",
-    "explicacion": "La meditación es una estrategia efectiva para manejar el estrés y la ansiedad, ya que permite reducir la ansiedad y mejorar la concentración.",
+    "respuesta_correcta": "A) La ansiedad es una respuesta natural al estrés",
+    "explicación": "La definición de Williams, T. describe la ansiedad como una respuesta natural al estrés, lo que sugiere que es un proceso normal y no necesariamente algo negativo.",
     "dificultad": "baja",
-    "tema": "Estrategias prácticas para el manejo del estrés y la ansiedad"
+    "tema": "Definición de ansiedad",
+    "explicacion": "La opción A refleja correctamente cómo Williams aborda la ansiedad como una reacción natural al estrés, lo que demuestra un entendimiento de sus definiciones y conceptos en el campo del comportamiento relacionado con la ansiedad."
   },
   {
-    "pregunta": "¿Cuál es un efecto negativo del estrés crónico?",
+    "pregunta": "¿Cuál es la principal diferencia entre el estrés y la ansiedad en el contexto universitario?",
     "opciones": [
-      "A) Mejora la capacidad de aprendizaje",
-      "B) Reducir la ansiedad",
-      "C) Debilitar el sistema inmunológico",
-      "D) Incrementar la motivación"
+      "A) El estrés se manifiesta físicamente, mientras que la ansiedad se manifiesta emocionalmente",
+      "B) La ansiedad es un trastorno mental, mientras que el estrés es una respuesta natural",
+      "C) El estrés es agudo y temporal, mientras que la ansiedad es crónica y persistente",
+      "D) No hay diferencia entre estrés y ansiedad"
     ],
-    "respuesta_correcta": "C) Debilitar el sistema inmunológico",
-    "explicacion": "El estrés crónico puede debilitar el sistema inmunológico, lo que puede llevar a una mayor susceptibilidad a las enfermedades.",
+    "respuesta_correcta": "C) El estrés es agudo y temporal, mientras que la ansiedad es crónica y persistente",
+    "explicación": "La principal diferencia entre el estrés y la ansiedad en el contexto universitario se refiere a su duración y naturaleza. El estrés es generalmente agudo y temporal, mientras que la ansiedad puede ser crónica y persistente.",
     "dificultad": "media",
-    "tema": "Efectos del estrés"
+    "tema": "Estrés y ansiedad",
+    "explicacion": "La respuesta correcta señala que, mientras que el estrés es una reacción de corto plazo a un desafío específico o situación estresante en la vida académica, la ansiedad implica miedos y preocupaciones persistentes sin evidencia concreta que justifiquen tales sentimientos."
   },
   {
-    "pregunta": "¿Cuál es el objetivo principal de utilizar técnicas para manejar el estrés y la ansiedad?",
+    "pregunta": "¿Qué actividad se menciona en el texto como parte de la práctica del auto-cuidado?",
     "opciones": [
-      "A) Reducir el nivel de estrés",
-      "B) Mejorar la calidad del sueño",
-      "C) Fortalecer la capacidad de adaptación ante cambios",
-      "D) Ignorar los problemas"
+      "A) La meditación",
+      "B) La respiración profunda",
+      "C) El mindfulness",
+      "D) No se menciona"
     ],
-    "respuesta_correcta": "C) Fortalecer la capacidad de adaptación ante cambios",
-    "explicacion": "La resiliencia y el manejo del estrés son fundamentales para enfrentar desafíos y superar obstáculos en la vida universitaria. Algunas técnicas para manejar el estrés y la ansiedad incluyen la meditación, la respiración profunda, la visualización y la escritura reflexiva.",
-    "dificultad": "media",
-    "tema": "Resiliencia y Manejo de Estrés"
-  },
-  {
-    "pregunta": "¿Qué es el estrés?",
-    "opciones": [
-      "A) La capacidad de adaptarse a cambios",
-      "B) El estado de ánimo negativo y agotador",
-      "C) La falta de habilidades para resolver problemas",
-      "D) La presión para alcanzar metas"
-    ],
-    "respuesta_correcta": "B) El estado de ánimo negativo y agotador",
-    "explicacion": "El estrés es un estado de ánimo negativo y agotador que se experimenta como resultado de la respuesta al estímulo. Aunque el estrés puede ser beneficioso en pequeñas dosis, en exceso puede afectar negativamente el bienestar emocional y físico.",
+    "respuesta_correcta": "B) La respiración profunda",
+    "explicación": "La respiración profunda es una actividad que se menciona en el texto como parte de la práctica del auto-cuidado, lo que sugiere que es un método para relajar y reducir el estrés.",
     "dificultad": "baja",
-    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+    "tema": "Auto-cuidado",
+    "explicacion": "La respuesta correcta es B) La respiración profunda porque, según el pasaje proporcionado, esta técnica se utiliza para ayudar a alcanzar un estado mental claro y enfocado durante la práctica del auto-cuidado. La meditación de respiración permite relajarse y conscientemente vivir en el presente moment, lo que es fundamental para este tipo de prácticas autogestibles."
   },
   {
-    "pregunta": "¿Cuál es el objetivo principal del manejo del estrés?",
+    "pregunta": "¿Qué se recomienda hacer después de llenar el abdomen con aire durante la técnica de respiración profunda?",
     "opciones": [
-      "A) Reducir la ansiedad",
-      "B) Mejorar la productividad",
-      "C) Disminuir la fatiga",
-      "D) Restaurar la equilibrio emocional"
+      "A) Retener el aire",
+      "B) Exhalar gradualmente",
+      "C) No hay recomendación específica",
+      "D) Realizar un movimiento físico"
     ],
-    "respuesta_correcta": "D) Restaurar la equilibrio emocional",
-    "explicacion": "El objetivo principal del manejo del estrés es restaurar el equilibrio emocional y reducir el impacto negativo en el bienestar físico y mental.",
-    "dificultad": "media",
-    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
-  },
-  {
-    "pregunta": "¿Qué tipo de estrés se caracteriza por ser una respuesta a un estímulo específico?",
-    "opciones": [
-      "A) Estrés crónico",
-      "B) Estrés agudo",
-      "C) Estrés psicosocial",
-      "D) Estrés físico"
-    ],
-    "respuesta_correcta": "B) Estrés agudo",
-    "explicacion": "El estrés agudo es una respuesta a un estímulo específico y transitorio, como un examen o una entrevista de trabajo. A diferencia del estrés crónico, el estrés agudo es más breve y puede ser manejado con técnicas de afrontamiento efectivas.",
-    "dificultad": "media",
-    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
-  },
-  {
-    "pregunta": "¿Cuál es un ejemplo de estrategia práctica para el manejo del estrés?",
-    "opciones": [
-      "A) Evitar el problema",
-      "B) Afrontar el problema",
-      "C) Distraerse con actividades recreativas",
-      "D) Buscar apoyo emocional"
-    ],
-    "respuesta_correcta": "C) Distraerse con actividades recreativas",
-    "explicacion": "Distraerse con actividades recreativas es un ejemplo de estrategia práctica para el manejo del estrés. Al hacerlo, se puede reducir la tensión y mejorar el estado de ánimo.",
+    "respuesta_correcta": "B) Exhalar gradualmente",
+    "explicación": "Después de llenar el abdomen con aire durante la técnica de respiración profunda, se recomienda exhalar gradualmente para permitir que el cuerpo se relaje.",
     "dificultad": "baja",
-    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+    "tema": "Técnica de respiración profunda",
+    "explicacion": "Después de inflar completamente el abdomen, es mejor continuar exhalando gradualmente para mantenerse en la inmersión completa y relajada que caracteriza a la respiración profunda. Esto permite una eficiente liberación del calor corporal acumulado durante la natación sin causar tensión innecesaria o alteraciones en el ritmo de buceo."
   }
 ]
