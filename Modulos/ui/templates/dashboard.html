@@ -250,7 +250,9 @@
                   <div class="d-flex flex-column align-items-center justify-content-center w-100 h-100">
                     <img src="{{ url_for('ui.static', filename=materia.icono) }}" alt="icono {{ materia.nombre }}" style="width:48px; height:48px; margin-bottom: 0.5rem;">
                     <div class="materia-nombre">{{ materia.nombre }}</div>
-                    <button class="btn btn-complementario btn-sm mt-2 w-100" {% if materia.nombre not in materias %}disabled style="opacity:0.5; pointer-events:none;"{% endif %}>Comenzar Test</button>
+                    <form method="get" action="{{ url_for('ui.comenzar_test', materia=materia.nombre) }}">
+                      <button type="submit" class="btn btn-complementario btn-sm mt-2 w-100" {% if materia.nombre not in materias %}disabled style="opacity:0.5; pointer-events:none;"{% endif %}>Comenzar Test</button>
+                    </form>
                   </div>
                 </div>
               </div>

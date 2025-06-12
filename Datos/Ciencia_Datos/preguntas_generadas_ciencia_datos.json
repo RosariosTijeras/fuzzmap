@@ -1,132 +1,80 @@
 [
   {
-    "pregunta": "¿Cuál es el objetivo principal de la Ciencia de Datos?",
+    "pregunta": "¿Qué organismo introdujo por primera vez el término 'Ciencia de Datos' en una conferencia en 1996?",
     "opciones": [
-      "A) Analizar y visualizar datos",
-      "B) Extraer patrones y tomar decisiones informadas",
-      "C) Desarrollar sistemas que imitan la inteligencia humana",
-      "D) Realizar cálculos matemáticos"
+      "A) American Statistical Association",
+      "B) International Institute for Analytics",
+      "C) Institute for Operations Research and the Management Sciences",
+      "D) Data Science Council of America"
     ],
-    "respuesta_correcta": "B) Extraer patrones y tomar decisiones informadas",
-    "explicacion": "La Ciencia de Datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
-    "dificultad": "baja",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
-  },
-  {
-    "pregunta": "¿Cuál es el enfoque principal de la Inteligencia Artificial?",
-    "opciones": [
-      "A) Analizar y visualizar datos",
-      "B) Desarrollar sistemas que imitan la inteligencia humana",
-      "C) Realizar cálculos matemáticos",
-      "D) Tomar decisiones informadas"
-    ],
-    "respuesta_correcta": "B) Desarrollar sistemas que imitan la inteligencia humana",
-    "explicacion": "La Inteligencia Artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
-    "dificultad": "baja",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
-  },
-  {
-    "pregunta": "¿Cuál es el objetivo principal de la Ciencia de Datos en la toma de decisiones?",
-    "opciones": [
-      "A) Realizar cálculos matemáticos",
-      "B) Analizar y visualizar datos",
-      "C) Extraer patrones y tomar decisiones informadas",
-      "D) Desarrollar sistemas que imitan la inteligencia humana"
-    ],
-    "respuesta_correcta": "C) Extraer patrones y tomar decisiones informadas",
-    "explicacion": "La Ciencia de Datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
-    "dificultad": "baja",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
-  },
-  {
-    "pregunta": "¿Cuál es el papel del aprendizaje automático en la Ciencia de Datos?",
-    "opciones": [
-      "A) Realizar cálculos matemáticos",
-      "B) Analizar y visualizar datos",
-      "C) Desarrollar sistemas que imitan la inteligencia humana",
-      "D) Aprender de los datos y realizar tareas específicas"
-    ],
-    "respuesta_correcta": "D) Aprender de los datos y realizar tareas específicas",
-    "explicacion": "El aprendizaje automático es una técnica utilizada en la Ciencia de Datos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "respuesta_correcta": "D) Data Science Council of America",
+    "explicacion": "La Data Science Council of America (DASCA) es un organismo que se estableció en 1996 y se considera el primer grupo que popularizó el término 'Ciencia de Datos'.",
     "dificultad": "media",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+    "tema": "Historia de la Ciencia de Datos"
   },
   {
-    "pregunta": "¿Cuál es el beneficio principal de la Ciencia de Datos?",
+    "pregunta": "¿Qué aspecto fue destacado como motivo relevante para el cambio hacia más aplicaciones en informática?",
     "opciones": [
-      "A) Realizar cálculos matemáticos",
-      "B) Analizar y visualizar datos",
-      "C) Extraer patrones y tomar decisiones informadas",
-      "D) Desarrollar sistemas que imitan la inteligencia humana"
+      "A) La creación de la Internet",
+      "B) El avance de la inteligencia artificial",
+      "C) El aumento del tamaño y complejidad de los datos",
+      "D) La mejora de las tecnologías de almacenamiento"
     ],
-    "respuesta_correcta": "C) Extraer patrones y tomar decisiones informadas",
-    "explicacion": "La Ciencia de Datos permite extraer información valiosa y tomar decisiones informadas en diferentes áreas, como la salud, finanzas, transporte y más.",
+    "respuesta_correcta": "C) El aumento del tamaño y complejidad de los datos",
+    "explicacion": "El aumento del tamaño y complejidad de los datos fue un factor importante para el cambio hacia más aplicaciones en informática, ya que requirió la creación de sistemas y algoritmos capaces de manejar grandes volúmenes de datos.",
     "dificultad": "baja",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+    "tema": "Impacto de la Informática en la Ciencia de Datos"
   },
   {
-    "pregunta": "¿Qué disciplina se centra en desarrollar sistemas que imitan la inteligencia humana?",
+    "pregunta": "¿Quién acuñó el término 'Ciencia de Datos' en 1974?",
     "opciones": [
-      "A) Ciencia de datos",
-      "B) Ingeniería de software",
-      "C) Inteligencia artificial",
-      "D) Análisis estadístico"
+      "A) John W. Tukey",
+      "B) William S. Cleveland",
+      "C) Kenneth J. Arrow",
+      "D) None of the above"
     ],
-    "respuesta_correcta": "C) Inteligencia artificial",
-    "explicacion": "La inteligencia artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
-    "dificultad": "baja",
-    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
-  },
-  {
-    "pregunta": "¿Cuál es el objetivo principal de la inteligencia artificial?",
-    "opciones": [
-      "A) Analizar y interpretar conjuntos de datos complejos",
-      "B) Desarrollar sistemas que imiten la inteligencia humana",
-      "C) Automatizar procesos cognitivos y aprender de los datos",
-      "D) Crear modelos predictivos para tomar decisiones"
-    ],
-    "respuesta_correcta": "C) Automatizar procesos cognitivos y aprender de los datos",
-    "explicacion": "La inteligencia artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "respuesta_correcta": "D) None of the above",
+    "explicacion": "El término 'Ciencia de Datos' no fue acuñado por un individuo en particular, sino que surgió como una disciplina interdisciplinaria a finales del siglo XX.",
     "dificultad": "media",
-    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+    "tema": "Historia de la Ciencia de Datos"
   },
   {
-    "pregunta": "¿Qué disciplina se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos?",
+    "pregunta": "¿Qué técnica se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio?",
     "opciones": [
-      "A) Ingeniería de software",
-      "B) Análisis estadístico",
-      "C) Ciencia de datos",
-      "D) Inteligencia artificial"
+      "A) Machine Learning",
+      "B) Deep Learning",
+      "C) Data Mining",
+      "D) Predictive Modeling"
     ],
-    "respuesta_correcta": "C) Ciencia de datos",
-    "explicacion": "La ciencia de datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
-    "dificultad": "baja",
-    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
-  },
-  {
-    "pregunta": "¿Qué áreas se ven beneficiadas por el uso de la ciencia de datos y la inteligencia artificial?",
-    "opciones": [
-      "A) Salud, finanzas y transporte",
-      "B) Industria manufacturera y servicios",
-      "C) Ciencias naturales y sociales",
-      "D) Todas las áreas mencionadas"
-    ],
-    "respuesta_correcta": "D) Todas las áreas mencionadas",
-    "explicacion": "La ciencia de datos y la inteligencia artificial tienen un impacto significativo en diversas áreas como la salud, finanzas, transporte y más, impulsando la innovación y el progreso tecnológico.",
+    "respuesta_correcta": "A) Machine Learning",
+    "explicacion": "La máquina aprendida se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio, ya que permite a los algoritmos aprender patrones y hacer predicciones sobre el comportamiento del consumidor.",
     "dificultad": "media",
-    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+    "tema": "Aplicaciones de la Ciencia de Datos"
   },
   {
-    "pregunta": "¿Cuál es el campo que se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos?",
+    "pregunta": "¿En qué fase del ciclo de vida de la ciencia de datos se generan informes y visualizaciones de datos?",
     "opciones": [
-      "A) Ciencias de la Computación",
-      "B) Estadística",
-      "C) Ciencia de Datos",
-      "D) Inteligencia Artificial"
+      "A) Ingestion",
+      "B) Storage",
+      "C) Processing",
+      "D) Reporting"
     ],
-    "respuesta_correcta": "C) Ciencia de Datos",
-    "explicacion": "La ciencia de datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
-    "dificultad": "baja",
-    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+    "respuesta_correcta": "D) Reporting",
+    "explicacion": "La fase de reporte en el ciclo de vida de la ciencia de datos implica convertir los datos procesados en informes y visualizaciones para ser presentados a los stakeholders.",
+    "dificultad": "media",
+    "tema": "Ciclo de Vida de la Ciencia de Datos"
+  },
+  {
+    "pregunta": "¿Quién introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+    "opciones": [
+      "A) John W. Tukey",
+      "B) William S. Cleveland",
+      "C) Vapnik, Vladimir",
+      "D) Harold Jeffery"
+    ],
+    "respuesta_correcta": "A) John W. Tukey",
+    "explicacion": "John W. Tukey es considerado el padre de la Ciencia de Datos y la introdujo como una disciplina unificada en 2001.",
+    "dificultad": "media",
+    "tema": "Historia de la Ciencia de Datos"
   }
 ]

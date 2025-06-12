@@ -7,6 +7,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from Modulos.auth.auth import registrar_usuario, autenticar_usuario # Funciones de autenticación
 from Modulos.auth.auth import _cargar_usuarios
 from datetime import timedelta
+import json
+import random
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
@@ -144,3 +147,128 @@ def admin_dashboard():
                 mensaje = 'El usuario ya existe.'
         usuarios = _cargar_usuarios()  # Recargar lista
     return render_template('admin_dashboard.html', usuarios=usuarios, mensaje=mensaje)
+
+# Ruta para comenzar un test de una materia
+@ui.route('/comenzar_test/<materia>', methods=['GET', 'POST'])
+def comenzar_test(materia):
+    if 'user' not in session:
+        return redirect(url_for('ui.login'))
+    # Mapear nombre visible a nombre de archivo
+    materia_map = {
+        'Fundamentos de ciencia de datos': 'ciencia_datos',
+        'Habilidades para la vida': 'habilidades_vida',
+    }
+    materia_key = materia_map.get(materia)
+    if not materia_key:
+        flash('Materia no válida o no implementada.', 'danger')
+        return redirect(url_for('ui.dashboard'))
+    # Cargar preguntas de ambos JSON
+    ruta_json1 = f'Datos/{materia_key.capitalize()}/bancodepreguntas_global_{materia_key}.json'
+    ruta_json2 = f'Datos/{materia_key.capitalize()}/preguntas_generadas_{materia_key}.json'
+    preguntas = []
+    import os
+    # Cargar preguntas del banco global
+    if os.path.exists(ruta_json1):
+        with open(ruta_json1, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            # Detectar formato: lista de dicts o dict con 'lineas'
+            if isinstance(data, dict) and 'lineas' in data:
+                # Intentar parsear preguntas tipo generadas si es posible
+                for l in data['lineas']:
+                    if isinstance(l, dict) and 'pregunta' in l:
+                        preguntas.append(l)
+            elif isinstance(data, list):
+                preguntas.extend(data)
+    # Cargar preguntas generadas
+    if os.path.exists(ruta_json2):
+        with open(ruta_json2, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                preguntas.extend(data)
+    # Filtrar solo preguntas válidas (dict con 'pregunta', 'opciones', ...)
+    preguntas = [q for q in preguntas if isinstance(q, dict) and 'pregunta' in q and 'opciones' in q]
+    if not preguntas:
+        flash('No hay preguntas disponibles para esta materia.', 'danger')
+        return redirect(url_for('ui.dashboard'))
+    # Elegir aleatoriamente 10 preguntas sin repetición
+    random.shuffle(preguntas)
+    preguntas_seleccionadas = preguntas[:10] if len(preguntas) > 10 else preguntas
+    # --- Cambios para control de test y timer ---
+    import time
+    if 'test_state' not in session or session.get('test_materia') != materia:
+        # Nueva sesión de test
+        session['test_state'] = {
+            'preguntas': preguntas_seleccionadas,
+            'respuestas': [],
+            'inicio': int(time.time()),
+            'duracion': 30*60,  # 30 minutos en segundos
+        }
+        session['test_materia'] = materia
+    state = session['test_state']
+    preguntas_seleccionadas = state['preguntas']
+    pregunta_actual = int(request.args.get('q', 0))
+    total_preguntas = len(preguntas_seleccionadas)
+    feedback = None
+    feedback_correcta = None
+    tiempo_restante = max(0, state['duracion'] - (int(time.time()) - state['inicio']))
+    # Si se acabó el tiempo, terminar test
+    if tiempo_restante <= 0:
+        return _finalizar_test(materia)
+    if request.method == 'POST':
+        respuesta = request.form.get('respuesta')
+        correcta = preguntas_seleccionadas[pregunta_actual]['respuesta_correcta']
+        state['respuestas'].append({
+            'pregunta': preguntas_seleccionadas[pregunta_actual]['pregunta'],
+            'respuesta_usuario': respuesta,
+            'respuesta_correcta': correcta,
+            'explicacion': preguntas_seleccionadas[pregunta_actual].get('explicacion', ''),
+            'correcta': respuesta == correcta
+        })
+        session.modified = True
+        siguiente = pregunta_actual + 1
+        if siguiente < total_preguntas:
+            return redirect(url_for('ui.comenzar_test', materia=materia, q=siguiente))
+        else:
+            return _finalizar_test(materia)
+    return render_template('comenzar_test.html',
+        materia_nombre=materia,
+        pregunta=preguntas_seleccionadas[pregunta_actual],
+        pregunta_actual=pregunta_actual,
+        total_preguntas=total_preguntas,
+        feedback=feedback,
+        feedback_correcta=feedback_correcta,
+        tiempo_restante=tiempo_restante
+    )
+
+def _finalizar_test(materia):
+    # Guarda resultados y redirige a página de resultados
+    state = session.get('test_state', {})
+    respuestas = state.get('respuestas', [])
+    correctas = sum(1 for r in respuestas if r.get('correcta'))
+    incorrectas = len(respuestas) - correctas
+    session['test_resultados'] = {
+        'materia_nombre': materia,
+        'preguntas': respuestas,
+        'correctas': correctas,
+        'incorrectas': incorrectas
+    }
+    session.pop('test_state', None)
+    session.pop('test_materia', None)
+    return redirect(url_for('ui.resultados_test', materia=materia))
+
+# Ruta para mostrar resultados de un test
+@ui.route('/resultados_test/<materia>')
+def resultados_test(materia):
+    if 'user' not in session or 'test_resultados' not in session:
+        return redirect(url_for('ui.dashboard'))
+    data = session.pop('test_resultados')
+    # data: dict con claves: preguntas, correctas, incorrectas, materia_nombre
+    score = evaluate_performance(data['correctas'], data['correctas'] + data['incorrectas'])
+    fuzzy_message = recommendation(score)
+    return render_template('resultados.html',
+        materia_nombre=data['materia_nombre'],
+        fuzzy_message=fuzzy_message,
+        correctas=data['correctas'],
+        incorrectas=data['incorrectas'],
+        preguntas=data['preguntas']
+    )
