@@ -1,0 +1,132 @@
+[
+  {
+    "pregunta": "¿Cuál es el primer paso para manejar el estrés y la ansiedad?",
+    "opciones": [
+      "A) Identificar las fuentes de estrés",
+      "B) Implementar técnicas de meditación",
+      "C) Buscar apoyo social inmediatamente",
+      "D) Ignorar el problema"
+    ],
+    "respuesta_correcta": "A) Identificar las fuentes de estrés",
+    "explicacion": "Es fundamental identificar las causas del estrés y la ansiedad para poder abordarlas efectivamente.",
+    "dificultad": "baja",
+    "tema": "Técnicas para el manejo de estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Cuál es un tipo de estrés que se caracteriza por ser provocado por la percepción de un desafío o una amenaza?",
+    "opciones": [
+      "A) Estrés académico",
+      "B) Estrés físico",
+      "C) Estrés emocional",
+      "D) Estrés por cambio"
+    ],
+    "respuesta_correcta": "A) Estrés académico",
+    "explicacion": "El estrés académico se produce cuando una persona percibe un desafío o una amenaza en su entorno académico.",
+    "dificultad": "media",
+    "tema": "Tipos de estrés"
+  },
+  {
+    "pregunta": "¿Cuál es una característica importante para manejar el estrés y la ansiedad?",
+    "opciones": [
+      "A) Negación",
+      "B) Control",
+      "C) Adaptabilidad",
+      "D) Frustración"
+    ],
+    "respuesta_correcta": "C) Adaptabilidad",
+    "explicacion": "La adaptabilidad es crucial para manejar el estrés y la ansiedad, ya que permite ser flexibles y responder de manera efectiva a los cambios y desafíos.",
+    "dificultad": "media",
+    "tema": "Capacidad para adaptarse y enfrentar desafíos"
+  },
+  {
+    "pregunta": "¿Cuál es una estrategia práctica para manejar el estrés y la ansiedad?",
+    "opciones": [
+      "A) Hacer ejercicio",
+      "B) Practicar meditación",
+      "C) Buscar apoyo social",
+      "D) Evitar los problemas"
+    ],
+    "respuesta_correcta": "B) Practicar meditación",
+    "explicacion": "La meditación es una estrategia efectiva para manejar el estrés y la ansiedad, ya que permite reducir la ansiedad y mejorar la concentración.",
+    "dificultad": "baja",
+    "tema": "Estrategias prácticas para el manejo del estrés y la ansiedad"
+  },
+  {
+    "pregunta": "¿Cuál es un efecto negativo del estrés crónico?",
+    "opciones": [
+      "A) Mejora la capacidad de aprendizaje",
+      "B) Reducir la ansiedad",
+      "C) Debilitar el sistema inmunológico",
+      "D) Incrementar la motivación"
+    ],
+    "respuesta_correcta": "C) Debilitar el sistema inmunológico",
+    "explicacion": "El estrés crónico puede debilitar el sistema inmunológico, lo que puede llevar a una mayor susceptibilidad a las enfermedades.",
+    "dificultad": "media",
+    "tema": "Efectos del estrés"
+  },
+  {
+    "pregunta": "¿Cuál es el objetivo principal de utilizar técnicas para manejar el estrés y la ansiedad?",
+    "opciones": [
+      "A) Reducir el nivel de estrés",
+      "B) Mejorar la calidad del sueño",
+      "C) Fortalecer la capacidad de adaptación ante cambios",
+      "D) Ignorar los problemas"
+    ],
+    "respuesta_correcta": "C) Fortalecer la capacidad de adaptación ante cambios",
+    "explicacion": "La resiliencia y el manejo del estrés son fundamentales para enfrentar desafíos y superar obstáculos en la vida universitaria. Algunas técnicas para manejar el estrés y la ansiedad incluyen la meditación, la respiración profunda, la visualización y la escritura reflexiva.",
+    "dificultad": "media",
+    "tema": "Resiliencia y Manejo de Estrés"
+  },
+  {
+    "pregunta": "¿Qué es el estrés?",
+    "opciones": [
+      "A) La capacidad de adaptarse a cambios",
+      "B) El estado de ánimo negativo y agotador",
+      "C) La falta de habilidades para resolver problemas",
+      "D) La presión para alcanzar metas"
+    ],
+    "respuesta_correcta": "B) El estado de ánimo negativo y agotador",
+    "explicacion": "El estrés es un estado de ánimo negativo y agotador que se experimenta como resultado de la respuesta al estímulo. Aunque el estrés puede ser beneficioso en pequeñas dosis, en exceso puede afectar negativamente el bienestar emocional y físico.",
+    "dificultad": "baja",
+    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Cuál es el objetivo principal del manejo del estrés?",
+    "opciones": [
+      "A) Reducir la ansiedad",
+      "B) Mejorar la productividad",
+      "C) Disminuir la fatiga",
+      "D) Restaurar la equilibrio emocional"
+    ],
+    "respuesta_correcta": "D) Restaurar la equilibrio emocional",
+    "explicacion": "El objetivo principal del manejo del estrés es restaurar el equilibrio emocional y reducir el impacto negativo en el bienestar físico y mental.",
+    "dificultad": "media",
+    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Qué tipo de estrés se caracteriza por ser una respuesta a un estímulo específico?",
+    "opciones": [
+      "A) Estrés crónico",
+      "B) Estrés agudo",
+      "C) Estrés psicosocial",
+      "D) Estrés físico"
+    ],
+    "respuesta_correcta": "B) Estrés agudo",
+    "explicacion": "El estrés agudo es una respuesta a un estímulo específico y transitorio, como un examen o una entrevista de trabajo. A diferencia del estrés crónico, el estrés agudo es más breve y puede ser manejado con técnicas de afrontamiento efectivas.",
+    "dificultad": "media",
+    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Cuál es un ejemplo de estrategia práctica para el manejo del estrés?",
+    "opciones": [
+      "A) Evitar el problema",
+      "B) Afrontar el problema",
+      "C) Distraerse con actividades recreativas",
+      "D) Buscar apoyo emocional"
+    ],
+    "respuesta_correcta": "C) Distraerse con actividades recreativas",
+    "explicacion": "Distraerse con actividades recreativas es un ejemplo de estrategia práctica para el manejo del estrés. Al hacerlo, se puede reducir la tensión y mejorar el estado de ánimo.",
+    "dificultad": "baja",
+    "tema": "Tema 1: Técnicas para el manejo de estrés y ansiedad"
+  }
+]
