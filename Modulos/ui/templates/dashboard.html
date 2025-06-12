@@ -66,6 +66,21 @@
       font-weight: 600;
       letter-spacing: 1px;
     }
+    .btn-complementario {
+      background: linear-gradient(90deg, #ff9800 0%, #ffb347 100%);
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #ff980033;
+      border: none;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-complementario:hover:not([disabled]) {
+      background: linear-gradient(90deg, #ffb347 0%, #ff9800 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px #ff980044;
+    }
+
     .dashboard-header {
       background: rgba(255,255,255,0.45);
       border-radius: 18px;
@@ -91,6 +106,7 @@
       grid-template-rows: auto auto;
       gap: 2rem;
       margin-top: 1.5rem;
+      align-items: flex-start;
     }
     .dashboard-section {
       background: rgba(255,255,255,0.55);
@@ -118,6 +134,79 @@
         grid-template-rows: auto auto auto auto;
       }
     }
+
+    /* Materias activas/inactivas para el dashboard */
+    .materia-card {
+      font-weight: 600;
+      border-radius: 35px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      transition: box-shadow 0.2s, opacity 0.2s;
+      padding: 0.1rem 0.25rem 0.1rem 0.25rem;
+      margin: 0 3px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .materia-card .btn-complementario {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+    }
+    .materia-card > *:last-child {
+      margin-bottom: 0 !important;
+    }
+    .materia-activa {
+      background: linear-gradient(90deg, #66a6ff 0%, #0dabda 100%);
+      color: #fff;
+      opacity: 1;
+    }
+    .materia-inactiva {
+      background: #f8f9fa;
+      color: #0dabda;
+      opacity: 0.35;
+    }
+    .materia-nombre {
+      font-size: 0.95rem;
+      color: #111;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.2rem;
+      line-height: 1.1;
+    }
+    .dashboard-section.p-0 {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      min-height: 100px;
+      height: 100%;
+      overflow: hidden;
+      padding-bottom: 1.5rem;
+    }
+    .dashboard-section.p-0 > .row.g-3 {
+      height: 100%;
+      min-height: 160px;
+      align-items: stretch !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100%;
+      flex-wrap: nowrap !important;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    @media (min-width: 768px) {
+      .row.g-3 > [class^='col-'] {
+        flex: 0 0 18%;
+        max-width: 18%;
+        height: 100%;
+        display: flex;
+        align-items: normal;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-bottom: 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -143,19 +232,30 @@
         <a href="{{ url_for('ui.logout') }}" class="btn btn-danger">Cerrar sesión</a>
       </div>
 
-      <div class="dashboard-main-grid">
+      <div class="dashboard-main-grid" style="align-items: start;">
         <!-- Materias en las que está registrado el usuario -->
-        <div class="dashboard-section">
-          <h1>Materias Registradas</h1>
-          <ul class="list-group list-group-flush">
-            {% if materias and materias|length > 0 %}
-              {% for materia in materias %}
-                <li class="list-group-item bg-transparent">{{ materia }}</li>
-              {% endfor %}
-            {% else %}
-              <li class="list-group-item bg-transparent text-muted">No hay materias registradas.</li>
-            {% endif %}
-          </ul>
+        <div class="dashboard-section p-0" style="display: flex; flex-direction: column; justify-content: flex-start; min-height: 120px; height: 100%;">
+          <h1 class="mb-2" style="padding-left: 1.5rem; padding-top: 1.5rem;">Materias Registradas</h1>
+          <div class="row g-3 justify-content-center align-items-center" style="flex:1; margin: 0; align-items: flex-start !important; margin-top: -12px; margin-bottom: 0;">
+            {% set todas_materias = [
+              {'nombre': 'Estructura de datos', 'icono': 'estructura_datos.png'},
+              {'nombre': 'Fundamentos de ciencia de datos', 'icono': 'ciencia_datos.png'},
+              {'nombre': 'Habilidades para la vida', 'icono': 'habilidades_vida.png'},
+              {'nombre': 'Probabilidad y estadística', 'icono': 'probabilidad_estadistica.png'},
+              {'nombre': 'Programación 2', 'icono': 'programacion2.png'}
+            ] %}
+            {% for materia in todas_materias %}
+              <div class="col-6 col-md-2 col-lg-2 d-flex align-items-stretch" style="padding-left: 4px; padding-right: 4px;">
+                <div class="materia-card w-100 h-100 {% if materia.nombre in materias %}materia-activa{% else %}materia-inactiva{% endif %}">
+                  <div class="d-flex flex-column align-items-center justify-content-center w-100 h-100">
+                    <img src="{{ url_for('ui.static', filename=materia.icono) }}" alt="icono {{ materia.nombre }}" style="width:48px; height:48px; margin-bottom: 0.5rem;">
+                    <div class="materia-nombre">{{ materia.nombre }}</div>
+                    <button class="btn btn-complementario btn-sm mt-2 w-100" {% if materia.nombre not in materias %}disabled style="opacity:0.5; pointer-events:none;"{% endif %}>Comenzar Test</button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
         <!-- Estadísticas del usuario -->
         <div class="dashboard-section">
