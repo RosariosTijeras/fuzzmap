@@ -1,0 +1,132 @@
+[
+  {
+    "pregunta": "¿Cuál es el objetivo principal de la Ciencia de Datos?",
+    "opciones": [
+      "A) Analizar y visualizar datos",
+      "B) Extraer patrones y tomar decisiones informadas",
+      "C) Desarrollar sistemas que imitan la inteligencia humana",
+      "D) Realizar cálculos matemáticos"
+    ],
+    "respuesta_correcta": "B) Extraer patrones y tomar decisiones informadas",
+    "explicacion": "La Ciencia de Datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
+    "dificultad": "baja",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el enfoque principal de la Inteligencia Artificial?",
+    "opciones": [
+      "A) Analizar y visualizar datos",
+      "B) Desarrollar sistemas que imitan la inteligencia humana",
+      "C) Realizar cálculos matemáticos",
+      "D) Tomar decisiones informadas"
+    ],
+    "respuesta_correcta": "B) Desarrollar sistemas que imitan la inteligencia humana",
+    "explicacion": "La Inteligencia Artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "dificultad": "baja",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el objetivo principal de la Ciencia de Datos en la toma de decisiones?",
+    "opciones": [
+      "A) Realizar cálculos matemáticos",
+      "B) Analizar y visualizar datos",
+      "C) Extraer patrones y tomar decisiones informadas",
+      "D) Desarrollar sistemas que imitan la inteligencia humana"
+    ],
+    "respuesta_correcta": "C) Extraer patrones y tomar decisiones informadas",
+    "explicacion": "La Ciencia de Datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
+    "dificultad": "baja",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el papel del aprendizaje automático en la Ciencia de Datos?",
+    "opciones": [
+      "A) Realizar cálculos matemáticos",
+      "B) Analizar y visualizar datos",
+      "C) Desarrollar sistemas que imitan la inteligencia humana",
+      "D) Aprender de los datos y realizar tareas específicas"
+    ],
+    "respuesta_correcta": "D) Aprender de los datos y realizar tareas específicas",
+    "explicacion": "El aprendizaje automático es una técnica utilizada en la Ciencia de Datos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "dificultad": "media",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el beneficio principal de la Ciencia de Datos?",
+    "opciones": [
+      "A) Realizar cálculos matemáticos",
+      "B) Analizar y visualizar datos",
+      "C) Extraer patrones y tomar decisiones informadas",
+      "D) Desarrollar sistemas que imitan la inteligencia humana"
+    ],
+    "respuesta_correcta": "C) Extraer patrones y tomar decisiones informadas",
+    "explicacion": "La Ciencia de Datos permite extraer información valiosa y tomar decisiones informadas en diferentes áreas, como la salud, finanzas, transporte y más.",
+    "dificultad": "baja",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Qué disciplina se centra en desarrollar sistemas que imitan la inteligencia humana?",
+    "opciones": [
+      "A) Ciencia de datos",
+      "B) Ingeniería de software",
+      "C) Inteligencia artificial",
+      "D) Análisis estadístico"
+    ],
+    "respuesta_correcta": "C) Inteligencia artificial",
+    "explicacion": "La inteligencia artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "dificultad": "baja",
+    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el objetivo principal de la inteligencia artificial?",
+    "opciones": [
+      "A) Analizar y interpretar conjuntos de datos complejos",
+      "B) Desarrollar sistemas que imiten la inteligencia humana",
+      "C) Automatizar procesos cognitivos y aprender de los datos",
+      "D) Crear modelos predictivos para tomar decisiones"
+    ],
+    "respuesta_correcta": "C) Automatizar procesos cognitivos y aprender de los datos",
+    "explicacion": "La inteligencia artificial se centra en desarrollar sistemas que imiten la inteligencia humana, utilizando algoritmos y modelos para aprender de los datos y realizar tareas específicas de manera autónoma.",
+    "dificultad": "media",
+    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Qué disciplina se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos?",
+    "opciones": [
+      "A) Ingeniería de software",
+      "B) Análisis estadístico",
+      "C) Ciencia de datos",
+      "D) Inteligencia artificial"
+    ],
+    "respuesta_correcta": "C) Ciencia de datos",
+    "explicacion": "La ciencia de datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
+    "dificultad": "baja",
+    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Qué áreas se ven beneficiadas por el uso de la ciencia de datos y la inteligencia artificial?",
+    "opciones": [
+      "A) Salud, finanzas y transporte",
+      "B) Industria manufacturera y servicios",
+      "C) Ciencias naturales y sociales",
+      "D) Todas las áreas mencionadas"
+    ],
+    "respuesta_correcta": "D) Todas las áreas mencionadas",
+    "explicacion": "La ciencia de datos y la inteligencia artificial tienen un impacto significativo en diversas áreas como la salud, finanzas, transporte y más, impulsando la innovación y el progreso tecnológico.",
+    "dificultad": "media",
+    "tema": "Fundamentos de Ciencia de Datos e Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es el campo que se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos?",
+    "opciones": [
+      "A) Ciencias de la Computación",
+      "B) Estadística",
+      "C) Ciencia de Datos",
+      "D) Inteligencia Artificial"
+    ],
+    "respuesta_correcta": "C) Ciencia de Datos",
+    "explicacion": "La ciencia de datos se enfoca en analizar, interpretar y extraer patrones de conjuntos de datos complejos para respaldar la toma de decisiones informadas.",
+    "dificultad": "baja",
+    "tema": "Introducción a la Ciencia de Datos e Inteligencia Artificial"
+  }
+]
