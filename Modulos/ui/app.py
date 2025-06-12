@@ -9,7 +9,10 @@ from Modulos.auth.auth import _cargar_usuarios
 from datetime import timedelta
 import json
 import random
-from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations
+import os
+from datetime import datetime
+from urllib.parse import unquote
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
@@ -101,7 +104,37 @@ def dashboard():
         nombre = usuarios[usuario].get("nombre", "")
         apellido = usuarios[usuario].get("apellido", "")
         materias = usuarios[usuario].get("materias", [])
-    return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias)
+    # Leer recomendación general y tests del usuario
+    user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+    recomendacion_general = get_user_recommendations(user_folder)
+    historial_tests = []
+    historial_tests_full = []
+    if os.path.isdir(user_folder):
+        tests = []
+        for fname in sorted(os.listdir(user_folder)):
+            if fname.startswith('test_') and fname.endswith('.json'):
+                with open(os.path.join(user_folder, fname), 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # Si la fecha es tipo '20250612_162754', formatear a legible
+                    fecha = data.get('fecha', '')
+                    if '_' in fname and (not fecha or len(fecha) < 10):
+                        # Extraer fecha del nombre del archivo si no está en el JSON
+                        try:
+                            raw = fname.split('_')[-2] + '_' + fname.split('_')[-1].replace('.json','')
+                            dt = datetime.strptime(raw, '%Y%m%d_%H%M%S')
+                            fecha = dt.strftime('%d/%m/%Y %H:%M:%S')
+                        except Exception:
+                            fecha = raw
+                    tests.append({
+                        'fecha': fecha,
+                        'nombre_test': data.get('materia', ''),
+                        'puntaje': data.get('score', 0),
+                        'estado': 'Aprobado' if data.get('score', 0) >= 7 else 'Reprobado',
+                        'recomendacion': data.get('recomendacion', '')
+                    })
+        historial_tests_full = tests
+        historial_tests = tests[-6:]
+    return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias, recomendacion_general=recomendacion_general, historial_tests=historial_tests)
 
 # Ruta para logout (cierra sesión y redirige al login)
 @ui.route('/logout')
@@ -153,46 +186,30 @@ def admin_dashboard():
 def comenzar_test(materia):
     if 'user' not in session:
         return redirect(url_for('ui.login'))
-    # Mapear nombre visible a nombre de archivo
+    # Decodificar y normalizar el nombre de la materia
+    materia_decodificada = unquote(materia).strip().lower()
     materia_map = {
-        'Fundamentos de ciencia de datos': 'ciencia_datos',
-        'Habilidades para la vida': 'habilidades_vida',
+        'fundamentos de ciencia de datos': 'Ciencia_Datos',
+        'habilidades para la vida': 'Habilidades_Vida',
     }
-    materia_key = materia_map.get(materia)
+    materia_key = materia_map.get(materia_decodificada)
     if not materia_key:
         flash('Materia no válida o no implementada.', 'danger')
         return redirect(url_for('ui.dashboard'))
-    # Cargar preguntas de ambos JSON
-    ruta_json1 = f'Datos/{materia_key.capitalize()}/bancodepreguntas_global_{materia_key}.json'
-    ruta_json2 = f'Datos/{materia_key.capitalize()}/preguntas_generadas_{materia_key}.json'
+    ruta_json = f'Datos/{materia_key}/preguntas_generadas_{materia_key.lower()}.json'
     preguntas = []
     import os
-    # Cargar preguntas del banco global
-    if os.path.exists(ruta_json1):
-        with open(ruta_json1, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            # Detectar formato: lista de dicts o dict con 'lineas'
-            if isinstance(data, dict) and 'lineas' in data:
-                # Intentar parsear preguntas tipo generadas si es posible
-                for l in data['lineas']:
-                    if isinstance(l, dict) and 'pregunta' in l:
-                        preguntas.append(l)
-            elif isinstance(data, list):
-                preguntas.extend(data)
-    # Cargar preguntas generadas
-    if os.path.exists(ruta_json2):
-        with open(ruta_json2, 'r', encoding='utf-8') as f:
+    if os.path.exists(ruta_json):
+        with open(ruta_json, 'r', encoding='utf-8') as f:
             data = json.load(f)
             if isinstance(data, list):
                 preguntas.extend(data)
-    # Filtrar solo preguntas válidas (dict con 'pregunta', 'opciones', ...)
     preguntas = [q for q in preguntas if isinstance(q, dict) and 'pregunta' in q and 'opciones' in q]
-    if not preguntas:
-        flash('No hay preguntas disponibles para esta materia.', 'danger')
+    if len(preguntas) < 10:
+        flash('No hay suficientes preguntas para este test. Se requieren 10 preguntas únicas.', 'danger')
         return redirect(url_for('ui.dashboard'))
-    # Elegir aleatoriamente 10 preguntas sin repetición
     random.shuffle(preguntas)
-    preguntas_seleccionadas = preguntas[:10] if len(preguntas) > 10 else preguntas
+    preguntas_seleccionadas = preguntas[:10]
     # --- Cambios para control de test y timer ---
     import time
     if 'test_state' not in session or session.get('test_materia') != materia:
@@ -240,17 +257,45 @@ def comenzar_test(materia):
         tiempo_restante=tiempo_restante
     )
 
+# Modifica _finalizar_test para guardar resultados y recomendaciones por usuario
+
 def _finalizar_test(materia):
-    # Guarda resultados y redirige a página de resultados
     state = session.get('test_state', {})
     respuestas = state.get('respuestas', [])
     correctas = sum(1 for r in respuestas if r.get('correcta'))
     incorrectas = len(respuestas) - correctas
+    usuario = session.get('user')
+    # Puntaje de 0 a 10
+    score = correctas
+    # Evaluación difusa robusta (mantener para recomendación)
+    fuzzy_score = evaluate_performance(correctas, 10)
+    rec = recommendation(fuzzy_score)
+    user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+    os.makedirs(user_folder, exist_ok=True)
+    from datetime import datetime
+    # Guardar resultados en Datos/<usuario>/test_<materia>_<fecha>.json
+    fecha = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    fecha_archivo = datetime.now().strftime('%Y%m%d_%H%M%S')
+    test_file = os.path.join(user_folder, f'test_{materia}_{fecha_archivo}.json')
+    with open(test_file, 'w', encoding='utf-8') as f:
+        json.dump({
+            'materia': materia,
+            'fecha': fecha,
+            'respuestas': respuestas,
+            'correctas': correctas,
+            'incorrectas': incorrectas,
+            'score': score,
+            'fuzzy_score': fuzzy_score,
+            'recomendacion': rec
+        }, f, ensure_ascii=False, indent=2)
     session['test_resultados'] = {
         'materia_nombre': materia,
         'preguntas': respuestas,
         'correctas': correctas,
-        'incorrectas': incorrectas
+        'incorrectas': incorrectas,
+        'score': score,
+        'fuzzy_score': fuzzy_score,
+        'recomendacion': rec
     }
     session.pop('test_state', None)
     session.pop('test_materia', None)
@@ -272,3 +317,25 @@ def resultados_test(materia):
         incorrectas=data['incorrectas'],
         preguntas=data['preguntas']
     )
+
+@ui.route('/estadisticas_usuario')
+def estadisticas_usuario():
+    if 'user' not in session:
+        return redirect(url_for('ui.login'))
+    usuario = session['user']
+    user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+    historial_tests = []
+    if os.path.isdir(user_folder):
+        for fname in sorted(os.listdir(user_folder)):
+            if fname.startswith('test_') and fname.endswith('.json'):
+                with open(os.path.join(user_folder, fname), 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    historial_tests.append({
+                        'fecha': data.get('fecha', ''),
+                        'materia': data.get('materia', ''),
+                        'score': data.get('score', 0),
+                        'correctas': data.get('correctas', 0),
+                        'incorrectas': data.get('incorrectas', 0),
+                        'recomendacion': data.get('recomendacion', '')
+                    })
+    return render_template('estadisticas_usuario.html', historial_tests=historial_tests)
