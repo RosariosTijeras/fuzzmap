@@ -10,7 +10,7 @@ Tiempo de ejecución de ejemplo en este equipo: 37 minutos (37.914s)
 
 Modelos de IA utilizados:
 - llama3:instruct (~8GB en disco, modelo grande, requiere GPU para inferencia eficiente)
-- phi3:mini-instruct (~2GB en disco, modelo ligero, puede correr en CPU pero se recomienda GPU)
+- phi3:mini (~2GB en disco, modelo ligero, puede correr en CPU pero se recomienda GPU)
 
 Requisitos mínimos recomendados:
 - CPU multinúcleo moderno
@@ -33,7 +33,7 @@ import random
 import os
 
 class QuestionExpander:
-    def __init__(self, model_name: str = "llama3:instruct", explanation_model: str = "phi3:mini-instruct"):
+    def __init__(self, model_name: str = "llama3:instruct", explanation_model: str = "phi3:mini"):
         self.model = model_name
         self.explanation_model = explanation_model  # Modelo especializado en explicaciones
         self._response_cache = lru_cache(maxsize=20)(self._cache_response)
@@ -69,6 +69,7 @@ class QuestionExpander:
 
     async def generate_explanations(self, questions: List[Dict]) -> List[Dict]:
         """Genera explicaciones usando un modelo especializado"""
+        print(f"[DEBUG] (Explicaciones) Modelo de explicación en uso: {self.explanation_model}")
         explained_questions = []
         for q in questions:
             prompt = (
@@ -88,6 +89,7 @@ class QuestionExpander:
 
     async def generate_new_questions(self, context_text: str, num_questions: int = 10) -> List[Dict]:
         """Genera preguntas con manejo de duplicados y explicaciones"""
+        print(f"[DEBUG] (Preguntas) Modelo de generación en uso: {self.model}")
         prompt = self._prepare_prompt(context_text, num_questions)
         
         # Generar preguntas en lotes
@@ -193,7 +195,20 @@ if __name__ == "__main__":
     import asyncio
     import os
 
-    # Definir materias y rutas
+    # Párrafos resumen sintetizados para cada materia
+    resumenes_sintetizados = {
+        "Ciencia_Datos": (
+            "La Ciencia de Datos es una disciplina interdisciplinaria que combina estadística, matemáticas, informática y algoritmos para analizar grandes volúmenes de datos, extraer información relevante y apoyar la toma de decisiones. "
+            "Su evolución ha estado marcada por el avance de la informática y la inteligencia artificial, permitiendo automatizar procesos, identificar patrones y predecir comportamientos en áreas como la salud, finanzas y tecnología. "
+            "El objetivo principal es transformar datos en conocimiento útil, facilitando la innovación y el progreso en diversos campos."
+        ),
+        "Habilidades_Vida": (
+            "Las Habilidades para la Vida son un conjunto de capacidades esenciales que permiten a las personas afrontar de manera efectiva los retos y demandas de la vida diaria, especialmente en el contexto universitario. "
+            "Incluyen la gestión del estrés y la ansiedad, el autocuidado, la adaptabilidad, la toma de decisiones y la comunicación asertiva. "
+            "Practicar técnicas como la respiración profunda, el mindfulness y la relajación muscular progresiva contribuye al bienestar psicológico, mejora el rendimiento académico y fortalece la resiliencia ante situaciones adversas."
+        )
+    }
+
     materias = [
         {
             "nombre": "Ciencia_Datos",
@@ -211,16 +226,11 @@ if __name__ == "__main__":
 
     for materia in materias:
         ruta_base = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), materia["carpeta"])
-        ruta_resumen = os.path.join(ruta_base, materia["resumen"])
         ruta_banco = os.path.join(ruta_base, materia["banco"])
         ruta_salida = os.path.join(ruta_base, f"preguntas_generadas_{materia['nombre'].lower()}.json")
 
-        # Leer resumen
-        resumen = ""
-        if os.path.exists(ruta_resumen):
-            with open(ruta_resumen, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                resumen = data.get("resumen", "")
+        # Usar el resumen sintetizado en vez del PDF
+        resumen = resumenes_sintetizados[materia["nombre"]]
         # Leer banco de preguntas
         preguntas_existentes = []
         if os.path.exists(ruta_banco):
@@ -233,8 +243,9 @@ if __name__ == "__main__":
         print(f"\nGenerando preguntas para {materia['nombre']}...")
         expander = QuestionExpander(
             model_name="llama3:instruct",
-            explanation_model="phi3:mini-instruct"
+            explanation_model="phi3:mini"
         )
+        print(f"[DEBUG] Modelo de generación: {expander.model} | Modelo de explicación: {expander.explanation_model}")
         preguntas = asyncio.run(expander.generate_new_questions(contexto, 10))
         # Eliminar duplicados por enunciado
         preguntas_unicas = []
