@@ -16,7 +16,7 @@
       min-height: 100vh;
       background: linear-gradient(120deg, rgba(137,247,254,0.55) 0%, rgba(102,166,255,0.65) 50%, rgba(60,40,120,0.75) 100%);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
     }
 
@@ -83,6 +83,41 @@
     @media (max-width: 991px) {
       .dashboard-header { flex-direction: column; gap: 1rem; }
     }
+
+    /* --- Inspirado en la estructura de Student-Dashboard, adaptado y personalizado --- */
+    .dashboard-main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+    .dashboard-section {
+      background: rgba(255,255,255,0.55);
+      border-radius: 18px;
+      box-shadow: 0 2px 16px #66a6ff33;
+      padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+      margin-bottom: 0;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-section h2, .dashboard-section h1 {
+      color: #0dabda;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      font-size: 1.6rem;
+    }
+    .dashboard-section .table {
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+    }
+    @media (max-width: 991px) {
+      .dashboard-main-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -108,35 +143,89 @@
         <a href="{{ url_for('ui.logout') }}" class="btn btn-danger">Cerrar sesión</a>
       </div>
 
-      <div class="row">
-        <!-- Columna izquierda: Estadísticas y Ranking -->
-        <div class="col-md-6">
-          <!-- Tarjeta de estadísticas -->
-          <div class="dashboard-card mb-4">
-            <h5>📊 Estadísticas</h5>
-            <p>Aquí irá tu información de tests realizados, puntajes promedio, etc.</p>
-          </div>
-          <!-- Tarjeta de ranking -->
-          <div class="dashboard-card">
-            <h5>🏆 Ranking de Usuarios</h5>
-            <p>Aquí va la lista de los mejores puntajes.</p>
-          </div>
+      <div class="dashboard-main-grid">
+        <!-- Materias en las que está registrado el usuario -->
+        <div class="dashboard-section">
+          <h1>Materias Registradas</h1>
+          <ul class="list-group list-group-flush">
+            {% if materias and materias|length > 0 %}
+              {% for materia in materias %}
+                <li class="list-group-item bg-transparent">{{ materia }}</li>
+              {% endfor %}
+            {% else %}
+              <li class="list-group-item bg-transparent text-muted">No hay materias registradas.</li>
+            {% endif %}
+          </ul>
         </div>
+        <!-- Estadísticas del usuario -->
+        <div class="dashboard-section">
+          <h2>Estadísticas</h2>
+          <ul class="list-group list-group-flush">
+            {# <li class="list-group-item bg-transparent">Tests realizados: <strong>{{ estadisticas.tests_realizados }}</strong></li>
+            <li class="list-group-item bg-transparent">Puntaje promedio: <strong>{{ estadisticas.puntaje_promedio }}</strong></li>
+            <li class="list-group-item bg-transparent">Mejor puntaje: <strong>{{ estadisticas.mejor_puntaje }}</strong></li> #}
+            <li class="list-group-item bg-transparent text-muted">(Aquí irán las estadísticas del usuario)</li>
+          </ul>
+        </div>
+        <!-- Ranking de usuarios -->
+        <div class="dashboard-section">
+          <h2>Ranking de Usuarios</h2>
+          {# <ol class="list-group list-group-numbered list-group-flush">
+            {% for user in ranking_usuarios %}
+              <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                <span>{{ user.nombre }}</span>
+                <span class="badge bg-info text-dark">{{ user.puntaje }}</span>
+              </li>
+            {% endfor %}
+          </ol> #}
+          <div class="text-muted">(Aquí irá el ranking de usuarios)</div>
+        </div>
+        <!-- Historial de tests realizados -->
+        <div class="dashboard-section" style="grid-column: 1 / span 3;">
+          <h2>Historial de Pruebas</h2>
+          {# <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="background:rgba(255,255,255,0.7); border-radius:12px;">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Test</th>
+                  <th scope="col">Puntaje</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if historial_tests and historial_tests|length > 0 %}
+                  {% for test in historial_tests %}
+                    <tr>
+                      <td>{{ test.fecha }}</td>
+                      <td>{{ test.nombre_test }}</td>
+                      <td><span class="badge bg-info text-dark">{{ test.puntaje }}</span></td>
+                      <td>
+                        {% if test.estado == 'Aprobado' %}
+                          <span class="badge bg-success">Aprobado</span>
+                        {% elif test.estado == 'Reprobado' %}
+                          <span class="badge bg-danger">Reprobado</span>
+                        {% else %}
+                          <span class="badge bg-secondary">{{ test.estado }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="4" class="text-center text-muted">No hay pruebas registradas.</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div> #}
+          <div class="text-muted">(Aquí irá el historial de pruebas)</div>
+        </div>
+      </div>
 
-        <!-- Columna derecha: Recomendaciones y Navegación -->
-        <div class="col-md-6">
-          <!-- Tarjeta de recomendaciones -->
-          <div class="dashboard-card mb-4">
-            <h5>💡 Recomendaciones</h5>
-            <p>Aquí mostrarás tips y sugerencias.</p>
-          </div>
-          <!-- Botones de navegación -->
-          <div class="d-grid gap-3">
-            <a href="#" class="btn btn-primary">📝 Comenzar Test</a>
-            <a href="#" class="btn btn-secondary">📜 Historial de Pruebas</a>
-            <a href="#" class="btn btn-info">⚙️ Configuración / Perfil</a>
-          </div>
-        </div>
+      <!-- Botones de navegación -->
+      <div class="d-grid gap-3">
+        <a href="#" class="btn btn-primary">📝 Comenzar Test</a>
       </div>
 
     </div>
