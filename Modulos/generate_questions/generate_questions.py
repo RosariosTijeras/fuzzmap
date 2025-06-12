@@ -6,6 +6,7 @@ import asyncio
 from typing import List, Dict
 from functools import lru_cache
 import random
+import os
 
 class QuestionExpander:
     def __init__(self, model_name: str = "llama3:instruct", explanation_model: str = "phi3:mini-instruct"):
@@ -166,33 +167,63 @@ class QuestionExpander:
 # Ejemplo de uso mejorado
 if __name__ == "__main__":
     import asyncio
-    # Contexto de ejemplo (puedes cargar de PDF real)
-    test_context = (
-        "La ciencia de datos es un campo interdisciplinario que utiliza métodos científicos, procesos, algoritmos y sistemas "
-        "para extraer conocimiento e insights de datos estructurados y no estructurados."
-    )
-    expander = QuestionExpander(
-        model_name="llama3:instruct",
-        explanation_model="phi3:mini-instruct"
-    )
-    preguntas = asyncio.run(expander.generate_new_questions(test_context, 10))
-    # Eliminar duplicados por enunciado
-    preguntas_unicas = []
-    vistos = set()
-    for p in preguntas:
-        enunciado = p['pregunta'].strip().lower()
-        if enunciado not in vistos:
-            preguntas_unicas.append(p)
-            vistos.add(enunciado)
-    print(f"\nPreguntas generadas ({len(preguntas_unicas)}):")
-    for i, p in enumerate(preguntas_unicas):
-        print(f"\n#{i+1}: {p['pregunta']}")
-        print(f"  - Correcta: {p['respuesta_correcta']}")
-        print(f"  - Explicación: {p.get('explicacion', '[SIN EXPLICACIÓN]')}")
-    # Guardar en JSON limpio solo si hay preguntas
-    if preguntas_unicas:
-        with open('Datos/preguntas_generadas.json', 'w', encoding='utf-8') as f:
-            json.dump(preguntas_unicas, f, indent=2, ensure_ascii=False)
-        print(f"\nPreguntas guardadas en Datos/preguntas_generadas.json")
-    else:
-        print("\n[ADVERTENCIA] No se generó ninguna pregunta válida para guardar.")
+    import os
+
+    # Definir materias y rutas
+    materias = [
+        {
+            "nombre": "Ciencia_Datos",
+            "carpeta": "Datos/Ciencia_Datos",
+            "resumen": "resumen_ciencia_datos.json",
+            "banco": "bancodepreguntas_global_cienciadatos.json"
+        },
+        {
+            "nombre": "Habilidades_Vida",
+            "carpeta": "Datos/Habilidades_Vida",
+            "resumen": "resumen_habilidades_vida.json",
+            "banco": "bancodepreguntas_global_habilidadesvida.json"
+        }
+    ]
+
+    for materia in materias:
+        ruta_base = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), materia["carpeta"])
+        ruta_resumen = os.path.join(ruta_base, materia["resumen"])
+        ruta_banco = os.path.join(ruta_base, materia["banco"])
+        ruta_salida = os.path.join(ruta_base, f"preguntas_generadas_{materia['nombre'].lower()}.json")
+
+        # Leer resumen
+        resumen = ""
+        if os.path.exists(ruta_resumen):
+            with open(ruta_resumen, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                resumen = data.get("resumen", "")
+        # Leer banco de preguntas
+        preguntas_existentes = []
+        if os.path.exists(ruta_banco):
+            with open(ruta_banco, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                lineas = data.get("lineas", [])
+                preguntas_existentes = [l for l in lineas if l.strip() and l.strip().startswith("¿")]
+        # Unir contexto
+        contexto = resumen + "\n\n" + "\n".join(preguntas_existentes)
+        print(f"\nGenerando preguntas para {materia['nombre']}...")
+        expander = QuestionExpander(
+            model_name="llama3:instruct",
+            explanation_model="phi3:mini-instruct"
+        )
+        preguntas = asyncio.run(expander.generate_new_questions(contexto, 10))
+        # Eliminar duplicados por enunciado
+        preguntas_unicas = []
+        vistos = set()
+        for p in preguntas:
+            enunciado = p['pregunta'].strip().lower()
+            if enunciado not in vistos:
+                preguntas_unicas.append(p)
+                vistos.add(enunciado)
+        # Guardar en JSON limpio solo si hay preguntas
+        if preguntas_unicas:
+            with open(ruta_salida, 'w', encoding='utf-8') as f:
+                json.dump(preguntas_unicas, f, indent=2, ensure_ascii=False)
+            print(f"Preguntas guardadas en {ruta_salida}")
+        else:
+            print(f"[ADVERTENCIA] No se generó ninguna pregunta válida para {materia['nombre']}")
