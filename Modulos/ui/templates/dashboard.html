@@ -262,12 +262,48 @@
         <!-- Estadísticas del usuario -->
         <div class="dashboard-section">
           <h2>Estadísticas</h2>
-          <ul class="list-group list-group-flush">
-            {# <li class="list-group-item bg-transparent">Tests realizados: <strong>{{ estadisticas.tests_realizados }}</strong></li>
-            <li class="list-group-item bg-transparent">Puntaje promedio: <strong>{{ estadisticas.puntaje_promedio }}</strong></li>
-            <li class="list-group-item bg-transparent">Mejor puntaje: <strong>{{ estadisticas.mejor_puntaje }}</strong></li> #}
-            <li class="list-group-item bg-transparent text-muted">(Aquí irán las estadísticas del usuario)</li>
-          </ul>
+          <!-- Diagrama de rendimiento general -->
+          <canvas id="chart-rendimiento" height="120"></canvas>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <script>
+            const labels = JSON.parse('{{ historial_tests|map(attribute="nombre_test")|list|tojson|safe }}');
+            const data = JSON.parse('{{ historial_tests|map(attribute="puntaje")|list|tojson|safe }}');
+            new Chart(document.getElementById('chart-rendimiento').getContext('2d'), {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Puntaje (0-10)',
+                  data: data,
+                  fill: true,
+                  borderColor: '#0dabda',
+                  backgroundColor: 'rgba(102,166,255,0.15)',
+                  tension: 0.3,
+                  pointBackgroundColor: '#0dabda',
+                  pointRadius: 5,
+                  pointHoverRadius: 7
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    min: 0,
+                    max: 10,
+                    title: { display: true, text: 'Puntaje (0-10)' }
+                  }
+                },
+                plugins: {
+                  legend: { display: false }
+                }
+              }
+            });
+          </script>
+          <!-- Recomendación general -->
+          <div class="alert alert-info mt-3" style="font-size:1.1rem;">
+            {{ recomendacion_general }}
+          </div>
+          <!-- Botón para ver todas las estadísticas -->
+          <a href="{{ url_for('ui.estadisticas_usuario') }}" class="btn btn-primary mt-2">Ver todas las estadísticas</a>
         </div>
         <!-- Ranking de usuarios -->
         <div class="dashboard-section">
@@ -282,10 +318,11 @@
           </ol> #}
           <div class="text-muted">(Aquí irá el ranking de usuarios)</div>
         </div>
+        
         <!-- Historial de tests realizados -->
         <div class="dashboard-section" style="grid-column: 1 / span 3;">
           <h2>Historial de Pruebas</h2>
-          {# <div class="table-responsive">
+          <div class="table-responsive">
             <table class="table table-hover align-middle mb-0" style="background:rgba(255,255,255,0.7); border-radius:12px;">
               <thead class="table-light">
                 <tr>
@@ -293,6 +330,7 @@
                   <th scope="col">Test</th>
                   <th scope="col">Puntaje</th>
                   <th scope="col">Estado</th>
+                  <th scope="col">Recomendación</th>
                 </tr>
               </thead>
               <tbody>
@@ -311,17 +349,17 @@
                           <span class="badge bg-secondary">{{ test.estado }}</span>
                         {% endif %}
                       </td>
+                      <td>{{ test.recomendacion }}</td>
                     </tr>
                   {% endfor %}
                 {% else %}
                   <tr>
-                    <td colspan="4" class="text-center text-muted">No hay pruebas registradas.</td>
+                    <td colspan="5" class="text-center text-muted">No hay pruebas registradas.</td>
                   </tr>
                 {% endif %}
               </tbody>
             </table>
-          </div> #}
-          <div class="text-muted">(Aquí irá el historial de pruebas)</div>
+          </div>
         </div>
       </div>
 
