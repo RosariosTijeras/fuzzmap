@@ -1,3 +1,27 @@
+"""
+ADVERTENCIA IMPORTANTE
+
+Este código fue probado y ejecutado en una laptop ASUS TUF A15 FA506NF con los siguientes componentes:
+- CPU: AMD Ryzen 5 7535HS
+- GPU: NVIDIA GeForce GTX 2050 (4GB VRAM)
+- RAM: 16GB DDR5
+- Almacenamiento: SSD NVMe
+Tiempo de ejecución de ejemplo en este equipo: 37 minutos (37.914s)
+
+Modelos de IA utilizados:
+- llama3:instruct (~8GB en disco, modelo grande, requiere GPU para inferencia eficiente)
+- phi3:mini-instruct (~2GB en disco, modelo ligero, puede correr en CPU pero se recomienda GPU)
+
+Requisitos mínimos recomendados:
+- CPU multinúcleo moderno
+- 16GB de RAM
+- GPU dedicada con al menos 4GB VRAM (NVIDIA recomendado para aceleración)
+- Al menos 20GB de espacio libre en disco para modelos y dependencias
+- Python 3.10+
+
+Este script puede requerir mucho tiempo y recursos dependiendo del tamaño del contexto y la cantidad de preguntas a generar.
+"""
+
 # Modulos/nlp/question_expander.py
 import ollama
 import json
