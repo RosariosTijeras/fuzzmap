@@ -3,7 +3,7 @@ Modulo para la interfaz web creada con Flask
 - Ruta de este archivo: Modulos/ui/app.py
 """
 # Importa los módulos necesarios de Flask
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from Modulos.auth.auth import registrar_usuario, autenticar_usuario # Funciones de autenticación
 from Modulos.auth.auth import _cargar_usuarios
 from datetime import timedelta
@@ -133,9 +133,21 @@ def dashboard():
                         'estado': 'Aprobado' if data.get('score', 0) >= 7 else 'Reprobado',
                         'recomendacion': data.get('recomendacion', '')
                     })
+        # Ordenar por fecha y hora descendente
+        def parse_fecha(fecha):
+            try:
+                return datetime.strptime(fecha, '%d/%m/%Y %H:%M:%S')
+            except Exception:
+                return datetime.min
+        tests.sort(key=lambda t: parse_fecha(t['fecha']), reverse=True)
         historial_tests_full = tests
-        historial_tests = tests[-6:]
-    return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias, recomendacion_general=recomendacion_general, historial_tests=historial_tests)
+        historial_tests = tests[:6]  # Los 6 más recientes
+    # Calcular estadística general para el dashboard
+    puntajes = [t['puntaje'] for t in historial_tests]
+    promedio = sum(puntajes) / len(puntajes) if puntajes else 0
+    maximo = max(puntajes) if puntajes else 0
+    minimo = min(puntajes) if puntajes else 0
+    return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias, recomendacion_general=recomendacion_general, historial_tests=historial_tests, promedio_general=promedio, maximo_general=maximo, minimo_general=minimo)
 
 # Ruta para logout (cierra sesión y redirige al login)
 @ui.route('/logout')
@@ -322,8 +334,9 @@ def resultados_test(materia):
         return redirect(url_for('ui.dashboard'))
     data = session.pop('test_resultados')
     return render_template('resultados.html',
-        materia_nombre=data['materia_nombre'],
-        fuzzy_message=data['recomendacion'],
+        usuario=session.get('user', ''),
+        materia_nombre=data.get('materia_nombre', ''),
+        fuzzy_message=data.get('recomendacion', ''),
         correctas=data['correctas'],
         incorrectas=data['incorrectas'],
         preguntas=data['preguntas']
@@ -349,4 +362,67 @@ def estadisticas_usuario():
                         'incorrectas': data.get('incorrectas', 0),
                         'recomendacion': data.get('recomendacion', '')
                     })
-    return render_template('estadisticas_usuario.html', historial_tests=historial_tests)
+    # Ordenar historial por fecha y hora descendente (más reciente primero)
+    def parse_fecha(fecha):
+        try:
+            return datetime.strptime(fecha, '%d/%m/%Y %H:%M:%S')
+        except Exception:
+            return datetime.min
+    historial_tests.sort(key=lambda t: parse_fecha(t['fecha']), reverse=True)
+    # Agrupar por materia para estadística por materia
+    estadisticas_materias = {}
+    for test in historial_tests:
+        mat = test['materia']
+        if mat not in estadisticas_materias:
+            estadisticas_materias[mat] = []
+        estadisticas_materias[mat].append(test['score'])
+    resumen_materias = [
+        {
+            'materia': mat,
+            'promedio': round(sum(scores)/len(scores),2) if scores else 0,
+            'maximo': max(scores) if scores else 0,
+            'minimo': min(scores) if scores else 0,
+            'cantidad': len(scores)
+        }
+        for mat, scores in estadisticas_materias.items()
+    ]
+    return render_template('estadisticas_usuario.html', historial_tests=historial_tests, resumen_materias=resumen_materias)
+
+@ui.route('/api/recomendacion', methods=['POST'])
+def api_recomendacion():
+    data = request.get_json()
+    usuario = data.get('usuario')
+    materia = data.get('materia')
+    fuzzy_message = data.get('fuzzy_message')
+    # Recuperar el último test del usuario para la materia
+    user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+    test_files = [f for f in os.listdir(user_folder) if f.startswith(f'test_{materia}_') and f.endswith('.json')]
+    if not test_files:
+        return jsonify({'recomendacion': 'No hay datos suficientes para recomendar.'})
+    test_files.sort(reverse=True)
+    with open(os.path.join(user_folder, test_files[0]), 'r', encoding='utf-8') as f:
+        test_data = json.load(f)
+    resultados_test = {
+        'materia': materia,
+        'correctas': test_data.get('correctas', 0),
+        'incorrectas': test_data.get('incorrectas', 0),
+        'total': test_data.get('correctas', 0) + test_data.get('incorrectas', 0),
+        'temas_fallados': [r.get('tema') for r in test_data.get('respuestas', []) if not r.get('correcta') and r.get('tema')],
+    }
+    fuzzy_score = test_data.get('fuzzy_score', 0)
+    # Prompt corto y directo
+    prompt_extra = (
+        "Genera una recomendación breve y concreta (máximo 3 frases), solo lo esencial para mejorar en la materia y los temas fallados. Evita motivación genérica, sé directo y útil.\n" +
+        f"Recomendación difusa: {fuzzy_message}"
+    )
+    try:
+        import asyncio
+        from Modulos.fuzzylogic.fuzzy_evaluator import ollama_recommendation_llama32
+        recomendacion = asyncio.run(ollama_recommendation_llama32(resultados_test, prompt_extra=prompt_extra))
+        # Limitar a 3 frases
+        recomendacion = '.'.join(recomendacion.split('.')[:3]).strip() + '.'
+    except Exception:
+        from Modulos.fuzzylogic.fuzzy_evaluator import recommendation
+        recomendacion = recommendation(fuzzy_score, resultados_test['correctas'], resultados_test['total'], resultados_test['temas_fallados'])
+        recomendacion = '.'.join(recomendacion.split('.')[:3]).strip() + '.'
+    return jsonify({'recomendacion': recomendacion})
