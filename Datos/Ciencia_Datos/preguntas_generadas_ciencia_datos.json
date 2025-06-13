@@ -1,16 +1,16 @@
 [
   {
-    "pregunta": "Which of the following statements is correct about the evolution of computing?",
+    "pregunta": "¿Cuál de las siguientes afirmaciones es correcta sobre la evolución de la computación?",
     "opciones": [
-      "A) Computing has been entirely based on manual labor since its inception.",
-      "B) The first computer was invented by Charles Babbage in the 19th century.",
-      "C) The first general-purpose computer, the UNIVAC I, was developed in the 1940s.",
-      "D) Computing has only been possible since the invention of transistors in the 1950s."
+      "A) La computación ha estado basada completamente en el trabajo manual desde sus inicios.",
+      "B) La primera computadora fue inventada por Charles Babbage en el siglo XIX.",
+      "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+      "D) La computación solo ha sido posible desde la invención de los transistores en la década de 1950."
     ],
-    "respuesta_correcta": "C) The first general-purpose computer, the UNIVAC I, was developed in the 1940s.",
-    "explicacion": "The UNIVAC I (Universal Automatic Computer I) was the first computer to be widely used for business purposes. It was developed by John Mauchly and J. Presper Eckert in the late 1940s.",
+    "respuesta_correcta": "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+    "explicacion": "La UNIVAC I (Universal Automatic Computer I) fue la primera computadora ampliamente utilizada para fines comerciales. Fue desarrollada por John Mauchly y J. Presper Eckert a finales de la década de 1940.",
     "dificultad": "media",
-    "tema": "Computing History"
+    "tema": "Historia de la computación"
   },
   {
     "pregunta": "¿Qué es la ciencia de datos?",
@@ -39,17 +39,17 @@
     "tema": "ciencia de datos"
   },
   {
-    "pregunta": "Which of the following is an example of an unsupervised learning algorithm?",
+    "pregunta": "¿Cuál de los siguientes es un ejemplo de un algoritmo de aprendizaje no supervisado?",
     "opciones": [
-      "A) K-means clustering",
-      "B) Linear regression",
-      "C) Decision tree",
-      "D) Random forest"
+      "A) Agrupamiento K-means",
+      "B) Regresión lineal",
+      "C) Árbol de decisión",
+      "D) Bosque aleatorio"
     ],
-    "respuesta_correcta": "A) K-means clustering",
-    "explicacion": "K-means clustering is an unsupervised learning algorithm that aims to partition a set of observations into K clusters, where the sum of squared distances between the observations and the cluster centers is minimized.",
+    "respuesta_correcta": "A) Agrupamiento K-means",
+    "explicacion": "El agrupamiento K-means es un algoritmo de aprendizaje no supervisado que busca dividir un conjunto de observaciones en K grupos, minimizando la suma de las distancias cuadradas entre las observaciones y los centros de los grupos.",
     "dificultad": "media",
-    "tema": "Machine Learning"
+    "tema": "Aprendizaje automático"
   },
   {
     "pregunta": "En qué contexto se utiliza la ciencia de datos?",

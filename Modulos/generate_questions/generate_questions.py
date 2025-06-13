@@ -56,6 +56,7 @@ class QuestionExpander:
             f"- Incluir una breve explicación (1-2 oraciones) de por qué la respuesta es correcta.\n"
             f"- Indicar el nivel de dificultad (baja, media o alta).\n"
             f"- Indicar el tema específico.\n\n"
+            f"**IMPORTANTE: Genera absolutamente todas las preguntas, opciones, explicaciones y temas SOLO en español. No utilices ningún texto en inglés.**\n"
             f"**Formato de salida exclusivamente JSON:**\n"
             f"[\n  {{\n    'pregunta': '...',\n    'opciones': ['A) ...', 'B) ...', 'C) ...', 'D) ...'],\n    'respuesta_correcta': 'A) ...',\n    'explicacion': '...',\n    'dificultad': 'media',\n    'tema': '...'}}\n]\n\n"
             f"Genera las preguntas en español y asegúrate de que sean diferentes a las originales."

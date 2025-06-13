@@ -17,7 +17,7 @@
     "opciones": [
       "A) Físico",
       "B) Emocional",
-      "C) Intellectual",
+      "C) Intelectual",
       "D) Social"
     ],
     "respuesta_correcta": "B) Emocional",
@@ -42,9 +42,9 @@
     "pregunta": "Cómo puede adaptarse una persona al cambio, ya sea personal o profesional?",
     "opciones": [
       "A) Asignando un nuevo objetivo y desarrollando estrategias para lograrlo.",
-      "B) Recognizando los desafíos del cambio y buscando apoyo social, emocional o profesional.",
-      "C) Cultivando habilidades de resiliencia y aprendizaje continúo.",
-      "D) Ignorando el cambio y esperando que se revertan a las cosas anteriores."
+      "B) Reconociendo los desafíos del cambio y buscando apoyo social, emocional o profesional.",
+      "C) Cultivando habilidades de resiliencia y aprendizaje continuo.",
+      "D) Ignorando el cambio y esperando que se reviertan las cosas anteriores."
     ],
     "respuesta_correcta": "A) Asignando un nuevo objetivo y desarrollando estrategias para lograrlo.",
     "explicacion": "Cambios significativos en la vida personal o profesional pueden ser desconcertantes, pero adaptarse a ellos puede ser una manera de crecer y evolucionar.",
