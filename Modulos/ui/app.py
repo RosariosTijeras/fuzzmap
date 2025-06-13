@@ -22,7 +22,6 @@ ui = Blueprint('ui', __name__,
                static_url_path='/ui/src')
 
 # Crear usuario admin automáticamente si no existe
-from Modulos.auth.auth import registrar_usuario, _cargar_usuarios
 
 @ui.before_app_request
 def crear_admin():
