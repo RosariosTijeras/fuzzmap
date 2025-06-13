@@ -26,4 +26,7 @@ def index():
 
 # Ejecuta la aplicación si este archivo es el principal
 if __name__ == '__main__':
+    # ADVERTENCIA: en producción, usa debug=False y una clave secreta fija
+    # Si debug=True y el servidor recarga, la clave secreta cambia y se pierden las sesiones
+    # Para pruebas locales, puedes dejar debug=True, pero si tienes problemas de sesión, pon debug=False
     app.run(debug=True)

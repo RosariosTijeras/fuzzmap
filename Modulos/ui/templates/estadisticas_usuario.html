@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Estadísticas del Usuario – FuzzMap</title>
+  <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      min-height: 100vh;
+      background: linear-gradient(120deg, rgba(137,247,254,0.55) 0%, rgba(102,166,255,0.65) 50%, rgba(60,40,120,0.75) 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .estadisticas-container {
+      min-height: 90vh;
+      margin-top: 2rem;
+      background: rgba(255,255,255,0.7);
+      border-radius: 22px;
+      box-shadow: 0 4px 32px #66a6ff44;
+      padding: 2.5rem 2rem;
+      max-width: 900px;
+      width: 100%;
+    }
+    h1 {
+      color: #0dabda;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .table {
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container estadisticas-container">
+    <h1>Estadísticas Detalladas</h1>
+    <a href="{{ url_for('ui.dashboard') }}" class="btn btn-secondary mb-3">Volver al Dashboard</a>
+    <div class="mb-4">
+      <h3 class="mb-3" style="color:#0dabda;">Resumen por Materia</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Materia</th>
+              <th>Promedio</th>
+              <th>Máximo</th>
+              <th>Mínimo</th>
+              <th>Cantidad de Tests</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for mat in resumen_materias %}
+            <tr>
+              <td>{{ mat.materia }}</td>
+              <td><span class="badge bg-info text-dark">{{ mat.promedio }}</span></td>
+              <td><span class="badge bg-success">{{ mat.maximo }}</span></td>
+              <td><span class="badge bg-danger">{{ mat.minimo }}</span></td>
+              <td>{{ mat.cantidad }}</td>
+            </tr>
+            {% endfor %}
+            {% if resumen_materias|length == 0 %}
+            <tr><td colspan="5" class="text-center text-muted">No hay estadísticas por materia.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Fecha</th>
+            <th>Materia</th>
+            <th>Puntaje</th>
+            <th>Aciertos</th>
+            <th>Errores</th>
+            <th>Recomendación</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if historial_tests and historial_tests|length > 0 %}
+            {% for test in historial_tests %}
+              <tr>
+                <td>{{ test.fecha }}</td>
+                <td>{{ test.materia }}</td>
+                <td><span class="badge bg-info text-dark">{{ test.score|round(2) }}</span></td>
+                <td>{{ test.correctas }}</td>
+                <td>{{ test.incorrectas }}</td>
+                <td>{{ test.recomendacion }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted">No hay pruebas registradas.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

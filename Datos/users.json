@@ -1,10 +1,22 @@
 {
+  "admin@unach.edu.ec": {
+    "usuario": "admin@unach.edu.ec",
+    "contrasena": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+    "nombre": "Administrador",
+    "apellido": "Principal",
+    "edad": 30,
+    "sexo": "Otro"
+  },
   "mario.camacho@unach.edu.ec": {
     "usuario": "mario.camacho@unach.edu.ec",
     "contrasena": "f1aa3bc6b10b82a8c44954772f4ab225090c0591c5c2bd1987d61a92d8177ac6",
     "nombre": "Jose Mario",
     "apellido": "Camacho Monar",
     "edad": 22,
-    "sexo": "M"
+    "sexo": "M",
+    "materias": [
+      "Fundamentos de ciencia de datos",
+      "Habilidades para la vida"
+    ]
   }
 }

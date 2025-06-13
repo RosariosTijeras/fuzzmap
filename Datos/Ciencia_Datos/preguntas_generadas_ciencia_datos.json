@@ -1,0 +1,132 @@
+[
+  {
+    "pregunta": "¿Cuál de las siguientes afirmaciones es correcta sobre la evolución de la computación?",
+    "opciones": [
+      "A) La computación ha estado basada completamente en el trabajo manual desde sus inicios.",
+      "B) La primera computadora fue inventada por Charles Babbage en el siglo XIX.",
+      "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+      "D) La computación solo ha sido posible desde la invención de los transistores en la década de 1950."
+    ],
+    "respuesta_correcta": "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+    "explicacion": "La UNIVAC I (Universal Automatic Computer I) fue la primera computadora ampliamente utilizada para fines comerciales. Fue desarrollada por John Mauchly y J. Presper Eckert a finales de la década de 1940.",
+    "dificultad": "media",
+    "tema": "Historia de la computación"
+  },
+  {
+    "pregunta": "¿Qué es la ciencia de datos?",
+    "opciones": [
+      "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "B) La ciencia de datos es una disciplina de programación que se utiliza para crear aplicaciones con grandes cantidades de datos.",
+      "C) La ciencia de datos es una disciplina de filosofía y psicología que estudia cómo los seres humanos se comportan y pensan.",
+      "D) La ciencia de datos es una disciplina de biología y geología que estudia cómo los organismos y procesos naturales funcionan."
+    ],
+    "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+    "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+    "dificultad": "media",
+    "tema": "ciencia de datos"
+  },
+  {
+    "pregunta": "Que es la ciencia de datos?",
+    "opciones": [
+      "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "B) La ciencia de datos se centra en la manipulación y análisis de datos para informar decisiones.",
+      "C) La ciencia de datos se dedica a la creación de modelos que pueden predecir comportamientos futuros.",
+      "D) La ciencia de datos es una rama de la matemáticas dedicada al análisis de datos."
+    ],
+    "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+    "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
+    "dificultad": "media",
+    "tema": "ciencia de datos"
+  },
+  {
+    "pregunta": "¿Cuál de los siguientes es un ejemplo de un algoritmo de aprendizaje no supervisado?",
+    "opciones": [
+      "A) Agrupamiento K-means",
+      "B) Regresión lineal",
+      "C) Árbol de decisión",
+      "D) Bosque aleatorio"
+    ],
+    "respuesta_correcta": "A) Agrupamiento K-means",
+    "explicacion": "El agrupamiento K-means es un algoritmo de aprendizaje no supervisado que busca dividir un conjunto de observaciones en K grupos, minimizando la suma de las distancias cuadradas entre las observaciones y los centros de los grupos.",
+    "dificultad": "media",
+    "tema": "Aprendizaje automático"
+  },
+  {
+    "pregunta": "En qué contexto se utiliza la ciencia de datos?",
+    "opciones": [
+      "A) Para el análisis de textos clínicos.",
+      "B) Para crear técnicas de segmentación impulsadas por aprendizaje automático.",
+      "C) Para la optimización del proceso de fabricación.",
+      "D) Para el desarrollo de políticas públicas."
+    ],
+    "respuesta_correcta": "A) Para el análisis de textos clínicos.",
+    "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
+    "dificultad": "media",
+    "tema": "Salud"
+  },
+  {
+    "pregunta": "¿Cuál es el objetivo de la inteligencia artificial?",
+    "opciones": [
+      "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+      "B) Aplicar modelos analíticos a procesos industriales para crear valor en la cadena de producción.",
+      "C) Usar datos en el análisis de texto clínico y bases de datos médicas para desarrollar técnicas de diagnóstico médico.",
+      "D) Analyzar fenómenos sociales complejos con la ayuda de la ciencia de datos y crear políticas públicas más efectivas."
+    ],
+    "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+    "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
+    "dificultad": "media",
+    "tema": "Inteligencia Artificial"
+  },
+  {
+    "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+    "opciones": [
+      "A) Patrones temporales",
+      "B) Patrones spatiales",
+      "C) Patrones de relación entre variables",
+      "D) Patrones de distribución de datos"
+    ],
+    "respuesta_correcta": "C) Patrones de relación entre variables",
+    "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+    "dificultad": "media",
+    "tema": "Aprendizaje Automático"
+  },
+  {
+    "pregunta": "Cuál es la definición de ciencia de datos?",
+    "opciones": [
+      "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+      "B) La ciencia de datos se dedica a crear modelos complejos que se mejoran al pasar tiempo.",
+      "C) La ciencia de datos se centra en el análisis de bases de datos clínicas y detección temprana de enfermedades.",
+      "D) La ciencia de datos es una aplicación de la inteligencia artificial al proceso productivo."
+    ],
+    "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+    "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
+    "dificultad": "media",
+    "tema": "ciencia de datos"
+  },
+  {
+    "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+    "opciones": [
+      "A) En biología",
+      "B) En psicología",
+      "C) En geografía",
+      "D) En medicina"
+    ],
+    "respuesta_correcta": "D) En medicina",
+    "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
+    "dificultad": "media",
+    "tema": "Ciencia de datos en la salud"
+  },
+  {
+    "pregunta": "¿Qué es la inteligencia artificial?",
+    "opciones": [
+      "A) La capacidad de una computadora para realizar un cálculo.",
+      "B) El proceso de aprendizaje automático en una máquina.",
+      "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+      "D) La capacidad de una computadora para realizar un cálculo, pero no necesariamente el proceso de aprendizaje automático."
+    ],
+    "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+    "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
+    "dificultad": "media",
+    "tema": "Inteligencia Artificial"
+  }
+]
