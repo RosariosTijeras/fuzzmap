@@ -3,6 +3,7 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 import os
 import json
+import ollama
 
 # Definir el universo de variables
 aciertos = ctrl.Antecedent(np.arange(0, 11, 1), 'aciertos')  # 0 a 10 preguntas
@@ -19,20 +20,25 @@ porcentaje['bajo'] = fuzz.trimf(porcentaje.universe, [0, 0, 50])
 porcentaje['medio'] = fuzz.trimf(porcentaje.universe, [30, 60, 80])
 porcentaje['alto'] = fuzz.trimf(porcentaje.universe, [70, 100, 100])
 
-# Funciones de membresía para evaluación
-# 0-40: deficiente, 30-70: regular, 60-100: excelente
-evaluacion['deficiente'] = fuzz.trimf(evaluacion.universe, [0, 0, 40])
-evaluacion['regular'] = fuzz.trimf(evaluacion.universe, [30, 60, 70])
-evaluacion['excelente'] = fuzz.trimf(evaluacion.universe, [60, 100, 100])
+# Funciones de membresía para evaluación (más niveles)
+evaluacion['muy_deficiente'] = fuzz.trimf(evaluacion.universe, [0, 0, 25])
+evaluacion['deficiente'] = fuzz.trimf(evaluacion.universe, [15, 30, 45])
+evaluacion['regular'] = fuzz.trimf(evaluacion.universe, [35, 50, 65])
+evaluacion['bueno'] = fuzz.trimf(evaluacion.universe, [55, 70, 85])
+evaluacion['excelente'] = fuzz.trimf(evaluacion.universe, [80, 100, 100])
 
-# Reglas difusas
-rule1 = ctrl.Rule(aciertos['bajo'] | porcentaje['bajo'], evaluacion['deficiente'])
-rule2 = ctrl.Rule(aciertos['medio'] & porcentaje['medio'], evaluacion['regular'])
-rule3 = ctrl.Rule(aciertos['alto'] & porcentaje['alto'], evaluacion['excelente'])
-rule4 = ctrl.Rule(aciertos['alto'] & porcentaje['medio'], evaluacion['regular'])
-rule5 = ctrl.Rule(aciertos['medio'] & porcentaje['alto'], evaluacion['regular'])
+# Reglas difusas más finas
+rule1 = ctrl.Rule(aciertos['bajo'] & porcentaje['bajo'], evaluacion['muy_deficiente'])
+rule2 = ctrl.Rule(aciertos['bajo'] & porcentaje['medio'], evaluacion['deficiente'])
+rule3 = ctrl.Rule(aciertos['bajo'] & porcentaje['alto'], evaluacion['deficiente'])
+rule4 = ctrl.Rule(aciertos['medio'] & porcentaje['bajo'], evaluacion['deficiente'])
+rule5 = ctrl.Rule(aciertos['medio'] & porcentaje['medio'], evaluacion['regular'])
+rule6 = ctrl.Rule(aciertos['medio'] & porcentaje['alto'], evaluacion['bueno'])
+rule7 = ctrl.Rule(aciertos['alto'] & porcentaje['bajo'], evaluacion['regular'])
+rule8 = ctrl.Rule(aciertos['alto'] & porcentaje['medio'], evaluacion['bueno'])
+rule9 = ctrl.Rule(aciertos['alto'] & porcentaje['alto'], evaluacion['excelente'])
 
-sistema_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5])
+sistema_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9])
 sistema = ctrl.ControlSystemSimulation(sistema_ctrl)
 
 def evaluate_performance(correct_count: int, total: int) -> float:
@@ -49,13 +55,22 @@ def evaluate_performance(correct_count: int, total: int) -> float:
     resultado = sistema.output['evaluacion'] / 100.0
     return resultado
 
-def recommendation(score: float) -> str:
-    if score < 0.4:
-        return "Revisa los conceptos básicos y repite el test."
-    elif score < 0.7:
-        return "Buen avance, pero aún puedes mejorar. Repasa los temas donde fallaste."
+def recommendation(score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
+    porcentaje = (correct_count / total) * 100 if total else 0
+    if score < 0.25:
+        msg = "Desempeño muy bajo. Es fundamental repasar los conceptos básicos y practicar ejercicios introductorios. Considera buscar apoyo adicional (videos, tutorías, grupos de estudio)."
+    elif score < 0.45:
+        msg = "Resultado insuficiente. Identifica los temas que más te cuestan y utiliza recursos adicionales como resúmenes, videos o sesiones de consulta."
+    elif score < 0.65:
+        msg = "Avance regular. Repasa especialmente los temas donde cometiste errores y realiza ejercicios prácticos para afianzar el conocimiento."
+    elif score < 0.8:
+        msg = "¡Buen trabajo! Solo algunos detalles por pulir. Refuerza los temas donde tuviste dudas y realiza autoevaluaciones para consolidar tu aprendizaje."
     else:
-        return "¡Excelente desempeño! Puedes avanzar a temas más complejos."
+        msg = "¡Excelente! Dominio sobresaliente del tema. Puedes avanzar a nuevos retos y profundizar en contenidos avanzados."
+    if temas_fallados:
+        msg += f" Temas a reforzar: {', '.join(set(temas_fallados))}."
+    msg += f" Aciertos: {correct_count}/{total} ({porcentaje:.1f}%)."
+    return msg
 
 def get_user_recommendations(user_folder: str):
     """
@@ -78,3 +93,47 @@ def get_user_recommendations(user_folder: str):
     if excelentes > len(recomendaciones) // 2:
         return "¡Tu progreso es excelente en la mayoría de materias! Sigue así."
     return "Sigue practicando y revisa los temas donde tuviste dificultades."
+
+async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str = "") -> str:
+    """
+    Genera una recomendación personalizada usando el modelo llama3.2:latest de Ollama.
+    resultados_test: dict con claves como 'correctas', 'incorrectas', 'temas_fallados', 'materia', etc.
+    prompt_extra: texto adicional para personalizar el prompt (opcional).
+    """
+    resumen_usuario = (
+        f"Materia: {resultados_test.get('materia', 'N/A')}\n"
+        f"Aciertos: {resultados_test.get('correctas', 0)} / {resultados_test.get('total', 10)}\n"
+        f"Temas fallados: {', '.join(resultados_test.get('temas_fallados', [])) if resultados_test.get('temas_fallados') else 'Ninguno'}\n"
+        f"Porcentaje: {resultados_test.get('porcentaje', 0):.1f}%\n"
+    )
+    prompt = (
+        "Eres un orientador académico universitario experto en retroalimentación personalizada. "
+        "Analiza el siguiente resultado de test y genera una recomendación motivacional, concreta y útil para el estudiante. "
+        "Incluye sugerencias de estudio, recursos, y consejos para mejorar, adaptados a los temas fallados si los hay. "
+        "Evita frases genéricas, sé específico y empático.\n\n"
+        f"{resumen_usuario}\n"
+        f"{prompt_extra}\n"
+        "Recomendación personalizada:"
+    )
+    client = ollama.AsyncClient()
+    response = await client.generate(
+        model="llama3.2:latest",
+        prompt=prompt,
+        options={"temperature": 0.7, "num_ctx": 2048}
+    )
+    return response['response'].strip()
+
+async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
+    """
+    Genera una recomendación personalizada usando la lógica difusa y la refina con llama3.2:latest.
+    resultados_test: dict con claves como 'materia', 'correctas', 'incorrectas', 'temas_fallados', etc.
+    """
+    # Obtener recomendación difusa base
+    rec_fuzzy = recommendation(score, correct_count, total, temas_fallados)
+    resultados_test = dict(resultados_test)  # Copia para no modificar el original
+    resultados_test['porcentaje'] = (correct_count / total) * 100 if total else 0
+    # Prompt extra con la recomendación difusa
+    prompt_extra = f"Recomendación generada por el sistema de lógica difusa: {rec_fuzzy}"
+    # Llamar al modelo para refinar la recomendación
+    recomendacion_final = await ollama_recommendation_llama32(resultados_test, prompt_extra=prompt_extra)
+    return recomendacion_final
