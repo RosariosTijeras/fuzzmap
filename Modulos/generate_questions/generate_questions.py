@@ -64,7 +64,7 @@ class QuestionExpander:
 
     async def generate_explanations(self, questions: List[Dict]) -> List[Dict]:
         """Genera explicaciones usando un modelo especializado"""
-        print(f"[DEBUG] (Explicaciones) Modelo de explicación en uso: {self.explanation_model}")
+        logging.debug(f"(Explicaciones) Modelo de explicación en uso: {self.explanation_model}")
         explained_questions = []
         for q in questions:
             prompt = (
