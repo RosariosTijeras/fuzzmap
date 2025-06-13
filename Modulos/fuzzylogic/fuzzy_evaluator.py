@@ -107,13 +107,10 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
         f"Porcentaje: {resultados_test.get('porcentaje', 0):.1f}%\n"
     )
     prompt = (
-        "Eres un orientador académico universitario experto en retroalimentación personalizada. "
-        "Analiza el siguiente resultado de test y genera una recomendación motivacional, concreta y útil para el estudiante. "
-        "Incluye sugerencias de estudio, recursos, y consejos para mejorar, adaptados a los temas fallados si los hay. "
-        "Evita frases genéricas, sé específico y empático.\n\n"
+        "Eres un orientador académico universitario. Analiza el siguiente resultado de test y responde SOLO con una recomendación breve y concreta (máximo 3 frases), poca motivación, que puedes ofrecer más recursos, solo el consejo clave para mejorar en la materia y los temas fallados.\n"
         f"{resumen_usuario}\n"
         f"{prompt_extra}\n"
-        "Recomendación personalizada:"
+        "Recomendación breve:"
     )
     client = ollama.AsyncClient()
     response = await client.generate(
@@ -121,7 +118,12 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
         prompt=prompt,
         options={"temperature": 0.7, "num_ctx": 2048}
     )
-    return response['response'].strip()
+    # Limitar a 2 frases
+    texto = response['response'].strip()
+    texto_corto = '.'.join(texto.split('.')[:2]).strip()
+    if not texto_corto.endswith('.'):
+        texto_corto += '.'
+    return texto_corto
 
 async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
     """
