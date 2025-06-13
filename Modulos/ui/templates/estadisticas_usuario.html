@@ -39,6 +39,36 @@
   <div class="container estadisticas-container">
     <h1>Estadísticas Detalladas</h1>
     <a href="{{ url_for('ui.dashboard') }}" class="btn btn-secondary mb-3">Volver al Dashboard</a>
+    <div class="mb-4">
+      <h3 class="mb-3" style="color:#0dabda;">Resumen por Materia</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Materia</th>
+              <th>Promedio</th>
+              <th>Máximo</th>
+              <th>Mínimo</th>
+              <th>Cantidad de Tests</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for mat in resumen_materias %}
+            <tr>
+              <td>{{ mat.materia }}</td>
+              <td><span class="badge bg-info text-dark">{{ mat.promedio }}</span></td>
+              <td><span class="badge bg-success">{{ mat.maximo }}</span></td>
+              <td><span class="badge bg-danger">{{ mat.minimo }}</span></td>
+              <td>{{ mat.cantidad }}</td>
+            </tr>
+            {% endfor %}
+            {% if resumen_materias|length == 0 %}
+            <tr><td colspan="5" class="text-center text-muted">No hay estadísticas por materia.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
@@ -57,7 +87,7 @@
               <tr>
                 <td>{{ test.fecha }}</td>
                 <td>{{ test.materia }}</td>
-                <td><span class="badge bg-info text-dark">{{ (test.score * 100)|round(0) }}</span></td>
+                <td><span class="badge bg-info text-dark">{{ test.score|round(2) }}</span></td>
                 <td>{{ test.correctas }}</td>
                 <td>{{ test.incorrectas }}</td>
                 <td>{{ test.recomendacion }}</td>
@@ -65,7 +95,7 @@
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="6" class="text-center text-muted">No hay estadísticas registradas.</td>
+              <td colspan="6" class="text-center text-muted">No hay pruebas registradas.</td>
             </tr>
           {% endif %}
         </tbody>

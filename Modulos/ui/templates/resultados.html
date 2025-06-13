@@ -37,7 +37,7 @@
       font-size: 2rem;
       text-align: center;
     }
-    .fuzzy-message {
+    .fuzzy-message, #recomendacion-container {
       font-size: 1.2rem;
       font-weight: 600;
       color: #0dabda;
@@ -93,13 +93,40 @@
       color: #fff;
       box-shadow: 0 4px 16px #0dabda44;
     }
+    .spinner-border {
+      width: 1.5rem;
+      height: 1.5rem;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    .recomendacion-box {
+      background: #eaf8ff;
+      border: 2px solid #0dabda;
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      color: #0a3a4a;
+      font-size: 1.15rem;
+      font-weight: 500;
+      box-shadow: 0 2px 12px #0dabda22;
+      text-align: center;
+      min-height: 3.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
   <div class="container result-container">
     <div class="result-card">
       <div class="result-title">Resultados del Test de {{ materia_nombre }}</div>
-      <div class="fuzzy-message">{{ fuzzy_message }}</div>
+      <div id="recomendacion-container">
+        <div class="recomendacion-box">
+          <span class="spinner-border text-info" role="status"></span>
+          <span id="recomendacion-text">Generando recomendación personalizada...</span>
+        </div>
+      </div>
       <div class="summary">
         <span class="text-success">✔ Correctas: {{ correctas }}</span> &nbsp; | &nbsp;
         <span class="text-danger">✘ Incorrectas: {{ incorrectas }}</span>
@@ -121,5 +148,40 @@
       <a href="{{ url_for('ui.dashboard') }}" class="btn btn-primary w-100 mt-3">Volver al Dashboard</a>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/api/recomendacion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "usuario": {{ usuario|default('')|tojson }},
+          "materia": {{ materia_nombre|default('')|tojson }},
+          "fuzzy_message": {{ fuzzy_message|default('')|tojson }}
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const recomendacionContainer = document.getElementById('recomendacion-container');
+        const recomendacionText = document.getElementById('recomendacion-text');
+        const spinner = recomendacionContainer.querySelector('.spinner-border');
+        if (spinner) spinner.style.display = 'none';
+        recomendacionText.textContent = data.recomendacion;
+        
+        // Mostrar u ocultar elementos basado en la respuesta
+        if (data.mostrar_elemento) {
+          // Código para mostrar el elemento
+        } else {
+          // Código para ocultar el elemento
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener la recomendación:', error);
+        const recomendacionText = document.getElementById('recomendacion-text');
+        recomendacionText.textContent = 'Error al generar la recomendación. Por favor, intenta nuevamente más tarde.';
+      });
+    });
+  </script>
 </body>
 </html>
