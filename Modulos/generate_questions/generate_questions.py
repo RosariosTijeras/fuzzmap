@@ -6,10 +6,11 @@ Este código fue probado y ejecutado en una laptop ASUS TUF A15 FA506NF con los 
 - GPU: NVIDIA GeForce GTX 2050 (4GB VRAM)
 - RAM: 16GB DDR5
 - Almacenamiento: SSD NVMe
-Tiempo de ejecución de ejemplo en este equipo: 46m (10.483s)
+Tiempo de ejecución de ejemplo en este equipo es de aproximadamente: 46m (2760 segundos) para generar 10 preguntas únicas con explicaciones.
+Este script utiliza modelos de IA que requieren recursos significativos. Asegúrate de tener un entorno adecuado antes de ejecutarlo.
 
 Modelos de IA utilizados:
-- llama3:instruct (~8GB en disco, modelo grande, requiere GPU para inferencia eficiente)
+- mistral:7b-instruct-q4_K_M (~7GB en disco, modelo de tamaño medio, recomendado para generación de preguntas)
 - phi3:mini (~2GB en disco, modelo ligero, puede correr en CPU pero se recomienda GPU)
 
 Requisitos mínimos recomendados:

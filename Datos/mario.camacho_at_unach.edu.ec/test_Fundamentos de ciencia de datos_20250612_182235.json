@@ -1,0 +1,81 @@
+{
+  "materia": "Fundamentos de ciencia de datos",
+  "fecha": "12/06/2025 18:22:35",
+  "respuestas": [
+    {
+      "correcta": true,
+      "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+      "pregunta": "¿Qué es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "respuesta_usuario": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos."
+    },
+    {
+      "correcta": false,
+      "explicacion": "The UNIVAC I (Universal Automatic Computer I) was the first computer to be widely used for business purposes. It was developed by John Mauchly and J. Presper Eckert in the late 1940s.",
+      "pregunta": "Which of the following statements is correct about the evolution of computing?",
+      "respuesta_correcta": "C) The first general-purpose computer, the UNIVAC I, was developed in the 1940s.",
+      "respuesta_usuario": "A) Computing has been entirely based on manual labor since its inception."
+    },
+    {
+      "correcta": true,
+      "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
+      "pregunta": "Cuál es la definición de ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+      "respuesta_usuario": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones."
+    },
+    {
+      "correcta": false,
+      "explicacion": "K-means clustering is an unsupervised learning algorithm that aims to partition a set of observations into K clusters, where the sum of squared distances between the observations and the cluster centers is minimized.",
+      "pregunta": "Which of the following is an example of an unsupervised learning algorithm?",
+      "respuesta_correcta": "A) K-means clustering",
+      "respuesta_usuario": "B) Linear regression"
+    },
+    {
+      "correcta": false,
+      "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
+      "pregunta": "¿Cuál es el objetivo de la inteligencia artificial?",
+      "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+      "respuesta_usuario": "B) Aplicar modelos analíticos a procesos industriales para crear valor en la cadena de producción."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
+      "pregunta": "Que es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "respuesta_usuario": "B) La ciencia de datos se centra en la manipulación y análisis de datos para informar decisiones."
+    },
+    {
+      "correcta": true,
+      "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
+      "pregunta": "¿Qué es la inteligencia artificial?",
+      "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+      "respuesta_usuario": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora."
+    },
+    {
+      "correcta": false,
+      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+      "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+      "respuesta_correcta": "C) Patrones de relación entre variables",
+      "respuesta_usuario": "A) Patrones temporales"
+    },
+    {
+      "correcta": false,
+      "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
+      "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+      "respuesta_correcta": "D) En medicina",
+      "respuesta_usuario": "B) En psicología"
+    },
+    {
+      "pregunta": "En qué contexto se utiliza la ciencia de datos?",
+      "respuesta_usuario": "C) Para la optimización del proceso de fabricación.",
+      "respuesta_correcta": "A) Para el análisis de textos clínicos.",
+      "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
+      "correcta": false
+    }
+  ],
+  "correctas": 3,
+  "incorrectas": 7,
+  "score": 3,
+  "fuzzy_score": 0.16333333333333336,
+  "recomendacion": "Revisa los conceptos básicos y repite el test."
+}

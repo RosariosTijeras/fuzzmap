@@ -1,80 +1,132 @@
 [
   {
-    "pregunta": "¿Qué organismo introdujo por primera vez el término 'Ciencia de Datos' en una conferencia en 1996?",
+    "pregunta": "Which of the following statements is correct about the evolution of computing?",
     "opciones": [
-      "A) American Statistical Association",
-      "B) International Institute for Analytics",
-      "C) Institute for Operations Research and the Management Sciences",
-      "D) Data Science Council of America"
+      "A) Computing has been entirely based on manual labor since its inception.",
+      "B) The first computer was invented by Charles Babbage in the 19th century.",
+      "C) The first general-purpose computer, the UNIVAC I, was developed in the 1940s.",
+      "D) Computing has only been possible since the invention of transistors in the 1950s."
     ],
-    "respuesta_correcta": "D) Data Science Council of America",
-    "explicacion": "La Data Science Council of America (DASCA) es un organismo que se estableció en 1996 y se considera el primer grupo que popularizó el término 'Ciencia de Datos'.",
+    "respuesta_correcta": "C) The first general-purpose computer, the UNIVAC I, was developed in the 1940s.",
+    "explicacion": "The UNIVAC I (Universal Automatic Computer I) was the first computer to be widely used for business purposes. It was developed by John Mauchly and J. Presper Eckert in the late 1940s.",
     "dificultad": "media",
-    "tema": "Historia de la Ciencia de Datos"
+    "tema": "Computing History"
   },
   {
-    "pregunta": "¿Qué aspecto fue destacado como motivo relevante para el cambio hacia más aplicaciones en informática?",
+    "pregunta": "¿Qué es la ciencia de datos?",
     "opciones": [
-      "A) La creación de la Internet",
-      "B) El avance de la inteligencia artificial",
-      "C) El aumento del tamaño y complejidad de los datos",
-      "D) La mejora de las tecnologías de almacenamiento"
+      "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "B) La ciencia de datos es una disciplina de programación que se utiliza para crear aplicaciones con grandes cantidades de datos.",
+      "C) La ciencia de datos es una disciplina de filosofía y psicología que estudia cómo los seres humanos se comportan y pensan.",
+      "D) La ciencia de datos es una disciplina de biología y geología que estudia cómo los organismos y procesos naturales funcionan."
     ],
-    "respuesta_correcta": "C) El aumento del tamaño y complejidad de los datos",
-    "explicacion": "El aumento del tamaño y complejidad de los datos fue un factor importante para el cambio hacia más aplicaciones en informática, ya que requirió la creación de sistemas y algoritmos capaces de manejar grandes volúmenes de datos.",
-    "dificultad": "baja",
-    "tema": "Impacto de la Informática en la Ciencia de Datos"
+    "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+    "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+    "dificultad": "media",
+    "tema": "ciencia de datos"
   },
   {
-    "pregunta": "¿Quién acuñó el término 'Ciencia de Datos' en 1974?",
+    "pregunta": "Que es la ciencia de datos?",
     "opciones": [
-      "A) John W. Tukey",
-      "B) William S. Cleveland",
-      "C) Kenneth J. Arrow",
-      "D) None of the above"
+      "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "B) La ciencia de datos se centra en la manipulación y análisis de datos para informar decisiones.",
+      "C) La ciencia de datos se dedica a la creación de modelos que pueden predecir comportamientos futuros.",
+      "D) La ciencia de datos es una rama de la matemáticas dedicada al análisis de datos."
     ],
-    "respuesta_correcta": "D) None of the above",
-    "explicacion": "El término 'Ciencia de Datos' no fue acuñado por un individuo en particular, sino que surgió como una disciplina interdisciplinaria a finales del siglo XX.",
+    "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+    "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
     "dificultad": "media",
-    "tema": "Historia de la Ciencia de Datos"
+    "tema": "ciencia de datos"
   },
   {
-    "pregunta": "¿Qué técnica se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio?",
+    "pregunta": "Which of the following is an example of an unsupervised learning algorithm?",
     "opciones": [
-      "A) Machine Learning",
-      "B) Deep Learning",
-      "C) Data Mining",
-      "D) Predictive Modeling"
+      "A) K-means clustering",
+      "B) Linear regression",
+      "C) Decision tree",
+      "D) Random forest"
     ],
-    "respuesta_correcta": "A) Machine Learning",
-    "explicacion": "La máquina aprendida se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio, ya que permite a los algoritmos aprender patrones y hacer predicciones sobre el comportamiento del consumidor.",
+    "respuesta_correcta": "A) K-means clustering",
+    "explicacion": "K-means clustering is an unsupervised learning algorithm that aims to partition a set of observations into K clusters, where the sum of squared distances between the observations and the cluster centers is minimized.",
     "dificultad": "media",
-    "tema": "Aplicaciones de la Ciencia de Datos"
+    "tema": "Machine Learning"
   },
   {
-    "pregunta": "¿En qué fase del ciclo de vida de la ciencia de datos se generan informes y visualizaciones de datos?",
+    "pregunta": "En qué contexto se utiliza la ciencia de datos?",
     "opciones": [
-      "A) Ingestion",
-      "B) Storage",
-      "C) Processing",
-      "D) Reporting"
+      "A) Para el análisis de textos clínicos.",
+      "B) Para crear técnicas de segmentación impulsadas por aprendizaje automático.",
+      "C) Para la optimización del proceso de fabricación.",
+      "D) Para el desarrollo de políticas públicas."
     ],
-    "respuesta_correcta": "D) Reporting",
-    "explicacion": "La fase de reporte en el ciclo de vida de la ciencia de datos implica convertir los datos procesados en informes y visualizaciones para ser presentados a los stakeholders.",
+    "respuesta_correcta": "A) Para el análisis de textos clínicos.",
+    "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
     "dificultad": "media",
-    "tema": "Ciclo de Vida de la Ciencia de Datos"
+    "tema": "Salud"
   },
   {
-    "pregunta": "¿Quién introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+    "pregunta": "¿Cuál es el objetivo de la inteligencia artificial?",
     "opciones": [
-      "A) John W. Tukey",
-      "B) William S. Cleveland",
-      "C) Vapnik, Vladimir",
-      "D) Harold Jeffery"
+      "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+      "B) Aplicar modelos analíticos a procesos industriales para crear valor en la cadena de producción.",
+      "C) Usar datos en el análisis de texto clínico y bases de datos médicas para desarrollar técnicas de diagnóstico médico.",
+      "D) Analyzar fenómenos sociales complejos con la ayuda de la ciencia de datos y crear políticas públicas más efectivas."
     ],
-    "respuesta_correcta": "A) John W. Tukey",
-    "explicacion": "John W. Tukey es considerado el padre de la Ciencia de Datos y la introdujo como una disciplina unificada en 2001.",
+    "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+    "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
     "dificultad": "media",
-    "tema": "Historia de la Ciencia de Datos"
+    "tema": "Inteligencia Artificial"
+  },
+  {
+    "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+    "opciones": [
+      "A) Patrones temporales",
+      "B) Patrones spatiales",
+      "C) Patrones de relación entre variables",
+      "D) Patrones de distribución de datos"
+    ],
+    "respuesta_correcta": "C) Patrones de relación entre variables",
+    "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+    "dificultad": "media",
+    "tema": "Aprendizaje Automático"
+  },
+  {
+    "pregunta": "Cuál es la definición de ciencia de datos?",
+    "opciones": [
+      "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+      "B) La ciencia de datos se dedica a crear modelos complejos que se mejoran al pasar tiempo.",
+      "C) La ciencia de datos se centra en el análisis de bases de datos clínicas y detección temprana de enfermedades.",
+      "D) La ciencia de datos es una aplicación de la inteligencia artificial al proceso productivo."
+    ],
+    "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+    "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
+    "dificultad": "media",
+    "tema": "ciencia de datos"
+  },
+  {
+    "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+    "opciones": [
+      "A) En biología",
+      "B) En psicología",
+      "C) En geografía",
+      "D) En medicina"
+    ],
+    "respuesta_correcta": "D) En medicina",
+    "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
+    "dificultad": "media",
+    "tema": "Ciencia de datos en la salud"
+  },
+  {
+    "pregunta": "¿Qué es la inteligencia artificial?",
+    "opciones": [
+      "A) La capacidad de una computadora para realizar un cálculo.",
+      "B) El proceso de aprendizaje automático en una máquina.",
+      "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+      "D) La capacidad de una computadora para realizar un cálculo, pero no necesariamente el proceso de aprendizaje automático."
+    ],
+    "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+    "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
+    "dificultad": "media",
+    "tema": "Inteligencia Artificial"
   }
 ]
