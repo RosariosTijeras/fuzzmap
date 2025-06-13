@@ -9,10 +9,11 @@ from Modulos.auth.auth import _cargar_usuarios
 from datetime import timedelta
 import json
 import random
-from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations, recomendacion_fuzzy_con_llama32
 import os
 from datetime import datetime
 from urllib.parse import unquote
+import asyncio
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
@@ -269,7 +270,20 @@ def _finalizar_test(materia):
     score = correctas
     # Evaluación difusa robusta (mantener para recomendación)
     fuzzy_score = evaluate_performance(correctas, 10)
-    rec = recommendation(fuzzy_score)
+    # Extraer temas fallados si existen
+    temas_fallados = [r.get('tema') for r in respuestas if not r.get('correcta') and r.get('tema')]
+    # Recomendación avanzada con IA
+    resultados_test = {
+        'materia': materia,
+        'correctas': correctas,
+        'incorrectas': incorrectas,
+        'total': correctas + incorrectas,
+        'temas_fallados': temas_fallados,
+    }
+    try:
+        rec = asyncio.run(recomendacion_fuzzy_con_llama32(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
+    except Exception as e:
+        rec = recommendation(fuzzy_score, correctas, correctas + incorrectas, temas_fallados)
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
     os.makedirs(user_folder, exist_ok=True)
     from datetime import datetime
@@ -307,12 +321,9 @@ def resultados_test(materia):
     if 'user' not in session or 'test_resultados' not in session:
         return redirect(url_for('ui.dashboard'))
     data = session.pop('test_resultados')
-    # data: dict con claves: preguntas, correctas, incorrectas, materia_nombre
-    score = evaluate_performance(data['correctas'], data['correctas'] + data['incorrectas'])
-    fuzzy_message = recommendation(score)
     return render_template('resultados.html',
         materia_nombre=data['materia_nombre'],
-        fuzzy_message=fuzzy_message,
+        fuzzy_message=data['recomendacion'],
         correctas=data['correctas'],
         incorrectas=data['incorrectas'],
         preguntas=data['preguntas']
