@@ -46,7 +46,7 @@
     },
     {
       "correcta": false,
-      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales o no lineales.",
       "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
       "respuesta_correcta": "C) Patrones de relación entre variables",
       "respuesta_usuario": "B) Patrones spatiales"
