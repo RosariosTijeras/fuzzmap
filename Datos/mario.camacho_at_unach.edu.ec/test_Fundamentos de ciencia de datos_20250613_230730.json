@@ -12,7 +12,7 @@
     {
       "correcta": false,
       "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
-      "pregunta": "Cuál es la definición de ciencia de datos?",
+      "pregunta": "¿Cuál es la definición de ciencia de datos?",
       "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
       "respuesta_usuario": "C) La ciencia de datos se centra en el análisis de bases de datos clínicas y detección temprana de enfermedades."
     },
