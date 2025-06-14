@@ -1,0 +1,132 @@
+[
+  {
+    "pregunta": "¿Qué es el estrés?",
+    "opciones": [
+      "A) Una situación difícil o desafiante",
+      "B) Un estado de ansiedad o miedo",
+      "C) Un estado de felicidad y bienestar",
+      "D) Un estado de tranquilidad y relaxación"
+    ],
+    "respuesta_correcta": "A) Una situación difícil o desafiante",
+    "explicacion": "El estrés se produce cuando nuestro cuerpo y mente son exigidos a cumplir con una demanda de trabajo que superan sus capacidades.",
+    "dificultad": "baja",
+    "tema": "Definición, tipos de estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Cuáles son los tipos de estrés?",
+    "opciones": [
+      "A) Físico",
+      "B) Emocional",
+      "C) Intelectual",
+      "D) Social"
+    ],
+    "respuesta_correcta": "B) Emocional",
+    "explicacion": "El tipo de estrés emocional se refiere a los sentimientos intensos y dolorosos que pueden causar tensión, ansiedad o depresión.",
+    "dificultad": "media",
+    "tema": "Estrés y ansiedad"
+  },
+  {
+    "pregunta": "¿Qué es la respuesta correcta al tema específico de \"Búsqueda de apoyo social, emocional y profesional\"?",
+    "opciones": [
+      "A) Buscar a familiares y amigos para apoyo.",
+      "B) Participar en grupos de apoyo o comunidad.",
+      "C) Buscar profesionales de salud.",
+      "D) Pensar en el problema y encontrar una solución."
+    ],
+    "respuesta_correcta": "B) Participar en grupos de apoyo o comunidad.",
+    "explicacion": "La respuesta correcta es participar en grupos de apoyo o comunidad. Esto se refiere al concepto de búsqueda de apoyo social, emocional y profesional.",
+    "dificultad": "media",
+    "tema": "Búsqueda de apoyo social, emocional y profesional"
+  },
+  {
+    "pregunta": "Cómo puede adaptarse una persona al cambio, ya sea personal o profesional?",
+    "opciones": [
+      "A) Asignando un nuevo objetivo y desarrollando estrategias para lograrlo.",
+      "B) Reconociendo los desafíos del cambio y buscando apoyo social, emocional o profesional.",
+      "C) Cultivando habilidades de resiliencia y aprendizaje continuo.",
+      "D) Ignorando el cambio y esperando que se reviertan las cosas anteriores."
+    ],
+    "respuesta_correcta": "A) Asignando un nuevo objetivo y desarrollando estrategias para lograrlo.",
+    "explicacion": "Cambios significativos en la vida personal o profesional pueden ser desconcertantes, pero adaptarse a ellos puede ser una manera de crecer y evolucionar.",
+    "dificultad": "media",
+    "tema": "Adaptación al cambio"
+  },
+  {
+    "pregunta": "En qué contexto se utiliza el término 'resilencia'?",
+    "opciones": [
+      "A) En relación con el manejo del estrés y la ansiedad.",
+      "B) En relación con las habilidades de adaptación al cambio.",
+      "C) En relación con el proceso de aprendizaje.",
+      "D) En relación con la salud mental."
+    ],
+    "respuesta_correcta": "A) En relación con el manejo del estrés y la ansiedad.",
+    "explicacion": "Resilencia se utiliza para describir la capacidad de un individuo para recuperarse rápidamente de adversidades o desafíos, en particular aquellos que involucran el manejo del estrés y la ansiedad. Se trata de una competencia importante para adaptarse a los cambios y sobrevivir y prosperar en los momentos difíciles.",
+    "dificultad": "media",
+    "tema": "resilencia"
+  },
+  {
+    "pregunta": "¿Cuál es el proceso de adaptación al cambio y cómo se puede desarrollar la resilencia?",
+    "opciones": [
+      "A) El proceso de adaptación al cambio es rápido y fácil.",
+      "B) La resilencia es una habilidad innata que no puede ser desarrollada.",
+      "C) El proceso de adaptación al cambio involucra el uso de estrategias prácticas.",
+      "D) La resilencia depende exclusivamente del nivel de conocimientos y habilidades."
+    ],
+    "respuesta_correcta": "C) El proceso de adaptación al cambio involucra el uso de estrategias prácticas.",
+    "explicacion": "El proceso de adaptación al cambio es una capacidad que se desarrolla con tiempo y experiencia. Los seres humanos pueden aprender a manejar los cambios en su entorno mediante la adopción de estrategias prácticas.",
+    "dificultad": "media",
+    "tema": "Adaptación al cambio y resilencia"
+  },
+  {
+    "pregunta": "¿Qué es el apoyo social?",
+    "opciones": [
+      "A) Es una forma de ayuda monetaria proporcionada por la familia o los amigos.",
+      "B) Es una forma de apoyo psicológico proporcionado por un profesional.",
+      "C) Es una forma de respuesta al cambio social y económico.",
+      "D) Es una forma de establecer relaciones sociales con otras personas."
+    ],
+    "respuesta_correcta": "D) Es una forma de establecer relaciones sociales con otras personas.",
+    "explicacion": "El apoyo social se refiere a las interacciones y relaciones sociales que se desarrollan entre personas y que son esenciales para su bienestar y desarrollo personal. Estas relaciones proporcionan apoyo emocional, informacional, material y práctico, y ayudan a las personas a adaptarse al cambio y a superar los desafíos de la vida.",
+    "dificultad": "media",
+    "tema": "apoyo social"
+  },
+  {
+    "pregunta": "Qué es el resumen de la unidad 2?",
+    "opciones": [
+      "A) Uno que se define como una respuesta adaptativa al cambio.",
+      "B) Uno que se describe como la capacidad de lidiar con los estrés y la ansiedad.",
+      "C) Uno que se refiere a la práctica de habilidades para manejar el estrés y la ansiedad.",
+      "D) Uno que se indica como una unidad que estudia sobre el proceso de adaptación al cambio."
+    ],
+    "respuesta_correcta": "A) Uno que se define como una respuesta adaptativa al cambio.",
+    "explicacion": "La unidad 2 se centra en la definición de un resumen que describe cómo ser adaptativo ante los cambios en la vida.",
+    "dificultad": "baja",
+    "tema": "Resumen y adaptación al cambio"
+  },
+  {
+    "pregunta": "¿Cuáles son los tipos de ansiedad más comunes en adultos?",
+    "opciones": [
+      "A) Pánico",
+      "B) Depresión",
+      "C) Ansiedad generalizada",
+      "D) Sobrevivencia"
+    ],
+    "respuesta_correcta": "B) Depresión",
+    "explicacion": "La depresión es un trastorno mental caracterizado por una serie de síntomas como dificultad para dormir, pérdida de apetito y gusto, fatiga o pérdida de interés en las actividades que anteriormente gozaban. La ansiedad generalizada se refiere a un estado de ansiedad continuo o recurrente que puede ser debido a varios factores como la vida cotidiana, la educación o el trabajo.",
+    "dificultad": "media",
+    "tema": "ansiedad"
+  },
+  {
+    "pregunta": "¿Cuál es el proceso de adaptación al cambio y cómo se puede mejorar?",
+    "opciones": [
+      "A) Adaptación al cambio es un proceso automático que no requiere acción.",
+      "B) Las personas pueden ser más resilientes a los cambios si tienen una buena salud física y mental.",
+      "C) El aprendizaje y la formación profesional son importantes para mejorar la adaptación al cambio.",
+      "D) La búsqueda de apoyo social, emocional y profesional es crucial para mejorar la adaptación al cambio."
+    ],
+    "respuesta_correcta": "D) La búsqueda de apoyo social, emocional y profesional es crucial para mejorar la adaptación al cambio.",
+    "explicacion": "La búsqueda de apoyo social, emocional y profesional ayuda a las personas a desarrollar las habilidades necesarias para copiar con los cambios y mejorar su adaptación.",
+    "dificultad": "media",
+    "tema": "Adaptación al cambio y aprendizaje"
+  }
+]
