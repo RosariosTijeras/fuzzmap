@@ -1,5 +1,5 @@
 """
-ADVERTENCIA IMPORTANTE .....
+ADVERTENCIA IMPORTANTE
 
 Este código fue probado y ejecutado en una laptop ASUS TUF A15 FA506NF con los siguientes componentes:
 - CPU: AMD Ryzen 5 7535HS

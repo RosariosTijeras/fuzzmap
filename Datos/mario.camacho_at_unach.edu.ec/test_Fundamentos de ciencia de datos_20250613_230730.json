@@ -1,0 +1,81 @@
+{
+  "materia": "Fundamentos de ciencia de datos",
+  "fecha": "13/06/2025 23:07:30",
+  "respuestas": [
+    {
+      "correcta": false,
+      "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
+      "pregunta": "¿Qué es la inteligencia artificial?",
+      "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+      "respuesta_usuario": "A) La capacidad de una computadora para realizar un cálculo."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
+      "pregunta": "Cuál es la definición de ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+      "respuesta_usuario": "C) La ciencia de datos se centra en el análisis de bases de datos clínicas y detección temprana de enfermedades."
+    },
+    {
+      "correcta": false,
+      "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
+      "pregunta": "¿Cuál es el objetivo de la inteligencia artificial?",
+      "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+      "respuesta_usuario": "D) Analyzar fenómenos sociales complejos con la ayuda de la ciencia de datos y crear políticas públicas más efectivas."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La UNIVAC I (Universal Automatic Computer I) fue la primera computadora ampliamente utilizada para fines comerciales. Fue desarrollada por John Mauchly y J. Presper Eckert a finales de la década de 1940.",
+      "pregunta": "¿Cuál de las siguientes afirmaciones es correcta sobre la evolución de la computación?",
+      "respuesta_correcta": "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+      "respuesta_usuario": "B) La primera computadora fue inventada por Charles Babbage en el siglo XIX."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
+      "pregunta": "Que es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "respuesta_usuario": "C) La ciencia de datos se dedica a la creación de modelos que pueden predecir comportamientos futuros."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+      "pregunta": "¿Qué es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "respuesta_usuario": "C) La ciencia de datos es una disciplina de filosofía y psicología que estudia cómo los seres humanos se comportan y pensan."
+    },
+    {
+      "correcta": false,
+      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+      "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+      "respuesta_correcta": "C) Patrones de relación entre variables",
+      "respuesta_usuario": "B) Patrones spatiales"
+    },
+    {
+      "correcta": false,
+      "explicacion": "El agrupamiento K-means es un algoritmo de aprendizaje no supervisado que busca dividir un conjunto de observaciones en K grupos, minimizando la suma de las distancias cuadradas entre las observaciones y los centros de los grupos.",
+      "pregunta": "¿Cuál de los siguientes es un ejemplo de un algoritmo de aprendizaje no supervisado?",
+      "respuesta_correcta": "A) Agrupamiento K-means",
+      "respuesta_usuario": "C) Árbol de decisión"
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
+      "pregunta": "En qué contexto se utiliza la ciencia de datos?",
+      "respuesta_correcta": "A) Para el análisis de textos clínicos.",
+      "respuesta_usuario": "C) Para la optimización del proceso de fabricación."
+    },
+    {
+      "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+      "respuesta_usuario": "C) En geografía",
+      "respuesta_correcta": "D) En medicina",
+      "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
+      "correcta": false
+    }
+  ],
+  "correctas": 0,
+  "incorrectas": 10,
+  "score": 0,
+  "fuzzy_score": 0.08333333333333331,
+  "recomendacion": "**Recomendación**\n\nPara mejorar en la materia de Fundamentos de Ciencia de Datos, te recomiendo:\n\n*   Repasar los conceptos básicos y comprender las definiciones fundamentales de la ciencia de datos.\n*   Buscar recursos complementarios como tutoriales en línea, videos explicativos o grupos de estudio para complementar tu aprendizaje."
+}
