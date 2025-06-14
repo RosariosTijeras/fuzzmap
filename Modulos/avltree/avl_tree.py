@@ -508,23 +508,30 @@ def sort_and_search_demo(questions):
 ## ----------------------------
 
 if __name__ == '__main__':
-
+    import json
     
     # Crear arbol AVL
     avl = AVLTree()
     
-    # Datos de ejemplo
-    questions = [
-        {'id': 5, 'question': '¿Que es un AVL tree?', 'answer': 'Un arbol binario balanceado', 'subject': 'estructuras'},
-        {'id': 2, 'question': '¿Que es la complejidad O(log n)?', 'answer': 'Tiempo logaritmico', 'subject': 'algoritmos'},
-        {'id': 8, 'question': '¿Que es un grafo?', 'answer': 'Estructura con nodos y aristas', 'subject': 'estructuras'},
-        {'id': 1, 'question': '¿Que es Merge Sort?', 'answer': 'Algoritmo de ordenamiento', 'subject': 'algoritmos'},
-        {'id': 4, 'question': '¿Que es la recursion?', 'answer': 'Funcion que se llama a si misma', 'subject': 'algoritmos'},
-        {'id': 7, 'question': '¿Que es una tabla hash?', 'answer': 'Estructura de clave-valor', 'subject': 'estructuras'},
-        {'id': 3, 'question': '¿Que es Binary Search?', 'answer': 'Busqueda en listas ordenadas', 'subject': 'algoritmos'}
-    ]
+    # Cargar preguntas desde el JSON
+    with open('preguntas_generadas_habilidades_vida.json', 'r', encoding='utf-8') as f:
+        preguntas_json = json.load(f)
     
-    # Insertar preguntas
+    # Convertir el formato JSON al formato esperado por nuestro AVL
+    questions = []
+    for i, pregunta in enumerate(preguntas_json):
+        question_data = {
+            'id': i + 1,  # Asignamos un ID numérico secuencial
+            'question': pregunta['pregunta'],
+            'answer': pregunta['respuesta_correcta'],
+            'subject': pregunta['tema'],
+            'opciones': pregunta['opciones'],
+            'explicacion': pregunta['explicacion'],
+            'dificultad': pregunta['dificultad']
+        }
+        questions.append(question_data)
+    
+    # Insertar preguntas en el AVL
     for q in questions:
         avl.insert(q)
     
@@ -535,14 +542,27 @@ if __name__ == '__main__':
     
     print("\nMaterias disponibles:", avl.get_all_subjects())
     
-    print("\nPreguntas en 'estructuras':")
-    for q in avl.search_by_subject('estructuras'):
-        print(f"ID {q['id']}: {q['question']}")
+    # Mostrar preguntas de una materia específica (ej: 'ciencia de datos')
+    materia = 'ciencia de datos'
+    print(f"\nPreguntas en '{materia}':")
+    for q in avl.search_by_subject(materia):
+        print(f"\nID {q['id']}: {q['question']}")
+        print("Opciones:")
+        for opcion in q['opciones']:
+            print(f" - {opcion}")
+        print(f"Respuesta correcta: {q['answer']}")
+        print(f"Explicación: {q['explicacion']}")
     
-    print("\nBuscando pregunta con ID 4:")
-    found = avl.search_by_id(4)
-    print(f"Encontrada: {found['question']} - Respuesta: {found['answer']}")
+    # Buscar una pregunta específica por ID
+    target_id = 2
+    print(f"\nBuscando pregunta con ID {target_id}:")
+    found = avl.search_by_id(target_id)
+    if found:
+        print(f"Encontrada: {found['question']}")
+        print(f"Respuesta: {found['answer']}")
+    else:
+        print("Pregunta no encontrada")
     
-    # Demostracion algoritmos
+    # Demostracion algoritmos de ordenamiento y busqueda
     print("\n=== DEMOSTRACION ALGORITMOS ===")
     sort_and_search_demo(questions)
