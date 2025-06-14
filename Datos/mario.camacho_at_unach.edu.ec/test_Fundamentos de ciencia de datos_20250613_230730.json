@@ -33,7 +33,7 @@
     {
       "correcta": false,
       "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
-      "pregunta": "Que es la ciencia de datos?",
+      "pregunta": "¿Qué es la ciencia de datos?",
       "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
       "respuesta_usuario": "C) La ciencia de datos se dedica a la creación de modelos que pueden predecir comportamientos futuros."
     },
