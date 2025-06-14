@@ -513,56 +513,67 @@ if __name__ == '__main__':
     # Crear arbol AVL
     avl = AVLTree()
     
-    # Cargar preguntas desde el JSON
-    with open('preguntas_generadas_habilidades_vida.json', 'r', encoding='utf-8') as f:
-        preguntas_json = json.load(f)
+    # Función para cargar preguntas desde un archivo JSON
+    def cargar_preguntas(archivo, materia):
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)
+        
+        questions = []
+        for i, pregunta in enumerate(preguntas_json):
+            question_data = {
+                'id': i + 1,  # IDs locales por materia
+                'question': pregunta['pregunta'],
+                'answer': pregunta['respuesta_correcta'],
+                'subject': materia,  # Usamos el nombre de materia proporcionado
+                'opciones': pregunta['opciones'],
+                'explicacion': pregunta['explicacion'],
+                'dificultad': pregunta['dificultad']
+            }
+            questions.append(question_data)
+        return questions
     
-    # Convertir el formato JSON al formato esperado por nuestro AVL
-    questions = []
-    for i, pregunta in enumerate(preguntas_json):
-        question_data = {
-            'id': i + 1,  # Asignamos un ID numérico secuencial
-            'question': pregunta['pregunta'],
-            'answer': pregunta['respuesta_correcta'],
-            'subject': pregunta['tema'],
-            'opciones': pregunta['opciones'],
-            'explicacion': pregunta['explicacion'],
-            'dificultad': pregunta['dificultad']
-        }
-        questions.append(question_data)
+    # Cargar preguntas de cada materia por separado
+    preguntas_habilidades = cargar_preguntas('preguntas_generadas_habilidades_vida.json', 'Habilidades para la Vida')
+    preguntas_ciencia = cargar_preguntas('preguntas_generadas_ciencia_datos.json', 'Ciencia de Datos')
     
-    # Insertar preguntas en el AVL
-    for q in questions:
+    # Insertar todas las preguntas en el AVL (se organizarán por materia automáticamente)
+    for q in preguntas_habilidades + preguntas_ciencia:
         avl.insert(q)
     
-    # Demostracion
+    # Demostración (código original sin cambios)
     print("=== DEMOSTRACION ARBOL AVL ===")
     print(f"Total preguntas insertadas: {avl.size}")
     print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")
     
     print("\nMaterias disponibles:", avl.get_all_subjects())
     
-    # Mostrar preguntas de una materia específica (ej: 'ciencia de datos')
-    materia = 'ciencia de datos'
-    print(f"\nPreguntas en '{materia}':")
-    for q in avl.search_by_subject(materia):
-        print(f"\nID {q['id']}: {q['question']}")
-        print("Opciones:")
-        for opcion in q['opciones']:
-            print(f" - {opcion}")
-        print(f"Respuesta correcta: {q['answer']}")
-        print(f"Explicación: {q['explicacion']}")
+    # Mostrar preguntas de una materia específica
+    for materia in avl.get_all_subjects():
+        print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
+        preguntas_materia = avl.search_by_subject(materia)
+        print(f"Total: {len(preguntas_materia)} preguntas")
+        
+        # Mostrar algunas preguntas de ejemplo
+        for q in preguntas_materia[:3]:  # Solo mostramos 3 por materia
+            print(f"\nID {q['id']}: {q['question']}")
+            print("Opciones:")
+            for opcion in q['opciones']:
+                print(f" - {opcion}")
+            print(f"Respuesta correcta: {q['answer']}")
+            print(f"Dificultad: {q['dificultad']}")
     
-    # Buscar una pregunta específica por ID
-    target_id = 2
-    print(f"\nBuscando pregunta con ID {target_id}:")
+    # Demostración de búsqueda por ID
+    print("\n=== BUSQUEDA POR ID ===")
+    target_id = 5
+    print(f"Buscando pregunta con ID {target_id}:")
     found = avl.search_by_id(target_id)
     if found:
-        print(f"Encontrada: {found['question']}")
+        print(f"Materia: {found['subject']}")
+        print(f"Pregunta: {found['question']}")
         print(f"Respuesta: {found['answer']}")
     else:
         print("Pregunta no encontrada")
     
-    # Demostracion algoritmos de ordenamiento y busqueda
+    # Demostración algoritmos de ordenamiento y búsqueda
     print("\n=== DEMOSTRACION ALGORITMOS ===")
-    sort_and_search_demo(questions)
+    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)
