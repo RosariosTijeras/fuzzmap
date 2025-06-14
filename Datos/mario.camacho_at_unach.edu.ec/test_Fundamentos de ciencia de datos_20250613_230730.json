@@ -66,11 +66,11 @@
       "respuesta_usuario": "C) Para la optimización del proceso de fabricación."
     },
     {
-      "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
-      "respuesta_usuario": "C) En geografía",
-      "respuesta_correcta": "D) En medicina",
+      "correcta": false,
       "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
-      "correcta": false
+      "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+      "respuesta_correcta": "D) En medicina",
+      "respuesta_usuario": "C) En geografía"
     }
   ],
   "correctas": 0,
