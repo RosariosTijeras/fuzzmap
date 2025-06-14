@@ -1,0 +1,16 @@
+{
+  "questions": [
+    {
+      "text": "¿Qué es un DataFrame en pandas?",
+      "topic": "Ciencia de Datos",
+      "difficulty": 2,
+      "answer": "Estructura de datos bidimensional..."
+    },
+    {
+      "text": "¿Cómo manejar conflictos en equipo?",
+      "topic": "Habilidades para la Vida",
+      "difficulty": 3,
+      "answer": "Escucha activa, comunicación asertiva..."
+    }
+  ]
+}
