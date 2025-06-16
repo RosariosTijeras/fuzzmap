@@ -1,13 +1,35 @@
+# =============================
+# Requerimientos del proyecto FuzzMap
+# =============================
+# Este archivo lista las dependencias necesarias para ejecutar la aplicación.
+# Puedes instalar todo con: pip install -r requirements.txt
+# Las líneas que comienzan con '#' son comentarios y son ignoradas por pip.
+
+# Framework web principal
 flask
+
+# Lógica difusa para evaluación de desempeño
 scikit-fuzzy
+
+# Procesamiento de lenguaje natural
 spacy
 nltk
+
+# Extracción y manejo de PDFs
 pdfminer.six
 PyPDF2
+
+# Estructuras de grafos y análisis de datos
 networkx
 pandas
 numpy
+
+# Visualización de datos
 altair
 matplotlib
+
+# Notebooks interactivos (opcional para pruebas y análisis)
 jupyter
-ollama
+
+# Cliente para integración con modelos Ollama (instalación manual si es necesario)
+ollama  # No se instala por pip, es externo
