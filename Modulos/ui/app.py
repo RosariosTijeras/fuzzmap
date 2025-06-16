@@ -1,19 +1,33 @@
 """
-Modulo para la interfaz web creada con Flask
-- Ruta de este archivo: Modulos/ui/app.py
+Módulo para la interfaz web de la aplicación de exámenes universitarios, construido con Flask.
+Ruta de este archivo: Modulos/ui/app.py
+
+En este módulo se implementan las siguientes funcionalidades:
+- Definición y configuración del Blueprint principal de la interfaz.
+- Rutas para login, registro, dashboard de usuario y administrador, inicio y finalización de tests, resultados y estadísticas.
+- Integración con el sistema de autenticación y lógica difusa para recomendaciones personalizadas.
+- Gestión de sesiones, control de acceso y almacenamiento de resultados de tests.
+- API para recomendaciones automáticas vía AJAX.
+
+Dependencias principales:
+- Flask
+- Modulos.auth.auth (autenticación de usuarios)
+- Modulos.fuzzylogic.fuzzy_evaluator (evaluación y recomendaciones)
+- json, os, datetime, random, asyncio
 """
-# Importa los módulos necesarios de Flask
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
-from Modulos.auth.auth import registrar_usuario, autenticar_usuario # Funciones de autenticación
-from Modulos.auth.auth import _cargar_usuarios
-from datetime import timedelta
-import json
-import random
-from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations, recomendacion_fuzzy_con_llama32
-import os
-from datetime import datetime
-from urllib.parse import unquote
-import asyncio
+
+# Importa los módulos necesarios de Flask y otros componentes del sistema
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify  # Funciones principales de Flask
+from Modulos.auth.auth import registrar_usuario, autenticar_usuario  # Funciones de autenticación
+from Modulos.auth.auth import _cargar_usuarios  # Función para cargar usuarios
+from datetime import timedelta  # Para manejo de sesiones
+import json  # Para leer y escribir archivos JSON
+import random  # Para seleccionar preguntas aleatoriamente
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations, recomendacion_fuzzy_con_llama32  # Evaluación y recomendaciones
+import os  # Operaciones con el sistema de archivos
+from datetime import datetime  # Manejo de fechas y horas
+from urllib.parse import unquote  # Decodificar URLs
+import asyncio  # Para operaciones asíncronas
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
@@ -21,46 +35,59 @@ ui = Blueprint('ui', __name__,
                static_folder='src',
                static_url_path='/ui/src')
 
-# Crear usuario admin automáticamente si no existe
-
+# =====================
+# CREACIÓN AUTOMÁTICA DEL USUARIO ADMINISTRADOR
+# =====================
+# Antes de cada petición, verifica si existe el usuario admin. Si no existe, lo crea automáticamente.
 @ui.before_app_request
 def crear_admin():
-    usuarios = _cargar_usuarios()
+    usuarios = _cargar_usuarios()  # Carga todos los usuarios registrados desde el archivo JSON
     if 'admin@unach.edu.ec' not in usuarios:
+        # Si el usuario admin no existe, lo registra con datos por defecto
         registrar_usuario(
-            'admin@unach.edu.ec',
-            'admin',
-            'Administrador',
-            'Principal',
-            30,
-            'Otro'
+            'admin@unach.edu.ec',  # Correo institucional
+            'admin',               # Contraseña por defecto
+            'Administrador',       # Nombre
+            'Principal',           # Apellido
+            30,                    # Edad
+            'Otro'                # Sexo
         )
 
-# Ruta para login (GET muestra el formulario, POST procesa el login)
+# =====================
+# RUTA DE LOGIN (INICIO DE SESIÓN)
+# =====================
+# Permite a los usuarios iniciar sesión. Si el método es GET, muestra el formulario. Si es POST, procesa el login.
 @ui.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Obtiene solo la primera parte del correo y arma el correo completo
+        # Obtiene la parte inicial del correo (sin dominio) y lo completa con el dominio institucional
         correo_parte = request.form['correo']
         usuario = f"{correo_parte}@unach.edu.ec"
         contrasena = request.form['contrasena']
+        # Verifica las credenciales usando la función de autenticación
         if autenticar_usuario(usuario, contrasena):
-            session.permanent = True
-            session['user'] = usuario
-            # Redirigir a dashboard de admin si es admin
+            session.permanent = True  # Hace la sesión persistente (no se cierra al cerrar el navegador)
+            session['user'] = usuario  # Guarda el usuario en la sesión
+            # Si el usuario es admin, redirige al dashboard de administrador
             if usuario == 'admin@unach.edu.ec':
                 return redirect(url_for('ui.admin_dashboard'))
             else:
+                # Si es usuario normal, redirige a su dashboard
                 return redirect(url_for('ui.dashboard'))
         else:
+            # Si las credenciales son incorrectas, muestra un mensaje de error
             flash('Usuario o contraseña incorrectos.', 'danger')
-    return render_template('login.html')
+    # Si es GET o hubo error, muestra el formulario de login
+    return render_template('login.html')  # Muestra el formulario de login
 
-# Ruta para registro (GET muestra el formulario, POST procesa el registro)
+# =====================
+# RUTA DE REGISTRO
+# =====================
+# Permite el registro de nuevos usuarios. Si el método es GET, muestra el formulario. Si es POST, procesa el registro.
 @ui.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # Obtiene solo la primera parte del correo y arma el correo completo
+        # Obtiene la parte inicial del correo (sin dominio) y lo completa con el dominio institucional
         correo_parte = request.form['correo']
         user = f"{correo_parte}@unach.edu.ec"
         pwd = request.form['contrasena']
@@ -82,15 +109,20 @@ def register():
             except ValueError:
                 flash('Edad inválida.', 'danger')
                 return render_template('register.html')
+            # Registra el nuevo usuario usando la función correspondiente
             ok = registrar_usuario(user, pwd, names, lastn, age_int, gender)
             if ok:
                 flash('¡Registro exitoso! Ahora inicia sesión.', 'success')
                 return redirect(url_for('ui.login'))
             else:
                 flash('El usuario ya existe.', 'danger')
-    return render_template('register.html')
+    # Si es GET o hubo error, muestra el formulario de registro
+    return render_template('register.html')  # Muestra el formulario de registro
 
-# Ruta para dashboard (solo accesible si hay usuario en sesión)
+# =====================
+# RUTA DEL DASHBOARD DE USUARIO
+# =====================
+# Muestra el dashboard del usuario con información personalizada y estadísticas de tests.
 @ui.route('/dashboard')
 def dashboard():
     if 'user' not in session:
@@ -101,6 +133,7 @@ def dashboard():
     apellido = ""
     materias = []
     if usuario in usuarios:
+        # Obtiene los datos del usuario desde el registro
         nombre = usuarios[usuario].get("nombre", "")
         apellido = usuarios[usuario].get("apellido", "")
         materias = usuarios[usuario].get("materias", [])
@@ -111,6 +144,7 @@ def dashboard():
     historial_tests_full = []
     if os.path.isdir(user_folder):
         tests = []
+        # Recorre los archivos del usuario en la carpeta correspondiente
         for fname in sorted(os.listdir(user_folder)):
             if fname.startswith('test_') and fname.endswith('.json'):
                 with open(os.path.join(user_folder, fname), 'r', encoding='utf-8') as f:
@@ -146,15 +180,22 @@ def dashboard():
     promedio = sum(puntajes) / len(puntajes) if puntajes else 0
     maximo = max(puntajes) if puntajes else 0
     minimo = min(puntajes) if puntajes else 0
+    # Renderiza el template del dashboard con los datos del usuario y estadísticas
     return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias, recomendacion_general=recomendacion_general, historial_tests=historial_tests, promedio_general=promedio, maximo_general=maximo, minimo_general=minimo)
 
-# Ruta para logout (cierra sesión y redirige al login)
+# =====================
+# RUTA DE LOGOUT (CERRAR SESIÓN)
+# =====================
+# Cierra la sesión del usuario y lo redirige a la página de login.
 @ui.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect(url_for('ui.login'))
 
-# Ruta para dashboard de administrador
+# =====================
+# RUTA DEL DASHBOARD DE ADMINISTRADOR
+# =====================
+# Muestra el dashboard del administrador con la lista de usuarios y permite registrar nuevos usuarios.
 @ui.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
     if 'user' not in session or session['user'] != 'admin@unach.edu.ec':
@@ -180,6 +221,7 @@ def admin_dashboard():
             except ValueError:
                 mensaje = 'Edad inválida.'
                 return render_template('admin_dashboard.html', usuarios=usuarios, mensaje=mensaje)
+            # Registra el nuevo usuario usando la función correspondiente
             ok = registrar_usuario(correo, pwd, nombres, apellidos, edad_int, sexo)
             if ok:
                 # Guardar materias en el usuario
@@ -191,9 +233,13 @@ def admin_dashboard():
             else:
                 mensaje = 'El usuario ya existe.'
         usuarios = _cargar_usuarios()  # Recargar lista
+    # Renderiza el template del dashboard admin con la lista de usuarios y mensajes
     return render_template('admin_dashboard.html', usuarios=usuarios, mensaje=mensaje)
 
-# Ruta para comenzar un test de una materia
+# =====================
+# RUTA PARA COMENZAR UN TEST
+# =====================
+# Inicia un test para el usuario en la materia seleccionada, cargando las preguntas y gestionando el estado del test.
 @ui.route('/comenzar_test/<materia>', methods=['GET', 'POST'])
 def comenzar_test(materia):
     if 'user' not in session:
@@ -259,6 +305,7 @@ def comenzar_test(materia):
             return redirect(url_for('ui.comenzar_test', materia=materia, q=siguiente))
         else:
             return _finalizar_test(materia)
+    # Renderiza la plantilla del test con la pregunta actual y el temporizador
     return render_template('comenzar_test.html',
         materia_nombre=materia,
         pregunta=preguntas_seleccionadas[pregunta_actual],
@@ -269,8 +316,10 @@ def comenzar_test(materia):
         tiempo_restante=tiempo_restante
     )
 
-# Modifica _finalizar_test para guardar resultados y recomendaciones por usuario
-
+# =====================
+# FINALIZACIÓN DEL TEST
+# =====================
+# Finaliza el test, guarda los resultados y genera recomendaciones personalizadas.
 def _finalizar_test(materia):
     state = session.get('test_state', {})
     respuestas = state.get('respuestas', [])
@@ -326,12 +375,16 @@ def _finalizar_test(materia):
     session.pop('test_materia', None)
     return redirect(url_for('ui.resultados_test', materia=materia))
 
-# Ruta para mostrar resultados de un test
+# =====================
+# RUTA PARA MOSTRAR RESULTADOS DE UN TEST
+# =====================
+# Muestra los resultados del test recién completado, incluyendo estadísticas y recomendaciones.
 @ui.route('/resultados_test/<materia>')
 def resultados_test(materia):
     if 'user' not in session or 'test_resultados' not in session:
         return redirect(url_for('ui.dashboard'))
     data = session.pop('test_resultados')
+    # Renderiza la plantilla de resultados con los datos del test
     return render_template('resultados.html',
         usuario=session.get('user', ''),
         materia_nombre=data.get('materia_nombre', ''),
@@ -341,6 +394,10 @@ def resultados_test(materia):
         preguntas=data['preguntas']
     )
 
+# =====================
+# RUTA PARA ESTADÍSTICAS DEL USUARIO
+# =====================
+# Muestra estadísticas detalladas del rendimiento del usuario en los tests realizados.
 @ui.route('/estadisticas_usuario')
 def estadisticas_usuario():
     if 'user' not in session:
@@ -385,8 +442,13 @@ def estadisticas_usuario():
         }
         for mat, scores in estadisticas_materias.items()
     ]
+    # Renderiza la plantilla de estadísticas con el historial de tests y resumen por materia
     return render_template('estadisticas_usuario.html', historial_tests=historial_tests, resumen_materias=resumen_materias)
 
+# =====================
+# API PARA RECOMENDACIONES AUTOMÁTICAS
+# =====================
+# Proporciona recomendaciones personalizadas a través de una solicitud AJAX, basada en el último test realizado por el usuario.
 @ui.route('/api/recomendacion', methods=['POST'])
 def api_recomendacion():
     data = request.get_json()
