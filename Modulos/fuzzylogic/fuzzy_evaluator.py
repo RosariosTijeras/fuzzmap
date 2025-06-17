@@ -21,7 +21,10 @@ import skfuzzy as fuzz  # Librería para lógica difusa
 from skfuzzy import control as ctrl  # Módulo de control difuso
 import os  # Para operaciones del sistema de archivos
 import json  # Para leer y escribir archivos JSON
-import ollama  # Cliente para recomendaciones AI (Ollama)
+import lmstudio  # Cliente para recomendaciones AI (LM Studio)
+
+# Cambia el modelo a Qwen3-4B Q4_K_M para mejor balance calidad/velocidad y buen español
+MODEL_NAME = "qwen/qwen3-4b"
 
 # ===============================
 # Definición del sistema difuso para evaluación de desempeño
@@ -167,7 +170,7 @@ def get_user_recommendations(user_folder: str):
 
 async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str = "") -> str:
     """
-    Genera una recomendación personalizada usando el modelo llama3.2:latest de Ollama.
+    Genera una recomendación personalizada usando el modelo Meta-Llama-3-8B-Instruct-GGUF de LM Studio (SDK oficial).
     resultados_test: dict con claves como 'correctas', 'incorrectas', 'temas_fallados', 'materia', etc.
     prompt_extra: texto adicional para personalizar el prompt (opcional).
 
@@ -182,28 +185,40 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
     resumen_usuario = (
         f"Materia: {resultados_test.get('materia', 'N/A')}\n"
         f"Aciertos: {resultados_test.get('correctas', 0)} / {resultados_test.get('total', 10)}\n"
-        f"Temas fallados: {', '.join(resultados_test.get('temas_fallados', [])) if resultados_test.get('temas_fallados') else 'Ninguno'}\n"
         f"Porcentaje: {resultados_test.get('porcentaje', 0):.1f}%\n"
+        f"Temas fallados: {', '.join(resultados_test.get('temas_fallados', [])) if resultados_test.get('temas_fallados') else 'Ninguno'}\n"
     )
-    # Prompt para el modelo AI, pidiendo una recomendación breve y concreta
+    # Incluir detalles de cada pregunta fallada
+    preguntas_falladas = resultados_test.get('preguntas_falladas', [])
+    detalles_fallos = ""
+    if preguntas_falladas:
+        detalles_fallos = "Preguntas falladas y explicación de cada error:\n"
+        for i, pf in enumerate(preguntas_falladas, 1):
+            detalles_fallos += f"{i}. Pregunta: {pf.get('pregunta', '')}\n   Tu respuesta: {pf.get('respuesta_usuario', '')}\n   Respuesta correcta: {pf.get('respuesta_correcta', '')}\n   Explicación: {pf.get('explicacion', '')}\n   Tema: {pf.get('tema', '')}\n"
+    # Prompt para el modelo AI, pidiendo una recomendación personalizada, estructurada y densa
     prompt = (
-        "Eres un orientador académico universitario. Analiza el siguiente resultado de test y responde SOLO con una recomendación breve y concreta (máximo 3 frases), poca motivación, que puedes ofrecer más recursos, solo el consejo clave para mejorar en la materia y los temas fallados.\n"
+        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y genera una recomendación estructurada, detallada y útil para el usuario. "
+        "La recomendación debe tener entre 4 y 6 frases, ser clara, específica y abordar al menos dos errores concretos del usuario, explicando cómo mejorar en esos temas. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto."
+        "\n\nEstructura sugerida:\n"
+        "1. Introducción breve sobre el desempeño general del usuario.\n"
+        "2. Menciona al menos dos errores concretos, citando la pregunta, la respuesta del usuario y la explicación correcta.\n"
+        "3. Da consejos prácticos y personalizados para mejorar en esos temas, usando la explicación de los errores.\n"
+        "4. Cierra con una sugerencia concreta de acción o recurso para el usuario.\n"
+        "\nEjemplo de formato:\n"
+        "Obtuviste un resultado bajo en el test, lo que indica que necesitas reforzar algunos conceptos clave. En la pregunta sobre el contexto de uso de la ciencia de datos, tu respuesta fue incorrecta; te recomiendo **revisar cómo se aplica en medicina, especialmente en el análisis de textos clínicos**. Además, confundiste la definición de ciencia de datos; **repasa la diferencia entre analizar datos y crear modelos predictivos**. Para mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas.\n"
         f"{resumen_usuario}\n"
+        f"{detalles_fallos}"
         f"{prompt_extra}\n"
-        "Recomendación breve:"
+        "Recomendación personalizada estructurada:"
     )
-    client = ollama.AsyncClient()  # Cliente asíncrono de Ollama
-    response = await client.generate(
-        model="llama3.2:latest",
-        prompt=prompt,
-        options={"temperature": 0.7, "num_ctx": 2048}
-    )
-    # Limita la respuesta a 2 frases
-    texto = response['response'].strip()
-    texto_corto = '.'.join(texto.split('.')[:2]).strip()
-    if not texto_corto.endswith('.'):
-        texto_corto += '.'
-    return texto_corto
+    # LM Studio SDK oficial con modelo Qwen3-4B Q4_K_M (sin pensamiento profundo)
+    model = lmstudio.llm(MODEL_NAME)
+    # Forzar respuesta 100% en español y desactivar razonamiento profundo
+    chat = lmstudio.Chat("Responde únicamente en español, sin ninguna frase en inglés. Eres un orientador académico universitario experto en retroalimentación personalizada. /no_think")
+    chat.add_user_message(prompt)
+    response = model.respond(chat)
+    # Retorna solo el texto de la respuesta
+    return str(response)
 
 
 async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
