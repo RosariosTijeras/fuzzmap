@@ -218,7 +218,7 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
     chat.add_user_message(prompt)
     response = model.respond(chat)
     # Retorna solo el texto de la respuesta
-    return str(response)
+    return response
 
 
 async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
