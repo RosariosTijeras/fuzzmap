@@ -114,7 +114,11 @@
             </div>
           {% endfor %}
         </div>
-        <button type="submit" class="btn btn-primary w-100 mt-3">Siguiente</button>
+        {% if pregunta_actual + 1 == total_preguntas %}
+          <button type="button" class="btn btn-danger w-100 mt-2" id="finalizar-btn">Finalizar test</button>
+        {% else %}
+          <button type="submit" class="btn btn-primary w-100 mt-3">Siguiente</button>
+        {% endif %}
       </form>
       {% if feedback %}
         <div class="test-feedback text-{{ 'success' if feedback_correcta else 'danger' }}">{{ feedback }}</div>
@@ -134,6 +138,11 @@
         document.getElementById('timer-sec').textContent = ("0" + (tiempo % 60)).slice(-2);
       }
     }, 1000);
+    // Detener el temporizador al finalizar test manualmente
+    document.getElementById('finalizar-btn').addEventListener('click', function() {
+      clearInterval(timer);
+      document.getElementById('test-form').submit();
+    });
   </script>
 </body>
 </html>

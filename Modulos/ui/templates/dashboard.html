@@ -325,7 +325,7 @@
                           <span class="badge bg-secondary">{{ test.estado }}</span>
                         {% endif %}
                       </td>
-                      <td>{{ test.recomendacion }}</td>
+                      <td>{{ test.recomendacion | markdown_to_html | safe }}</td>
                     </tr>
                   {% endfor %}
                 {% else %}

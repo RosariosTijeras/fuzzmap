@@ -90,7 +90,7 @@
                 <td><span class="badge bg-info text-dark">{{ test.score|round(2) }}</span></td>
                 <td>{{ test.correctas }}</td>
                 <td>{{ test.incorrectas }}</td>
-                <td>{{ test.recomendacion }}</td>
+                <td>{{ test.recomendacion | markdown_to_html | safe }}</td>
               </tr>
             {% endfor %}
           {% else %}

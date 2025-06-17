@@ -114,41 +114,111 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      /* Permitir scroll si la recomendación es muy larga */
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    /* Estilos para el chat */
+    .chat-box {
+      background: #fafdff;
+      border-radius: 10px;
+      border: 1px solid #cce6f7;
+      min-height: 220px;
+      max-height: 350px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    .chat-message {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-message.ai .bubble {
+      background: #eaf8ff;
+      color: #0a3a4a;
+      border-bottom-left-radius: 4px;
+      max-width: 80%;
+      padding: 0.8rem 1.1rem;
+      border-radius: 16px;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      box-shadow: 0 1px 6px #0dabda11;
+    }
+    .chat-message.user .bubble {
+      background: linear-gradient(90deg,#66a6ff 0%,#0dabda 100%);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      max-width: 80%;
+      padding: 0.8rem 1.1rem;
+      border-radius: 16px;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      box-shadow: 0 1px 6px #0dabda11;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-input {
+      flex: 1 1 auto;
+      border-radius: 8px;
+      border: 1px solid #b3d8f7;
+      padding: 0.7rem 1rem;
+      font-size: 1.08rem;
     }
   </style>
 </head>
 <body>
-  <div class="container result-container">
-    <div class="result-card">
-      <div class="result-title">Resultados del Test de {{ materia_nombre }}</div>
-      <div id="recomendacion-container">
-        <div class="recomendacion-box">
-          <span class="spinner-border text-info" role="status"></span>
-          <span id="recomendacion-text">Generando recomendación personalizada...</span>
+    <div class="container-fluid py-4" style="min-height:100vh;">
+      <div class="row justify-content-center align-items-stretch" style="min-height:80vh;">
+        <!-- Columna de preguntas y resultados -->
+        <div class="col-lg-7 col-md-7 col-12 d-flex flex-column" style="max-width:900px;min-width:350px;">
+          <div class="result-card h-100 d-flex flex-column">
+            <div class="result-title">Resultados del Test de {{ materia_nombre }}</div>
+            <div class="summary">
+              <span class="text-success">✔ Correctas: {{ correctas }}</span> &nbsp; | &nbsp;
+              <span class="text-danger">✘ Incorrectas: {{ incorrectas }}</span>
+            </div>
+            <div class="question-list flex-grow-1">
+              {% for q in preguntas %}
+                <div class="question-item {% if not q.correcta %}incorrect{% endif %}">
+                  <div class="question-title">{{ loop.index }}. {{ q.pregunta }}</div>
+                  <div class="answer">
+                    <strong>Tu respuesta:</strong> {{ q.respuesta_usuario }}<br/>
+                    <strong>Respuesta correcta:</strong> {{ q.respuesta_correcta }}
+                  </div>
+                  <div class="explanation">
+                    <strong>Explicación:</strong> {{ q.explicacion }}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <a href="{{ url_for('ui.dashboard') }}" class="btn btn-primary w-100 mt-3">Volver al Dashboard</a>
+          </div>
+        </div>
+        <!-- Columna de recomendación y chat -->
+        <div class="col-lg-5 col-md-5 col-12 d-flex flex-column align-items-stretch" style="min-width:350px;max-width:600px;">
+          <div class="result-card h-100 d-flex flex-column">
+            <div class="result-title">Recomendación y Chat AI</div>
+            <div class="chat-box flex-grow-1" id="chat-box">
+              <div class="chat-message ai">
+                <div class="bubble" id="recomendacion-inicial">
+                  <span class="spinner-border text-info" role="status"></span>
+                  <span id="recomendacion-text">Generando recomendación personalizada...</span>
+                </div>
+              </div>
+            </div>
+            <form class="chat-input-row" id="chat-form" autocomplete="off">
+              <input type="text" class="chat-input" id="chat-input" placeholder="Escribe tu pregunta o mensaje para la IA..." autocomplete="off"/>
+              <button type="submit" class="btn btn-primary btn-send">Enviar</button>
+            </form>
+          </div>
         </div>
       </div>
-      <div class="summary">
-        <span class="text-success">✔ Correctas: {{ correctas }}</span> &nbsp; | &nbsp;
-        <span class="text-danger">✘ Incorrectas: {{ incorrectas }}</span>
-      </div>
-      <div class="question-list">
-        {% for q in preguntas %}
-          <div class="question-item {% if not q.correcta %}incorrect{% endif %}">
-            <div class="question-title">{{ loop.index }}. {{ q.pregunta }}</div>
-            <div class="answer">
-              <strong>Tu respuesta:</strong> {{ q.respuesta_usuario }}<br/>
-              <strong>Respuesta correcta:</strong> {{ q.respuesta_correcta }}
-            </div>
-            <div class="explanation">
-              <strong>Explicación:</strong> {{ q.explicacion }}
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-      <a href="{{ url_for('ui.dashboard') }}" class="btn btn-primary w-100 mt-3">Volver al Dashboard</a>
     </div>
-  </div>
   <script>
+    // Mostrar recomendación inicial
     document.addEventListener('DOMContentLoaded', function() {
       fetch('/api/recomendacion', {
         method: 'POST',
@@ -156,30 +226,65 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          "usuario": {{ usuario|tojson }},
+          "materia": {{ materia_nombre|tojson }},
+          "fuzzy_message": {{ fuzzy_message|tojson }}
+        })
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        const recomendacionText = document.getElementById('recomendacion-text');
+        const spinner = document.querySelector('#recomendacion-inicial .spinner-border');
+        if (spinner) spinner.style.display = 'none';
+        // Eliminar espacios, saltos de línea y caracteres invisibles al inicio y final
+        let texto = (data.recomendacion || '').replace(/^[\s\u200B\uFEFF]+|[\s\u200B\uFEFF]+$/g, '');
+        recomendacionText.innerHTML = texto;
+      })
+      .catch(function(error) {
+        const recomendacionText = document.getElementById('recomendacion-text');
+        recomendacionText.textContent = 'Error al generar la recomendación. Por favor, intenta nuevamente más tarde.';
+      });
+    });
+    // Chat interactivo
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const chatBox = document.getElementById('chat-box');
+      // Mostrar mensaje del usuario
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message user';
+      userMsg.innerHTML = `<div class="bubble" style="background:linear-gradient(90deg,#66a6ff 0%,#0dabda 100%);color:#fff;border-bottom-right-radius:4px;max-width:80%;padding:0.8rem 1.1rem;border-radius:16px;font-size:1.08rem;line-height:1.5;box-shadow:0 1px 6px #0dabda11;">${msg}</div>`;
+      chatBox.appendChild(userMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = '';
+      // Llamar a la API de chat (debes implementar /api/chat_ai en backend)
+      fetch('/api/chat_ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           "usuario": {{ usuario|default('')|tojson }},
           "materia": {{ materia_nombre|default('')|tojson }},
-          "fuzzy_message": {{ fuzzy_message|default('')|tojson }}
+          "mensaje": msg
         })
       })
       .then(response => response.json())
       .then(data => {
-        const recomendacionContainer = document.getElementById('recomendacion-container');
-        const recomendacionText = document.getElementById('recomendacion-text');
-        const spinner = recomendacionContainer.querySelector('.spinner-border');
-        if (spinner) spinner.style.display = 'none';
-        recomendacionText.textContent = data.recomendacion;
-        
-        // Mostrar u ocultar elementos basado en la respuesta
-        if (data.mostrar_elemento) {
-          // Código para mostrar el elemento
-        } else {
-          // Código para ocultar el elemento
-        }
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.innerHTML = `<div class="bubble" style="background:#eaf8ff;color:#0a3a4a;border-bottom-left-radius:4px;max-width:80%;padding:0.8rem 1.1rem;border-radius:16px;font-size:1.08rem;line-height:1.5;box-shadow:0 1px 6px #0dabda11;">${data.respuesta}</div>`;
+        chatBox.appendChild(aiMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
       })
-      .catch(error => {
-        console.error('Error al obtener la recomendación:', error);
-        const recomendacionText = document.getElementById('recomendacion-text');
-        recomendacionText.textContent = 'Error al generar la recomendación. Por favor, intenta nuevamente más tarde.';
+      .catch(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.innerHTML = '<div class="bubble">Error al obtener respuesta de la IA.</div>';
+        chatBox.appendChild(aiMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
       });
     });
   </script>
