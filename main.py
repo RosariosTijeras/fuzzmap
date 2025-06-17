@@ -21,7 +21,7 @@ Dependencias principales:
 # Importa Flask y utilidades para sesión y redirección
 from flask import Flask, session, redirect, url_for
 # Importa el blueprint de la interfaz de usuario
-from Modulos.ui.app import ui
+from Modulos.ui.app import ui, markdown_to_html  # Importa el blueprint y el filtro markdown
 # Para definir la duración de la sesión
 from datetime import timedelta
 # Para generar una clave secreta segura
@@ -38,6 +38,9 @@ app.secret_key = secrets.token_hex(32)  # 64 caracteres hexadecimales (~256 bits
 
 # Configura la duración de las sesiones (7 días)
 app.permanent_session_lifetime = timedelta(days=7)
+
+# Registra el filtro markdown_to_html para usar en plantillas Jinja2
+app.add_template_filter(markdown_to_html)
 
 # Registra el blueprint de la UI en la aplicación principal, todas las rutas de la interfaz pasan por aquí
 app.register_blueprint(ui, url_prefix='/')

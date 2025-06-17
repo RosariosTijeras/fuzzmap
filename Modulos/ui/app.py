@@ -28,6 +28,7 @@ import os  # Operaciones con el sistema de archivos
 from datetime import datetime  # Manejo de fechas y horas
 from urllib.parse import unquote  # Decodificar URLs
 import asyncio  # Para operaciones asíncronas
+import re  # Para procesar markdown básico en recomendaciones
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
@@ -254,7 +255,8 @@ def comenzar_test(materia):
     if not materia_key:
         flash('Materia no válida o no implementada.', 'danger')
         return redirect(url_for('ui.dashboard'))
-    ruta_json = f'Datos/{materia_key}/preguntas_generadas_{materia_key.lower()}.json'
+    # Adaptar ruta a la nueva estructura de carpetas
+    ruta_json = f'Datos/{materia_key}/preguntas_generadas/preguntas_generadas_{materia_key.lower()}.json'
     preguntas = []
     import os
     if os.path.exists(ruta_json):
@@ -299,6 +301,50 @@ def comenzar_test(materia):
             'explicacion': preguntas_seleccionadas[pregunta_actual].get('explicacion', ''),
             'correcta': respuesta == correcta
         })
+        # Generar recomendación parcial en background tras cada respuesta
+        try:
+            from Modulos.fuzzylogic.fuzzy_evaluator import recomendacion_fuzzy_con_llama32
+            if len(state['respuestas']) >= 3:
+                respuestas = state['respuestas']
+                correctas = sum(1 for r in respuestas if r.get('correcta'))
+                incorrectas = len(respuestas) - correctas
+                temas_fallados = [r.get('tema') for r in respuestas if not r.get('correcta') and r.get('tema')]
+                preguntas_falladas = [
+                    {
+                        'pregunta': r.get('pregunta'),
+                        'respuesta_usuario': r.get('respuesta_usuario'),
+                        'respuesta_correcta': r.get('respuesta_correcta'),
+                        'explicacion': r.get('explicacion', ''),
+                        'tema': r.get('tema', '')
+                    }
+                    for r in respuestas if not r.get('correcta')
+                ]
+                resultados_test = {
+                    'materia': materia,
+                    'correctas': correctas,
+                    'incorrectas': incorrectas,
+                    'total': correctas + incorrectas,
+                    'temas_fallados': temas_fallados,
+                    'preguntas_falladas': preguntas_falladas,
+                }
+                fuzzy_score = evaluate_performance(correctas, correctas + incorrectas)
+                import threading
+                import copy
+                usuario = session.get('user')
+                user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+                os.makedirs(user_folder, exist_ok=True)
+                def generar_recomendacion():
+                    import asyncio
+                    try:
+                        rec = asyncio.run(recomendacion_fuzzy_con_llama32(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
+                        # Guardar recomendación parcial en archivo temporal
+                        with open(os.path.join(user_folder, 'recomendacion_parcial.json'), 'w', encoding='utf-8') as f:
+                            json.dump({'recomendacion': rec}, f, ensure_ascii=False)
+                    except Exception:
+                        pass
+                threading.Thread(target=generar_recomendacion).start()
+        except Exception:
+            pass
         session.modified = True
         siguiente = pregunta_actual + 1
         if siguiente < total_preguntas:
@@ -333,15 +379,40 @@ def _finalizar_test(materia):
     # Extraer temas fallados si existen
     temas_fallados = [r.get('tema') for r in respuestas if not r.get('correcta') and r.get('tema')]
     # Recomendación avanzada con IA
+    # Además de los datos actuales, incluir preguntas falladas, respuestas del usuario y explicaciones
+    preguntas_falladas = [
+        {
+            'pregunta': r.get('pregunta'),
+            'respuesta_usuario': r.get('respuesta_usuario'),
+            'respuesta_correcta': r.get('respuesta_correcta'),
+            'explicacion': r.get('explicacion', ''),
+            'tema': r.get('tema', '')
+        }
+        for r in respuestas if not r.get('correcta')
+    ]
     resultados_test = {
         'materia': materia,
         'correctas': correctas,
         'incorrectas': incorrectas,
         'total': correctas + incorrectas,
         'temas_fallados': temas_fallados,
+        'preguntas_falladas': preguntas_falladas,
     }
     try:
-        rec = asyncio.run(recomendacion_fuzzy_con_llama32(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
+        # Usar recomendación parcial desde archivo si existe
+        usuario = session.get('user')
+        user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
+        recomendacion_path = os.path.join(user_folder, 'recomendacion_parcial.json')
+        rec = None
+        if os.path.exists(recomendacion_path):
+            with open(recomendacion_path, 'r', encoding='utf-8') as f:
+                data_rec = json.load(f)
+                rec = data_rec.get('recomendacion')
+        if not rec:
+            rec = asyncio.run(recomendacion_fuzzy_con_llama32(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
+        # Limpiar archivo temporal después de usarlo
+        if os.path.exists(recomendacion_path):
+            os.remove(recomendacion_path)
     except Exception as e:
         rec = recommendation(fuzzy_score, correctas, correctas + incorrectas, temas_fallados)
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
@@ -455,7 +526,6 @@ def api_recomendacion():
     usuario = data.get('usuario')
     materia = data.get('materia')
     fuzzy_message = data.get('fuzzy_message')
-    # Recuperar el último test del usuario para la materia
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
     test_files = [f for f in os.listdir(user_folder) if f.startswith(f'test_{materia}_') and f.endswith('.json')]
     if not test_files:
@@ -471,7 +541,6 @@ def api_recomendacion():
         'temas_fallados': [r.get('tema') for r in test_data.get('respuestas', []) if not r.get('correcta') and r.get('tema')],
     }
     fuzzy_score = test_data.get('fuzzy_score', 0)
-    # Prompt corto y directo
     prompt_extra = (
         "Genera una recomendación breve y concreta (máximo 3 frases), solo lo esencial para mejorar en la materia y los temas fallados. Evita motivación genérica, sé directo y útil.\n" +
         f"Recomendación difusa: {fuzzy_message}"
@@ -480,10 +549,55 @@ def api_recomendacion():
         import asyncio
         from Modulos.fuzzylogic.fuzzy_evaluator import ollama_recommendation_llama32
         recomendacion = asyncio.run(ollama_recommendation_llama32(resultados_test, prompt_extra=prompt_extra))
-        # Limitar a 3 frases
-        recomendacion = '.'.join(recomendacion.split('.')[:3]).strip() + '.'
     except Exception:
         from Modulos.fuzzylogic.fuzzy_evaluator import recommendation
         recomendacion = recommendation(fuzzy_score, resultados_test['correctas'], resultados_test['total'], resultados_test['temas_fallados'])
         recomendacion = '.'.join(recomendacion.split('.')[:3]).strip() + '.'
-    return jsonify({'recomendacion': recomendacion})
+    # Procesar la recomendación con el filtro markdown_to_html antes de enviarla
+    recomendacion_html = markdown_to_html(recomendacion)
+    return jsonify({'recomendacion': recomendacion_html})
+
+def markdown_to_html(text):
+    """
+    Convierte texto markdown simple (**negrita**) a HTML seguro para mostrar en plantillas.
+    - Elimina la palabra 'Recomendación' en negrita al inicio si existe.
+    - Si la línea comienza con '* **texto**', elimina el asterisco y deja solo el texto en negrita.
+    """
+    if not isinstance(text, str):
+        return text
+    # Elimina "<b>Recomendación</b>" o "**Recomendación**" al inicio, con o sin espacios y saltos de línea
+    text = re.sub(r'^(<b>Recomendación</b>|\*\*Recomendación\*\*)[\s:\n]*', '', text)
+    # Convierte líneas que empiezan con '* **texto**' a solo <b>texto</b>
+    text = re.sub(r'^\*\s*\*\*(.+?)\*\*', r'<b>\1</b>', text, flags=re.MULTILINE)
+    # Solo negrita (**texto**)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+    # Opcional: convierte saltos de línea dobles en <br><br> para mejor visualización
+    text = text.replace('\n\n', '<br><br>')
+    return text
+
+# =====================
+# API PARA RESPUESTA DE CHAT CON IA
+# =====================
+# Proporciona respuestas a consultas del usuario sobre el test y la materia, usando el modelo de IA con contexto.
+@ui.route('/api/chat_ai', methods=['POST'])
+def api_chat_ai():
+    data = request.get_json()
+    usuario = data.get('usuario', '')
+    materia = data.get('materia', '')
+    mensaje = data.get('mensaje', '')
+    # Prompt para el modelo: contexto de materia y mensaje del usuario
+    prompt = (
+        f"Eres un orientador académico universitario experto en retroalimentación personalizada. El usuario está realizando un test de la materia '{materia}'. "
+        f"Responde de forma clara, útil y profesional a la siguiente consulta del usuario, usando ejemplos y consejos prácticos si es posible. Si la pregunta es sobre un error concreto, explica cómo mejorar.\n"
+        f"Mensaje del usuario: {mensaje}"
+    )
+    try:
+        import asyncio
+        import Modulos.fuzzylogic.fuzzy_evaluator as fe
+        # Usar LM Studio en vez de ollama
+        respuesta = asyncio.run(fe.ollama_recommendation_llama32({'materia': materia}, prompt_extra=prompt))
+        from .app import markdown_to_html
+        respuesta_html = markdown_to_html(respuesta)
+    except Exception as e:
+        respuesta_html = "No se pudo obtener respuesta de la IA. Intenta nuevamente más tarde."
+    return jsonify({'respuesta': respuesta_html})
