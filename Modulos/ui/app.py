@@ -381,7 +381,7 @@ def _finalizar_test(materia):
                     })
     resultados_test['historial_materia'] = historial_materia
     try:
-        # Usar recomendación parcial desde archivo si existe
+        # Usar recomendación avanzada con Qwen3-4B
         usuario = session.get('user')
         user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
         recomendacion_path = os.path.join(user_folder, 'recomendacion_parcial.json')
@@ -396,7 +396,7 @@ def _finalizar_test(materia):
         if os.path.exists(recomendacion_path):
             os.remove(recomendacion_path)
     except Exception as e:
-        rec = recommendation(fuzzy_score, correctas, correctas + incorrectas, temas_fallados)
+        rec = "[Error: No se pudo obtener recomendación personalizada del modelo AI. Se muestra una recomendación genérica.]\n" + recommendation(fuzzy_score, correctas, correctas + incorrectas, temas_fallados)
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
     os.makedirs(user_folder, exist_ok=True)
     from datetime import datetime
@@ -515,7 +515,6 @@ def api_recomendacion():
     data = request.get_json()
     usuario = data.get('usuario')
     materia = data.get('materia')
-    fuzzy_message = data.get('fuzzy_message')
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
     test_files = [f for f in os.listdir(user_folder) if f.startswith(f'test_{materia}_') and f.endswith('.json')]
     if not test_files:
@@ -523,26 +522,8 @@ def api_recomendacion():
     test_files.sort(reverse=True)
     with open(os.path.join(user_folder, test_files[0]), 'r', encoding='utf-8') as f:
         test_data = json.load(f)
-    resultados_test = {
-        'materia': materia,
-        'correctas': test_data.get('correctas', 0),
-        'incorrectas': test_data.get('incorrectas', 0),
-        'total': test_data.get('correctas', 0) + test_data.get('incorrectas', 0),
-        'temas_fallados': [r.get('tema') for r in test_data.get('respuestas', []) if not r.get('correcta') and r.get('tema')],
-    }
-    fuzzy_score = test_data.get('fuzzy_score', 0)
-    prompt_extra = (
-        "Genera una recomendación breve y concreta (máximo 3 frases), solo lo esencial para mejorar en la materia y los temas fallados. Evita motivación genérica, sé directo y útil.\n" +
-        f"Recomendación difusa: {fuzzy_message}"
-    )
-    try:
-        import asyncio
-        recomendacion = asyncio.run(recomendacion_fuzzy_con_qwen3(resultados_test, prompt_extra=prompt_extra))
-    except Exception:
-        from Modulos.fuzzylogic.fuzzy_evaluator import recommendation
-        recomendacion = recommendation(fuzzy_score, resultados_test['correctas'], resultados_test['total'], resultados_test['temas_fallados'])
-        recomendacion = '.'.join(recomendacion.split('.')[:3]).strip() + '.'
-    # Procesar la recomendación con el filtro markdown_to_html antes de enviarla
+    # Usar la recomendación guardada, sin filtros ni generación nueva
+    recomendacion = test_data.get('recomendacion', 'No hay recomendación generada.')
     recomendacion_html = markdown_to_html(recomendacion)
     return jsonify({'recomendacion': recomendacion_html})
 

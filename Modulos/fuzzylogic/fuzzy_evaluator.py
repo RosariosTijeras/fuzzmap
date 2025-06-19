@@ -154,8 +154,11 @@ def get_user_recommendations(user_folder: str):
             with open(os.path.join(user_folder, fname), 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 rec = data.get('recomendacion')
-                if rec:
-                    recomendaciones.append(rec)
+                # Filtrar mensajes de error y limpiar etiquetas <think>
+                if rec and not rec.startswith('[Error:'):
+                    rec_limpia = rec.replace('<think>', '').replace('</think>', '').strip()
+                    if rec_limpia:
+                        recomendaciones.append(rec_limpia)
     if not recomendaciones:
         return "No hay recomendaciones registradas."
     # Si la mayoría de recomendaciones son excelentes, mensaje positivo
@@ -200,22 +203,24 @@ async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str =
         for h in historial:
             temas = ', '.join(set(r.get('tema','') for r in h.get('preguntas_falladas',[]) if r.get('tema')))
             historial_str += f"- {h['fecha']}: {h['correctas']} aciertos, {h['incorrectas']} errores, temas fallados: {temas}\n"
-    # Prompt para el modelo AI, pidiendo una recomendación personalizada, estructurada y densa
+    # Prompt para el modelo AI, pidiendo una recomendación personalizada, estructurada, densa y extensa
     prompt = (
-        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y el historial del usuario en la materia, y genera una recomendación estructurada, detallada y útil para el usuario. "
-        "La recomendación debe tener entre 4 y 6 frases, ser clara, específica y abordar al menos dos errores concretos del usuario, explicando cómo mejorar en esos temas. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto."
+        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y el historial del usuario en la materia, y genera una recomendación estructurada, MUY DETALLADA, extensa y útil para el usuario. "
+        "La recomendación debe tener al menos 6 frases completas, ser clara, específica y abordar al menos dos errores concretos del usuario, citando la pregunta, la respuesta del usuario y la explicación correcta. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto. Si el usuario tiene un desempeño bajo, incluye referencias a recursos concretos (videos, libros, artículos, ejercicios interactivos) y explica cómo usarlos. Si el usuario repite errores, haz énfasis en la importancia de repasar esos temas."
         "\n\nEstructura sugerida:\n"
         "1. Introducción breve sobre el desempeño general del usuario.\n"
         "2. Menciona al menos dos errores concretos, citando la pregunta, la respuesta del usuario y la explicación correcta.\n"
         "3. Da consejos prácticos y personalizados para mejorar en esos temas, usando la explicación de los errores.\n"
-        "4. Cierra con una sugerencia concreta de acción o recurso para el usuario.\n"
+        "4. Recomienda recursos concretos (videos, libros, ejercicios, artículos) y explica cómo aprovecharlos.\n"
+        "5. Si hay errores repetidos, resáltalos y sugiere estrategias para superarlos.\n"
+        "6. Cierra con una sugerencia concreta de acción o plan de estudio para el usuario.\n"
         "\nEjemplo de formato:\n"
-        "Obtuviste un resultado bajo en el test, lo que indica que necesitas reforzar algunos conceptos clave. En la pregunta sobre el contexto de uso de la ciencia de datos, tu respuesta fue incorrecta; te recomiendo **revisar cómo se aplica en medicina, especialmente en el análisis de textos clínicos**. Además, confundiste la definición de ciencia de datos; **repasa la diferencia entre analizar datos y crear modelos predictivos**. Para mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas.\n"
+        "Obtuviste un resultado bajo en el test, lo que indica que necesitas reforzar algunos conceptos clave. En la pregunta sobre el contexto de uso de la ciencia de datos, tu respuesta fue incorrecta; te recomiendo **revisar cómo se aplica en medicina, especialmente en el análisis de textos clínicos**. Además, confundiste la definición de ciencia de datos; **repasa la diferencia entre analizar datos y crear modelos predictivos**. Para mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas. Puedes buscar el video 'Introducción a la Ciencia de Datos' en YouTube y resolver ejercicios interactivos en plataformas como DataCamp. Si notas que repites errores en los mismos temas, dedica sesiones específicas de estudio y autoevaluación. Elabora un plan de repaso semanal para consolidar tu aprendizaje.\n"
         f"{resumen_usuario}\n"
         f"{detalles_fallos}"
         f"{historial_str}"
         f"{prompt_extra}\n"
-        "Recomendación personalizada estructurada:"
+        "Recomendación personalizada estructurada, extensa y detallada:"
     )
     # LM Studio SDK oficial con modelo Qwen3-4B Q4_K_M (sin pensamiento profundo)
     model = lmstudio.llm("qwen/qwen3-4b")
@@ -223,7 +228,10 @@ async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str =
     chat = lmstudio.Chat("Responde únicamente en español, sin ninguna frase en inglés. Eres un orientador académico universitario experto en retroalimentación personalizada. /no_think")
     chat.add_user_message(prompt)
     response = model.respond(chat)
-    # Retorna solo el texto de la respuesta
+    # Limpiar etiquetas <think> y </think> automáticamente
+    if isinstance(response, str):
+        response = response.replace('<think>', '').replace('</think>', '').strip()
+    # Retorna solo el texto de la respuesta limpio
     return response
 
 
