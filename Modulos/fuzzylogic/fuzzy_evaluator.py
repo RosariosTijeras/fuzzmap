@@ -7,12 +7,12 @@ En este módulo se implementan las siguientes funcionalidades:
 - Cálculo del desempeño del usuario usando lógica difusa (skfuzzy).
 - Generación de recomendaciones automáticas según el puntaje obtenido y los temas fallados.
 - Obtención de recomendaciones generales a partir del historial de tests de un usuario.
-- Integración con modelos de lenguaje (Ollama) para recomendaciones personalizadas y breves.
+- Integración con modelos de lenguaje (LM Studio, Qwen3-4B) para recomendaciones personalizadas y breves.
 
 Dependencias principales:
 - numpy
 - scikit-fuzzy (skfuzzy)
-- ollama (cliente para modelos de lenguaje)
+- lmstudio (cliente para modelos de lenguaje)
 - json, os
 """
 
@@ -22,9 +22,6 @@ from skfuzzy import control as ctrl  # Módulo de control difuso
 import os  # Para operaciones del sistema de archivos
 import json  # Para leer y escribir archivos JSON
 import lmstudio  # Cliente para recomendaciones AI (LM Studio)
-
-# Cambia el modelo a Qwen3-4B Q4_K_M para mejor balance calidad/velocidad y buen español
-MODEL_NAME = "qwen/qwen3-4b"
 
 # ===============================
 # Definición del sistema difuso para evaluación de desempeño
@@ -168,9 +165,9 @@ def get_user_recommendations(user_folder: str):
     return "Sigue practicando y revisa los temas donde tuviste dificultades."
 
 
-async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str = "") -> str:
+async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str = "") -> str:
     """
-    Genera una recomendación personalizada usando el modelo Meta-Llama-3-8B-Instruct-GGUF de LM Studio (SDK oficial).
+    Genera una recomendación personalizada usando el modelo Qwen3-4B de LM Studio (SDK oficial).
     resultados_test: dict con claves como 'correctas', 'incorrectas', 'temas_fallados', 'materia', etc.
     prompt_extra: texto adicional para personalizar el prompt (opcional).
 
@@ -195,9 +192,17 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
         detalles_fallos = "Preguntas falladas y explicación de cada error:\n"
         for i, pf in enumerate(preguntas_falladas, 1):
             detalles_fallos += f"{i}. Pregunta: {pf.get('pregunta', '')}\n   Tu respuesta: {pf.get('respuesta_usuario', '')}\n   Respuesta correcta: {pf.get('respuesta_correcta', '')}\n   Explicación: {pf.get('explicacion', '')}\n   Tema: {pf.get('tema', '')}\n"
+    # Incluir historial de la materia en el prompt
+    historial = resultados_test.get('historial_materia', [])
+    historial_str = ""
+    if historial:
+        historial_str = "\nHistorial de tests previos en la materia (fecha, aciertos, errores, temas fallados):\n"
+        for h in historial:
+            temas = ', '.join(set(r.get('tema','') for r in h.get('preguntas_falladas',[]) if r.get('tema')))
+            historial_str += f"- {h['fecha']}: {h['correctas']} aciertos, {h['incorrectas']} errores, temas fallados: {temas}\n"
     # Prompt para el modelo AI, pidiendo una recomendación personalizada, estructurada y densa
     prompt = (
-        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y genera una recomendación estructurada, detallada y útil para el usuario. "
+        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y el historial del usuario en la materia, y genera una recomendación estructurada, detallada y útil para el usuario. "
         "La recomendación debe tener entre 4 y 6 frases, ser clara, específica y abordar al menos dos errores concretos del usuario, explicando cómo mejorar en esos temas. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto."
         "\n\nEstructura sugerida:\n"
         "1. Introducción breve sobre el desempeño general del usuario.\n"
@@ -208,11 +213,12 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
         "Obtuviste un resultado bajo en el test, lo que indica que necesitas reforzar algunos conceptos clave. En la pregunta sobre el contexto de uso de la ciencia de datos, tu respuesta fue incorrecta; te recomiendo **revisar cómo se aplica en medicina, especialmente en el análisis de textos clínicos**. Además, confundiste la definición de ciencia de datos; **repasa la diferencia entre analizar datos y crear modelos predictivos**. Para mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas.\n"
         f"{resumen_usuario}\n"
         f"{detalles_fallos}"
+        f"{historial_str}"
         f"{prompt_extra}\n"
         "Recomendación personalizada estructurada:"
     )
     # LM Studio SDK oficial con modelo Qwen3-4B Q4_K_M (sin pensamiento profundo)
-    model = lmstudio.llm(MODEL_NAME)
+    model = lmstudio.llm("qwen/qwen3-4b")
     # Forzar respuesta 100% en español y desactivar razonamiento profundo
     chat = lmstudio.Chat("Responde únicamente en español, sin ninguna frase en inglés. Eres un orientador académico universitario experto en retroalimentación personalizada. /no_think")
     chat.add_user_message(prompt)
@@ -221,9 +227,9 @@ async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str
     return response
 
 
-async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
+async def recomendacion_fuzzy_con_qwen3(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
     """
-    Genera una recomendación personalizada usando la lógica difusa y la refina con llama3.2:latest.
+    Genera una recomendación personalizada usando la lógica difusa y la refina con Qwen3-4B.
     resultados_test: dict con claves como 'materia', 'correctas', 'incorrectas', 'temas_fallados', etc.
 
     Args:
@@ -243,5 +249,5 @@ async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, c
     # Prompt extra con la recomendación difusa
     prompt_extra = f"Recomendación generada por el sistema de lógica difusa: {rec_fuzzy}"
     # Llamar al modelo para refinar la recomendación
-    recomendacion_final = await ollama_recommendation_llama32(resultados_test, prompt_extra=prompt_extra)
+    recomendacion_final = await generar_recomendacion_qwen3(resultados_test, prompt_extra=prompt_extra)
     return recomendacion_final

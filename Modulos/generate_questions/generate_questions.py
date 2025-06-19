@@ -24,7 +24,6 @@ Este script puede requerir mucho tiempo y recursos dependiendo del tamaño del c
 """
 
 # Modulos/nlp/question_expander.py
-import ollama
 import json
 import re
 import asyncio
@@ -124,8 +123,6 @@ class QuestionExpander:
         return preguntas[:num_questions]
 
     async def _call_model(self, prompt: str) -> str:
-        """Llama al modelo con configuración optimizada"""
-        client = ollama.AsyncClient()
         response = await client.generate(
             model=self.model,
             prompt=prompt,
