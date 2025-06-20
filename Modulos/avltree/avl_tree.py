@@ -540,7 +540,7 @@ if __name__ == '__main__':
     for q in preguntas_habilidades + preguntas_ciencia:
         avl.insert(q)
     
-    # Demostración (código original sin cambios)
+    
     print("=== DEMOSTRACION ARBOL AVL ===")
     print(f"Total preguntas insertadas: {avl.size}")
     print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")
