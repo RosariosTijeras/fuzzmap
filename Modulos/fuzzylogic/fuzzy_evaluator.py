@@ -208,7 +208,7 @@ async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str =
         "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y el historial del usuario en la materia, y genera una recomendación estructurada, MUY DETALLADA, extensa y útil para el usuario. "
         "La recomendación debe tener al menos 6 frases completas, ser clara, específica y abordar al menos dos errores concretos del usuario, citando la pregunta, la respuesta del usuario y la explicación correcta. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto. Si el usuario tiene un desempeño bajo, incluye referencias a recursos concretos (videos, libros, artículos, ejercicios interactivos) y explica cómo usarlos. Si el usuario repite errores, haz énfasis en la importancia de repasar esos temas."
         "\n\nEstructura sugerida:\n"
-        "1. Introducción breve sobre el desempeño general del usuario.\n"
+        "1. Introducción breve sobrae el desempeño general del usuario.\n"
         "2. Menciona al menos dos errores concretos, citando la pregunta, la respuesta del usuario y la explicación correcta.\n"
         "3. Da consejos prácticos y personalizados para mejorar en esos temas, usando la explicación de los errores.\n"
         "4. Recomienda recursos concretos (videos, libros, ejercicios, artículos) y explica cómo aprovecharlos.\n"
@@ -223,14 +223,21 @@ async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str =
         "Recomendación personalizada estructurada, extensa y detallada:"
     )
     # LM Studio SDK oficial con modelo Qwen3-4B Q4_K_M (sin pensamiento profundo)
-    model = lmstudio.llm("qwen/qwen3-4b")
+    model = lmstudio.llm("mistral-7b-instruct-v0.3")
     # Forzar respuesta 100% en español y desactivar razonamiento profundo
     chat = lmstudio.Chat("Responde únicamente en español, sin ninguna frase en inglés. Eres un orientador académico universitario experto en retroalimentación personalizada. /no_think")
     chat.add_user_message(prompt)
     response = model.respond(chat)
     # Limpiar etiquetas <think> y </think> automáticamente
     if isinstance(response, str):
-        response = response.replace('<think>', '').replace('</think>', '').strip()
+        response = response.replace('<think>', '').replace('</think>', '')
+        response = response.strip()
+        # Eliminar saltos de línea y espacios extra al inicio
+        while response.startswith('\n') or response.startswith(' '):
+            response = response[1:]
+        # Eliminar saltos de línea y espacios extra al final
+        while response.endswith('\n') or response.endswith(' '):
+            response = response[:-1]
     # Retorna solo el texto de la respuesta limpio
     return response
 
@@ -259,3 +266,246 @@ async def recomendacion_fuzzy_con_qwen3(resultados_test: dict, score: float, cor
     # Llamar al modelo para refinar la recomendación
     recomendacion_final = await generar_recomendacion_qwen3(resultados_test, prompt_extra=prompt_extra)
     return recomendacion_final
+
+def recommendation_features(respuestas, historial=None):
+    """
+    Devuelve el vector de features estructurado para recomendaciones avanzadas (tokenización robusta).
+    Args:
+        respuestas (list): Lista de dicts con claves: correcta, tema, dificultad, tipo_error, etc.
+        historial (list, opcional): Lista de tests previos.
+    Returns:
+        dict: Vector de features para LLM o análisis avanzado.
+    """
+    return evaluate_performance_features(respuestas, historial)
+
+# ===============================
+# Lógica difusa avanzada: granularidad, subtemas, tendencias y emociones
+# ===============================
+# Definición ÚNICA de variables difusas avanzadas
+aciertos = ctrl.Antecedent(np.arange(0, 11, 1), 'aciertos')
+porcentaje = ctrl.Antecedent(np.arange(0, 101, 1), 'porcentaje')
+evaluacion = ctrl.Consequent(np.arange(0, 101, 1), 'evaluacion')
+
+# Más niveles de membresía para granularidad
+aciertos['crítico'] = fuzz.trimf(aciertos.universe, [0, 0, 2])
+aciertos['muy_bajo'] = fuzz.trimf(aciertos.universe, [1, 2, 4])
+aciertos['bajo'] = fuzz.trimf(aciertos.universe, [3, 4, 6])
+aciertos['medio'] = fuzz.trimf(aciertos.universe, [5, 6, 8])
+aciertos['alto'] = fuzz.trimf(aciertos.universe, [7, 8, 9])
+aciertos['excelente'] = fuzz.trimf(aciertos.universe, [9, 10, 10])
+
+porcentaje['crítico'] = fuzz.trimf(porcentaje.universe, [0, 0, 20])
+porcentaje['muy_bajo'] = fuzz.trimf(porcentaje.universe, [10, 20, 40])
+porcentaje['bajo'] = fuzz.trimf(porcentaje.universe, [30, 40, 60])
+porcentaje['medio'] = fuzz.trimf(porcentaje.universe, [50, 60, 80])
+porcentaje['alto'] = fuzz.trimf(porcentaje.universe, [70, 85, 95])
+porcentaje['excelente'] = fuzz.trimf(porcentaje.universe, [90, 100, 100])
+
+evaluacion['crítico'] = fuzz.trimf(evaluacion.universe, [0, 0, 15])
+evaluacion['muy_bajo'] = fuzz.trimf(evaluacion.universe, [10, 20, 35])
+evaluacion['bajo'] = fuzz.trimf(evaluacion.universe, [25, 40, 55])
+evaluacion['medio'] = fuzz.trimf(evaluacion.universe, [45, 60, 75])
+evaluacion['alto'] = fuzz.trimf(evaluacion.universe, [65, 80, 90])
+evaluacion['excelente'] = fuzz.trimf(evaluacion.universe, [85, 95, 100])
+
+# Reglas difusas avanzadas (puedes expandirlas aún más si lo deseas)
+reglas_avanzadas = [
+    ctrl.Rule(aciertos['crítico'] | porcentaje['crítico'], evaluacion['crítico']),
+    ctrl.Rule(aciertos['muy_bajo'] | porcentaje['muy_bajo'], evaluacion['muy_bajo']),
+    ctrl.Rule(aciertos['bajo'] | porcentaje['bajo'], evaluacion['bajo']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['medio'], evaluacion['medio']),
+    ctrl.Rule(aciertos['alto'] & porcentaje['alto'], evaluacion['alto']),
+    ctrl.Rule(aciertos['excelente'] & porcentaje['excelente'], evaluacion['excelente']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['alto'], evaluacion['alto']),
+    ctrl.Rule(aciertos['alto'] & porcentaje['medio'], evaluacion['alto']),
+    ctrl.Rule(aciertos['bajo'] & porcentaje['medio'], evaluacion['bajo']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['bajo'], evaluacion['bajo']),
+    # Puedes agregar reglas por subtema, dificultad, tendencia, tipo de error, etc.
+]
+
+sistema_ctrl = ctrl.ControlSystem(reglas_avanzadas)
+sistema = ctrl.ControlSystemSimulation(sistema_ctrl)
+
+# ===============================
+# Tokenización y features avanzados para LLM
+# ===============================
+def evaluate_performance_features(respuestas, historial=None):
+    """
+    Analiza el desempeño del usuario usando lógica difusa avanzada y devuelve un diccionario de features/tokenización para LLM.
+    Incluye granularidad por subtema, dificultad, tipo de error, tendencias, emociones, evolución temporal y más.
+    """
+    temas = {}
+    subtemas = {}
+    tipos_error = set()
+    dificultad_fallada = set()
+    dificultad_stats = {}
+    error_stats = {}
+    patrones = set()
+    total = len(respuestas)
+    correctas = sum(1 for r in respuestas if r.get('correcta'))
+    incorrectas = total - correctas
+    # Tokenización por tema, subtema y nivel difuso
+    for r in respuestas:
+        tema = r.get('tema', 'general')
+        subtema = r.get('subtema', None)
+        dificultad = r.get('dificultad', None)
+        tipo_error = r.get('tipo_error', None)
+        if tema not in temas:
+            temas[tema] = {'aciertos': 0, 'errores': 0}
+        if subtema:
+            if subtema not in subtemas:
+                subtemas[subtema] = {'aciertos': 0, 'errores': 0}
+        if dificultad:
+            if dificultad not in dificultad_stats:
+                dificultad_stats[dificultad] = {'aciertos': 0, 'errores': 0}
+        if tipo_error:
+            if tipo_error not in error_stats:
+                error_stats[tipo_error] = {'aciertos': 0, 'errores': 0}
+        if r.get('correcta'):
+            temas[tema]['aciertos'] += 1
+            if subtema:
+                subtemas[subtema]['aciertos'] += 1
+            if dificultad:
+                dificultad_stats[dificultad]['aciertos'] += 1
+            if tipo_error:
+                error_stats[tipo_error]['aciertos'] += 1
+        else:
+            temas[tema]['errores'] += 1
+            if subtema:
+                subtemas[subtema]['errores'] += 1
+            if dificultad:
+                dificultad_fallada.add(dificultad)
+                dificultad_stats[dificultad]['errores'] += 1
+            if tipo_error:
+                tipos_error.add(tipo_error)
+                error_stats[tipo_error]['errores'] += 1
+    # Calcular nivel difuso por tema y subtema
+    def nivel_difuso(aciertos, errores):
+        total = aciertos + errores
+        if total == 0:
+            return 'sin_datos'
+        ratio = aciertos / total
+        if ratio < 0.15:
+            return 'crítico'
+        elif ratio < 0.3:
+            return 'muy_bajo'
+        elif ratio < 0.5:
+            return 'bajo'
+        elif ratio < 0.7:
+            return 'medio'
+        elif ratio < 0.9:
+            return 'alto'
+        elif ratio < 0.98:
+            return 'excelente'
+        else:
+            return 'sobresaliente'
+    temas_nivel = {tema: nivel_difuso(vals['aciertos'], vals['errores']) for tema, vals in temas.items()}
+    subtemas_nivel = {subtema: nivel_difuso(vals['aciertos'], vals['errores']) for subtema, vals in subtemas.items()}
+    dificultad_nivel = {dif: nivel_difuso(vals['aciertos'], vals['errores']) for dif, vals in dificultad_stats.items()}
+    error_nivel = {err: nivel_difuso(vals['aciertos'], vals['errores']) for err, vals in error_stats.items()}
+    # Nivel global difuso
+    ratio_global = correctas / total if total else 0
+    if ratio_global < 0.15:
+        nivel_global = 'crítico'
+    elif ratio_global < 0.3:
+        nivel_global = 'muy_bajo'
+    elif ratio_global < 0.5:
+        nivel_global = 'bajo'
+    elif ratio_global < 0.7:
+        nivel_global = 'medio'
+    elif ratio_global < 0.9:
+        nivel_global = 'alto'
+    elif ratio_global < 0.98:
+        nivel_global = 'excelente'
+    else:
+        nivel_global = 'sobresaliente'
+    # Patrones: repite errores, confunde definiciones, tendencia de mejora/retroceso
+    if historial:
+        temas_hist = set()
+        for h in historial:
+            for r in h.get('respuestas', []):
+                if not r.get('correcta') and r.get('tema'):
+                    temas_hist.add(r['tema'])
+        temas_fallados_actual = {t for t, n in temas_nivel.items() if n in ['crítico', 'muy_bajo', 'bajo']}
+        if temas_fallados_actual & temas_hist:
+            patrones.add('repite_errores')
+        # Progreso global y por tema
+        if len(historial) >= 2:
+            prev = historial[-2]
+            prev_score = prev.get('correctas', 0) / (prev.get('correctas', 0) + prev.get('incorrectas', 0) or 1)
+            if ratio_global > prev_score + 0.1:
+                progreso = 'mejora'
+            elif ratio_global < prev_score - 0.1:
+                progreso = 'retroceso'
+            else:
+                progreso = 'estancamiento'
+        else:
+            progreso = 'sin_datos'
+    else:
+        progreso = 'sin_datos'
+    # Estado emocional inferido avanzado
+    if ratio_global < 0.15:
+        estado_emocional = 'frustrado'
+    elif ratio_global < 0.3:
+        estado_emocional = 'inseguro'
+    elif ratio_global < 0.5:
+        estado_emocional = 'preocupado'
+    elif ratio_global > 0.9:
+        estado_emocional = 'confiado'
+    elif ratio_global > 0.7:
+        estado_emocional = 'motivado'
+    else:
+        estado_emocional = 'neutral'
+    # Evolución temporal (si hay historial)
+    evolucion = []
+    if historial:
+        for h in historial:
+            score_hist = h.get('correctas', 0) / (h.get('correctas', 0) + h.get('incorrectas', 0) or 1)
+            evolucion.append({
+                'fecha': h.get('fecha', ''),
+                'score': round(score_hist, 3),
+                'temas_fallados': [r.get('tema') for r in h.get('respuestas', []) if not r.get('correcta')]
+            })
+    # Vector de features final
+    return {
+        'temas': temas,
+        'subtemas': subtemas,
+        'tipos_error': list(tipos_error),
+        'dificultad_fallada': list(dificultad_fallada),
+        'dificultad_stats': dificultad_stats,
+        'error_stats': error_stats,
+        'patrones': list(patrones),
+        'total': total,
+        'correctas': correctas,
+        'incorrectas': incorrectas,
+        'nivel_global': nivel_global,
+        'temas_nivel': temas_nivel,
+        'subtemas_nivel': subtemas_nivel,
+        'dificultad_nivel': dificultad_nivel,
+        'error_nivel': error_nivel,
+        'progreso': progreso,
+        'estado_emocional': estado_emocional,
+        'evolucion': evolucion
+    }
+
+def resumen_recomendacion(recomendacion: str, max_chars: int = 220) -> str:
+    """
+    Extrae el resumen más importante de la recomendación para mostrar en el dashboard.
+    - Toma la primera frase relevante (hasta el primer punto y seguido) o corta a max_chars.
+    - Elimina saltos de línea y espacios extra.
+    """
+    if not isinstance(recomendacion, str):
+        return ''
+    texto = recomendacion.replace('\n', ' ').replace('  ', ' ').strip()
+    # Busca el primer punto y seguido después de 60 caracteres (para evitar frases introductorias muy cortas)
+    punto = texto.find('.', 60)
+    if punto != -1:
+        resumen = texto[:punto+1]
+    else:
+        resumen = texto[:max_chars]
+    # Si el resumen es muy corto, amplía hasta el siguiente punto
+    if len(resumen) < 60 and len(texto) > max_chars:
+        punto2 = texto.find('.', max_chars)
+        if punto2 != -1:
+            resumen = texto[:punto2+1]
+    return resumen.strip()
