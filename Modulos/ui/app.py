@@ -23,7 +23,7 @@ from Modulos.auth.auth import _cargar_usuarios  # Función para cargar usuarios
 from datetime import timedelta  # Para manejo de sesiones
 import json  # Para leer y escribir archivos JSON
 import random  # Para seleccionar preguntas aleatoriamente
-from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation, get_user_recommendations, recomendacion_fuzzy_con_qwen3  # Evaluación y recomendaciones
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation_features, get_user_recommendations, recomendacion_fuzzy_con_qwen3, resumen_recomendacion  # Solo funciones avanzadas
 import os  # Operaciones con el sistema de archivos
 from datetime import datetime  # Manejo de fechas y horas
 from urllib.parse import unquote  # Decodificar URLs
@@ -182,6 +182,9 @@ def dashboard():
     maximo = max(puntajes) if puntajes else 0
     minimo = min(puntajes) if puntajes else 0
     # Renderiza el template del dashboard con los datos del usuario y estadísticas
+    # Mostrar solo el resumen de la recomendación en el historial
+    for t in historial_tests:
+        t['recomendacion'] = resumen_recomendacion(t.get('recomendacion', ''))
     return render_template('dashboard.html', usuario=usuario, nombre=nombre, apellido=apellido, materias=materias, recomendacion_general=recomendacion_general, historial_tests=historial_tests, promedio_general=promedio, maximo_general=maximo, minimo_general=minimo)
 
 # =====================
