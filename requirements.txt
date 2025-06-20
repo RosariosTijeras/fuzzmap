@@ -31,5 +31,5 @@ matplotlib
 # Notebooks interactivos (opcional para pruebas y análisis)
 jupyter
 
-# Cliente para integración con modelos Ollama (instalación manual si es necesario)
-ollama  # No se instala por pip, es externo
+# Cliente para integración con modelos LmStudio (instalación manual si es necesario)
+lmstudio  # No se instala por pip, es externo
