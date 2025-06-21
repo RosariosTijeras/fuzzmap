@@ -37,3 +37,6 @@ lmstudio  # No se instala por pip, es externo
 # Visualización interactiva de datos
 plotly
 plotly[express]  # Extensión para gráficos rápidos y sencillos con plotly
+
+# Cálculos científicos y matemáticos avanzados
+scipy
