@@ -1,33 +1,70 @@
-import numpy as np
-import skfuzzy as fuzz
-from skfuzzy import control as ctrl
-import os
-import json
-import ollama
+"""
+Módulo para la evaluación de desempeño estudiantil mediante lógica difusa y generación de recomendaciones personalizadas.
+Ruta de este archivo: Modulos/fuzzylogic/fuzzy_evaluator.py
 
-# Definir el universo de variables
-aciertos = ctrl.Antecedent(np.arange(0, 11, 1), 'aciertos')  # 0 a 10 preguntas
-porcentaje = ctrl.Antecedent(np.arange(0, 101, 1), 'porcentaje')  # 0% a 100%
-evaluacion = ctrl.Consequent(np.arange(0, 101, 1), 'evaluacion')  # 0% a 100%
+En este módulo se implementan las siguientes funcionalidades:
+- Definición de variables y reglas difusas para evaluar el rendimiento en tests.
+- Cálculo del desempeño del usuario usando lógica difusa (skfuzzy).
+- Generación de recomendaciones automáticas según el puntaje obtenido y los temas fallados.
+- Obtención de recomendaciones generales a partir del historial de tests de un usuario.
+- Integración con modelos de lenguaje (LM Studio, Qwen3-4B) para recomendaciones personalizadas y breves.
 
-# Funciones de membresía para aciertos
+Dependencias principales:
+- numpy
+- scikit-fuzzy (skfuzzy)
+- lmstudio (cliente para modelos de lenguaje)
+- json, os
+"""
+
+import numpy as np  # Librería para operaciones numéricas y manejo de arrays
+import skfuzzy as fuzz  # Librería para lógica difusa
+from skfuzzy import control as ctrl  # Módulo de control difuso
+import os  # Para operaciones del sistema de archivos
+import json  # Para leer y escribir archivos JSON
+import lmstudio  # Cliente para recomendaciones AI (LM Studio)
+
+# ===============================
+# Definición del sistema difuso para evaluación de desempeño
+# ===============================
+
+# Universo de variables difusas:
+# - aciertos: número de respuestas correctas (0 a 10)
+# - porcentaje: porcentaje de aciertos (0% a 100%)
+# - evaluacion: calificación final (0% a 100%)
+aciertos = ctrl.Antecedent(np.arange(0, 11, 1), 'aciertos')  # Número de aciertos: 0 a 10
+porcentaje = ctrl.Antecedent(np.arange(0, 101, 1), 'porcentaje')  # Porcentaje de aciertos: 0% a 100%
+evaluacion = ctrl.Consequent(np.arange(0, 101, 1), 'evaluacion')  # Evaluación final: 0% a 100%
+
+# Funciones de membresía para la variable 'aciertos'
+# - bajo: pocos aciertos (0-5)
+# - medio: cantidad intermedia de aciertos (2-8)
+# - alto: muchos aciertos (6-10)
 aciertos['bajo'] = fuzz.trimf(aciertos.universe, [0, 0, 5])
 aciertos['medio'] = fuzz.trimf(aciertos.universe, [2, 5, 8])
 aciertos['alto'] = fuzz.trimf(aciertos.universe, [6, 10, 10])
 
-# Funciones de membresía para porcentaje
+# Funciones de membresía para la variable 'porcentaje'
+# - bajo: bajo porcentaje de aciertos (0-50%)
+# - medio: porcentaje intermedio (30-80%)
+# - alto: alto porcentaje de aciertos (70-100%)
 porcentaje['bajo'] = fuzz.trimf(porcentaje.universe, [0, 0, 50])
 porcentaje['medio'] = fuzz.trimf(porcentaje.universe, [30, 60, 80])
 porcentaje['alto'] = fuzz.trimf(porcentaje.universe, [70, 100, 100])
 
-# Funciones de membresía para evaluación (más niveles)
+# Funciones de membresía para la variable 'evaluacion'
+# - muy_deficiente: desempeño muy bajo (0-25%)
+# - deficiente: desempeño bajo (15-45%)
+# - regular: desempeño regular (35-65%)
+# - bueno: buen desempeño (55-85%)
+# - excelente: desempeño sobresaliente (80-100%)
 evaluacion['muy_deficiente'] = fuzz.trimf(evaluacion.universe, [0, 0, 25])
 evaluacion['deficiente'] = fuzz.trimf(evaluacion.universe, [15, 30, 45])
 evaluacion['regular'] = fuzz.trimf(evaluacion.universe, [35, 50, 65])
 evaluacion['bueno'] = fuzz.trimf(evaluacion.universe, [55, 70, 85])
 evaluacion['excelente'] = fuzz.trimf(evaluacion.universe, [80, 100, 100])
 
-# Reglas difusas más finas
+# Reglas difusas para determinar la evaluación final
+# Cada regla combina los niveles de aciertos y porcentaje para asignar una evaluación
 rule1 = ctrl.Rule(aciertos['bajo'] & porcentaje['bajo'], evaluacion['muy_deficiente'])
 rule2 = ctrl.Rule(aciertos['bajo'] & porcentaje['medio'], evaluacion['deficiente'])
 rule3 = ctrl.Rule(aciertos['bajo'] & porcentaje['alto'], evaluacion['deficiente'])
@@ -38,25 +75,48 @@ rule7 = ctrl.Rule(aciertos['alto'] & porcentaje['bajo'], evaluacion['regular'])
 rule8 = ctrl.Rule(aciertos['alto'] & porcentaje['medio'], evaluacion['bueno'])
 rule9 = ctrl.Rule(aciertos['alto'] & porcentaje['alto'], evaluacion['excelente'])
 
+# Crear el sistema de control difuso y la simulación
+# sistema_ctrl: contiene todas las reglas
+# sistema: permite simular el sistema con valores de entrada
 sistema_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9])
 sistema = ctrl.ControlSystemSimulation(sistema_ctrl)
 
+
 def evaluate_performance(correct_count: int, total: int) -> float:
-    """
-    Evalúa el rendimiento usando lógica difusa robusta (scikit-fuzzy).
-    Devuelve un score entre 0 y 1.
+    """Evalúa el desempeño del usuario basado en el número de aciertos y el total de preguntas.
+
+    Args:
+        correct_count (int): Número de respuestas correctas.
+        total (int): Número total de preguntas.
+
+    Returns:
+        float: Desempeño del usuario en una escala de 0 a 1.
     """
     if total == 0:
-        return 0.0
-    porcentaje_val = (correct_count / total) * 100
-    sistema.input['aciertos'] = correct_count
-    sistema.input['porcentaje'] = porcentaje_val
-    sistema.compute()
-    resultado = sistema.output['evaluacion'] / 100.0
+        return 0.0  # Evita división por cero
+    porcentaje_val = (correct_count / total) * 100  # Calcula el porcentaje de aciertos
+    sistema.input['aciertos'] = correct_count  # Asigna aciertos al sistema difuso
+    sistema.input['porcentaje'] = porcentaje_val  # Asigna porcentaje al sistema difuso
+    sistema.compute()  # Realiza la inferencia difusa
+    resultado = sistema.output['evaluacion'] / 100.0  # Normaliza a escala 0-1
     return resultado
 
+
 def recommendation(score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
-    porcentaje = (correct_count / total) * 100 if total else 0
+    """
+    Genera una recomendación textual basada en el puntaje y los temas fallados.
+
+    Args:
+        score (float): Puntaje del usuario.
+        correct_count (int): Número de respuestas correctas.
+        total (int): Número total de preguntas.
+        temas_fallados (list, opcional): Lista de temas donde el usuario tuvo errores.
+
+    Returns:
+        str: Recomendación personalizada.
+    """
+    porcentaje = (correct_count / total) * 100 if total else 0  # Calcula el porcentaje
+    # Selecciona el mensaje base según el score
     if score < 0.25:
         msg = "Desempeño muy bajo. Es fundamental repasar los conceptos básicos y practicar ejercicios introductorios. Considera buscar apoyo adicional (videos, tutorías, grupos de estudio)."
     elif score < 0.45:
@@ -67,68 +127,135 @@ def recommendation(score: float, correct_count: int, total: int, temas_fallados:
         msg = "¡Buen trabajo! Solo algunos detalles por pulir. Refuerza los temas donde tuviste dudas y realiza autoevaluaciones para consolidar tu aprendizaje."
     else:
         msg = "¡Excelente! Dominio sobresaliente del tema. Puedes avanzar a nuevos retos y profundizar en contenidos avanzados."
+    # Si hay temas fallados, los agrega al mensaje
     if temas_fallados:
         msg += f" Temas a reforzar: {', '.join(set(temas_fallados))}."
+    # Agrega resumen de aciertos
     msg += f" Aciertos: {correct_count}/{total} ({porcentaje:.1f}%)."
     return msg
+
 
 def get_user_recommendations(user_folder: str):
     """
     Lee todas las recomendaciones de los tests de un usuario y genera una recomendación general.
+
+    Args:
+        user_folder (str): Ruta a la carpeta del usuario donde se encuentran los archivos de test.
+
+    Returns:
+        str: Recomendación general basada en el análisis de los tests.
     """
-    recomendaciones = []
+    recomendaciones = []  # Lista para almacenar recomendaciones
     if not os.path.isdir(user_folder):
         return "No hay datos suficientes para recomendar."
+    # Recorre los archivos de test del usuario
     for fname in os.listdir(user_folder):
         if fname.startswith('test_') and fname.endswith('.json'):
             with open(os.path.join(user_folder, fname), 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 rec = data.get('recomendacion')
-                if rec:
-                    recomendaciones.append(rec)
+                # Filtrar mensajes de error y limpiar etiquetas <think>
+                if rec and not rec.startswith('[Error:'):
+                    rec_limpia = rec.replace('<think>', '').replace('</think>', '').strip()
+                    if rec_limpia:
+                        recomendaciones.append(rec_limpia)
     if not recomendaciones:
         return "No hay recomendaciones registradas."
-    # Lógica simple: si la mayoría son excelentes, recomendación positiva, si no, sugerir repaso
+    # Si la mayoría de recomendaciones son excelentes, mensaje positivo
     excelentes = sum('excelente' in r.lower() for r in recomendaciones)
     if excelentes > len(recomendaciones) // 2:
         return "¡Tu progreso es excelente en la mayoría de materias! Sigue así."
     return "Sigue practicando y revisa los temas donde tuviste dificultades."
 
-async def ollama_recommendation_llama32(resultados_test: dict, prompt_extra: str = "") -> str:
+
+async def generar_recomendacion_qwen3(resultados_test: dict, prompt_extra: str = "") -> str:
     """
-    Genera una recomendación personalizada usando el modelo llama3.2:latest de Ollama.
+    Genera una recomendación personalizada usando el modelo Qwen3-4B de LM Studio (SDK oficial).
     resultados_test: dict con claves como 'correctas', 'incorrectas', 'temas_fallados', 'materia', etc.
     prompt_extra: texto adicional para personalizar el prompt (opcional).
+
+    Args:
+        resultados_test (dict): Resultados del test del usuario.
+        prompt_extra (str, opcional): Información adicional para el modelo.
+
+    Returns:
+        str: Recomendación generada por el modelo.
     """
+    # Construye un resumen de los resultados del usuario
     resumen_usuario = (
         f"Materia: {resultados_test.get('materia', 'N/A')}\n"
         f"Aciertos: {resultados_test.get('correctas', 0)} / {resultados_test.get('total', 10)}\n"
-        f"Temas fallados: {', '.join(resultados_test.get('temas_fallados', [])) if resultados_test.get('temas_fallados') else 'Ninguno'}\n"
         f"Porcentaje: {resultados_test.get('porcentaje', 0):.1f}%\n"
+        f"Temas fallados: {', '.join(resultados_test.get('temas_fallados', [])) if resultados_test.get('temas_fallados') else 'Ninguno'}\n"
     )
+    # Incluir detalles de cada pregunta fallada
+    preguntas_falladas = resultados_test.get('preguntas_falladas', [])
+    detalles_fallos = ""
+    if preguntas_falladas:
+        detalles_fallos = "Preguntas falladas y explicación de cada error:\n"
+        for i, pf in enumerate(preguntas_falladas, 1):
+            detalles_fallos += f"{i}. Pregunta: {pf.get('pregunta', '')}\n   Tu respuesta: {pf.get('respuesta_usuario', '')}\n   Respuesta correcta: {pf.get('respuesta_correcta', '')}\n   Explicación: {pf.get('explicacion', '')}\n   Tema: {pf.get('tema', '')}\n"
+    # Incluir historial de la materia en el prompt
+    historial = resultados_test.get('historial_materia', [])
+    historial_str = ""
+    if historial:
+        historial_str = "\nHistorial de tests previos en la materia (fecha, aciertos, errores, temas fallados):\n"
+        for h in historial:
+            temas = ', '.join(set(r.get('tema','') for r in h.get('preguntas_falladas',[]) if r.get('tema')))
+            historial_str += f"- {h['fecha']}: {h['correctas']} aciertos, {h['incorrectas']} errores, temas fallados: {temas}\n"
+    # Prompt para el modelo AI, pidiendo una recomendación personalizada, estructurada, densa y extensa
     prompt = (
-        "Eres un orientador académico universitario. Analiza el siguiente resultado de test y responde SOLO con una recomendación breve y concreta (máximo 3 frases), poca motivación, que puedes ofrecer más recursos, solo el consejo clave para mejorar en la materia y los temas fallados.\n"
+        "Eres un orientador académico universitario experto en retroalimentación personalizada. Analiza el siguiente resultado de test y el historial del usuario en la materia, y genera una recomendación estructurada, MUY DETALLADA, extensa y útil para el usuario. "
+        "La recomendación debe tener al menos 6 frases completas, ser clara, específica y abordar al menos dos errores concretos del usuario, citando la pregunta, la respuesta del usuario y la explicación correcta. Utiliza las explicaciones de cada pregunta fallada para dar consejos prácticos y personalizados. Evita frases genéricas, motivacionales o superficiales. Si quieres resaltar palabras o frases importantes, usa doble asterisco (**negrita**) y nunca uses asterisco simple (*). No uses listas markdown, solo frases separadas por punto. Si el usuario tiene un desempeño bajo, incluye referencias a recursos concretos (videos, libros, artículos, ejercicios interactivos) y explica cómo usarlos. Si el usuario repite errores, haz énfasis en la importancia de repasar esos temas."
+        "\n\nEstructura sugerida:\n"
+        "1. Introducción breve sobrae el desempeño general del usuario.\n"
+        "2. Menciona al menos dos errores concretos, citando la pregunta, la respuesta del usuario y la explicación correcta.\n"
+        "3. Da consejos prácticos y personalizados para mejorar en esos temas, usando la explicación de los errores.\n"
+        "4. Recomienda recursos concretos (videos, libros, ejercicios, artículos) y explica cómo aprovecharlos.\n"
+        "5. Si hay errores repetidos, resáltalos y sugiere estrategias para superarlos.\n"
+        "6. Cierra con una sugerencia concreta de acción o plan de estudio para el usuario.\n"
+        "\nEjemplo de formato:\n"
+        "Obtuviste un resultado bajo en el test, lo que indica que necesitas reforzar algunos conceptos clave. En la pregunta sobre el contexto de uso de la ciencia de datos, tu respuesta fue incorrecta; te recomiendo **revisar cómo se aplica en medicina, especialmente en el análisis de textos clínicos**. Además, confundiste la definición de ciencia de datos; **repasa la diferencia entre analizar datos y crear modelos predictivos**. Para mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas. Puedes buscar el video 'Introducción a la Ciencia de Datos' en YouTube y resolver ejercicios interactivos en plataformas como DataCamp. Si notas que repites errores en los mismos temas, dedica sesiones específicas de estudio y autoevaluación. Elabora un plan de repaso semanal para consolidar tu aprendizaje.\n"
         f"{resumen_usuario}\n"
+        f"{detalles_fallos}"
+        f"{historial_str}"
         f"{prompt_extra}\n"
-        "Recomendación breve:"
+        "Recomendación personalizada estructurada, extensa y detallada:"
     )
-    client = ollama.AsyncClient()
-    response = await client.generate(
-        model="llama3.2:latest",
-        prompt=prompt,
-        options={"temperature": 0.7, "num_ctx": 2048}
-    )
-    # Limitar a 2 frases
-    texto = response['response'].strip()
-    texto_corto = '.'.join(texto.split('.')[:2]).strip()
-    if not texto_corto.endswith('.'):
-        texto_corto += '.'
-    return texto_corto
+    # LM Studio SDK oficial con modelo Qwen3-4B Q4_K_M (sin pensamiento profundo)
+    model = lmstudio.llm("mistral-7b-instruct-v0.3")
+    # Forzar respuesta 100% en español y desactivar razonamiento profundo
+    chat = lmstudio.Chat("Responde únicamente en español, sin ninguna frase en inglés. Eres un orientador académico universitario experto en retroalimentación personalizada. /no_think")
+    chat.add_user_message(prompt)
+    response = model.respond(chat)
+    # Limpiar etiquetas <think> y </think> automáticamente
+    if isinstance(response, str):
+        response = response.replace('<think>', '').replace('</think>', '')
+        response = response.strip()
+        # Eliminar saltos de línea y espacios extra al inicio
+        while response.startswith('\n') or response.startswith(' '):
+            response = response[1:]
+        # Eliminar saltos de línea y espacios extra al final
+        while response.endswith('\n') or response.endswith(' '):
+            response = response[:-1]
+    # Retorna solo el texto de la respuesta limpio
+    return response
 
-async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
+
+async def recomendacion_fuzzy_con_qwen3(resultados_test: dict, score: float, correct_count: int, total: int, temas_fallados: list = None) -> str:
     """
-    Genera una recomendación personalizada usando la lógica difusa y la refina con llama3.2:latest.
+    Genera una recomendación personalizada usando la lógica difusa y la refina con Qwen3-4B.
     resultados_test: dict con claves como 'materia', 'correctas', 'incorrectas', 'temas_fallados', etc.
+
+    Args:
+        resultados_test (dict): Resultados del test del usuario.
+        score (float): Puntaje del usuario.
+        correct_count (int): Número de respuestas correctas.
+        total (int): Número total de preguntas.
+        temas_fallados (list, opcional): Lista de temas donde el usuario tuvo errores.
+
+    Returns:
+        str: Recomendación refinada generada por el modelo.
     """
     # Obtener recomendación difusa base
     rec_fuzzy = recommendation(score, correct_count, total, temas_fallados)
@@ -137,5 +264,248 @@ async def recomendacion_fuzzy_con_llama32(resultados_test: dict, score: float, c
     # Prompt extra con la recomendación difusa
     prompt_extra = f"Recomendación generada por el sistema de lógica difusa: {rec_fuzzy}"
     # Llamar al modelo para refinar la recomendación
-    recomendacion_final = await ollama_recommendation_llama32(resultados_test, prompt_extra=prompt_extra)
+    recomendacion_final = await generar_recomendacion_qwen3(resultados_test, prompt_extra=prompt_extra)
     return recomendacion_final
+
+def recommendation_features(respuestas, historial=None):
+    """
+    Devuelve el vector de features estructurado para recomendaciones avanzadas (tokenización robusta).
+    Args:
+        respuestas (list): Lista de dicts con claves: correcta, tema, dificultad, tipo_error, etc.
+        historial (list, opcional): Lista de tests previos.
+    Returns:
+        dict: Vector de features para LLM o análisis avanzado.
+    """
+    return evaluate_performance_features(respuestas, historial)
+
+# ===============================
+# Lógica difusa avanzada: granularidad, subtemas, tendencias y emociones
+# ===============================
+# Definición ÚNICA de variables difusas avanzadas
+aciertos = ctrl.Antecedent(np.arange(0, 11, 1), 'aciertos')
+porcentaje = ctrl.Antecedent(np.arange(0, 101, 1), 'porcentaje')
+evaluacion = ctrl.Consequent(np.arange(0, 101, 1), 'evaluacion')
+
+# Más niveles de membresía para granularidad
+aciertos['crítico'] = fuzz.trimf(aciertos.universe, [0, 0, 2])
+aciertos['muy_bajo'] = fuzz.trimf(aciertos.universe, [1, 2, 4])
+aciertos['bajo'] = fuzz.trimf(aciertos.universe, [3, 4, 6])
+aciertos['medio'] = fuzz.trimf(aciertos.universe, [5, 6, 8])
+aciertos['alto'] = fuzz.trimf(aciertos.universe, [7, 8, 9])
+aciertos['excelente'] = fuzz.trimf(aciertos.universe, [9, 10, 10])
+
+porcentaje['crítico'] = fuzz.trimf(porcentaje.universe, [0, 0, 20])
+porcentaje['muy_bajo'] = fuzz.trimf(porcentaje.universe, [10, 20, 40])
+porcentaje['bajo'] = fuzz.trimf(porcentaje.universe, [30, 40, 60])
+porcentaje['medio'] = fuzz.trimf(porcentaje.universe, [50, 60, 80])
+porcentaje['alto'] = fuzz.trimf(porcentaje.universe, [70, 85, 95])
+porcentaje['excelente'] = fuzz.trimf(porcentaje.universe, [90, 100, 100])
+
+evaluacion['crítico'] = fuzz.trimf(evaluacion.universe, [0, 0, 15])
+evaluacion['muy_bajo'] = fuzz.trimf(evaluacion.universe, [10, 20, 35])
+evaluacion['bajo'] = fuzz.trimf(evaluacion.universe, [25, 40, 55])
+evaluacion['medio'] = fuzz.trimf(evaluacion.universe, [45, 60, 75])
+evaluacion['alto'] = fuzz.trimf(evaluacion.universe, [65, 80, 90])
+evaluacion['excelente'] = fuzz.trimf(evaluacion.universe, [85, 95, 100])
+
+# Reglas difusas avanzadas (puedes expandirlas aún más si lo deseas)
+reglas_avanzadas = [
+    ctrl.Rule(aciertos['crítico'] | porcentaje['crítico'], evaluacion['crítico']),
+    ctrl.Rule(aciertos['muy_bajo'] | porcentaje['muy_bajo'], evaluacion['muy_bajo']),
+    ctrl.Rule(aciertos['bajo'] | porcentaje['bajo'], evaluacion['bajo']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['medio'], evaluacion['medio']),
+    ctrl.Rule(aciertos['alto'] & porcentaje['alto'], evaluacion['alto']),
+    ctrl.Rule(aciertos['excelente'] & porcentaje['excelente'], evaluacion['excelente']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['alto'], evaluacion['alto']),
+    ctrl.Rule(aciertos['alto'] & porcentaje['medio'], evaluacion['alto']),
+    ctrl.Rule(aciertos['bajo'] & porcentaje['medio'], evaluacion['bajo']),
+    ctrl.Rule(aciertos['medio'] & porcentaje['bajo'], evaluacion['bajo']),
+    # Puedes agregar reglas por subtema, dificultad, tendencia, tipo de error, etc.
+]
+
+sistema_ctrl = ctrl.ControlSystem(reglas_avanzadas)
+sistema = ctrl.ControlSystemSimulation(sistema_ctrl)
+
+# ===============================
+# Tokenización y features avanzados para LLM
+# ===============================
+def evaluate_performance_features(respuestas, historial=None):
+    """
+    Analiza el desempeño del usuario usando lógica difusa avanzada y devuelve un diccionario de features/tokenización para LLM.
+    Incluye granularidad por subtema, dificultad, tipo de error, tendencias, emociones, evolución temporal y más.
+    """
+    temas = {}
+    subtemas = {}
+    tipos_error = set()
+    dificultad_fallada = set()
+    dificultad_stats = {}
+    error_stats = {}
+    patrones = set()
+    total = len(respuestas)
+    correctas = sum(1 for r in respuestas if r.get('correcta'))
+    incorrectas = total - correctas
+    # Tokenización por tema, subtema y nivel difuso
+    for r in respuestas:
+        tema = r.get('tema', 'general')
+        subtema = r.get('subtema', None)
+        dificultad = r.get('dificultad', None)
+        tipo_error = r.get('tipo_error', None)
+        if tema not in temas:
+            temas[tema] = {'aciertos': 0, 'errores': 0}
+        if subtema:
+            if subtema not in subtemas:
+                subtemas[subtema] = {'aciertos': 0, 'errores': 0}
+        if dificultad:
+            if dificultad not in dificultad_stats:
+                dificultad_stats[dificultad] = {'aciertos': 0, 'errores': 0}
+        if tipo_error:
+            if tipo_error not in error_stats:
+                error_stats[tipo_error] = {'aciertos': 0, 'errores': 0}
+        if r.get('correcta'):
+            temas[tema]['aciertos'] += 1
+            if subtema:
+                subtemas[subtema]['aciertos'] += 1
+            if dificultad:
+                dificultad_stats[dificultad]['aciertos'] += 1
+            if tipo_error:
+                error_stats[tipo_error]['aciertos'] += 1
+        else:
+            temas[tema]['errores'] += 1
+            if subtema:
+                subtemas[subtema]['errores'] += 1
+            if dificultad:
+                dificultad_fallada.add(dificultad)
+                dificultad_stats[dificultad]['errores'] += 1
+            if tipo_error:
+                tipos_error.add(tipo_error)
+                error_stats[tipo_error]['errores'] += 1
+    # Calcular nivel difuso por tema y subtema
+    def nivel_difuso(aciertos, errores):
+        total = aciertos + errores
+        if total == 0:
+            return 'sin_datos'
+        ratio = aciertos / total
+        if ratio < 0.15:
+            return 'crítico'
+        elif ratio < 0.3:
+            return 'muy_bajo'
+        elif ratio < 0.5:
+            return 'bajo'
+        elif ratio < 0.7:
+            return 'medio'
+        elif ratio < 0.9:
+            return 'alto'
+        elif ratio < 0.98:
+            return 'excelente'
+        else:
+            return 'sobresaliente'
+    temas_nivel = {tema: nivel_difuso(vals['aciertos'], vals['errores']) for tema, vals in temas.items()}
+    subtemas_nivel = {subtema: nivel_difuso(vals['aciertos'], vals['errores']) for subtema, vals in subtemas.items()}
+    dificultad_nivel = {dif: nivel_difuso(vals['aciertos'], vals['errores']) for dif, vals in dificultad_stats.items()}
+    error_nivel = {err: nivel_difuso(vals['aciertos'], vals['errores']) for err, vals in error_stats.items()}
+    # Nivel global difuso
+    ratio_global = correctas / total if total else 0
+    if ratio_global < 0.15:
+        nivel_global = 'crítico'
+    elif ratio_global < 0.3:
+        nivel_global = 'muy_bajo'
+    elif ratio_global < 0.5:
+        nivel_global = 'bajo'
+    elif ratio_global < 0.7:
+        nivel_global = 'medio'
+    elif ratio_global < 0.9:
+        nivel_global = 'alto'
+    elif ratio_global < 0.98:
+        nivel_global = 'excelente'
+    else:
+        nivel_global = 'sobresaliente'
+    # Patrones: repite errores, confunde definiciones, tendencia de mejora/retroceso
+    if historial:
+        temas_hist = set()
+        for h in historial:
+            for r in h.get('respuestas', []):
+                if not r.get('correcta') and r.get('tema'):
+                    temas_hist.add(r['tema'])
+        temas_fallados_actual = {t for t, n in temas_nivel.items() if n in ['crítico', 'muy_bajo', 'bajo']}
+        if temas_fallados_actual & temas_hist:
+            patrones.add('repite_errores')
+        # Progreso global y por tema
+        if len(historial) >= 2:
+            prev = historial[-2]
+            prev_score = prev.get('correctas', 0) / (prev.get('correctas', 0) + prev.get('incorrectas', 0) or 1)
+            if ratio_global > prev_score + 0.1:
+                progreso = 'mejora'
+            elif ratio_global < prev_score - 0.1:
+                progreso = 'retroceso'
+            else:
+                progreso = 'estancamiento'
+        else:
+            progreso = 'sin_datos'
+    else:
+        progreso = 'sin_datos'
+    # Estado emocional inferido avanzado
+    if ratio_global < 0.15:
+        estado_emocional = 'frustrado'
+    elif ratio_global < 0.3:
+        estado_emocional = 'inseguro'
+    elif ratio_global < 0.5:
+        estado_emocional = 'preocupado'
+    elif ratio_global > 0.9:
+        estado_emocional = 'confiado'
+    elif ratio_global > 0.7:
+        estado_emocional = 'motivado'
+    else:
+        estado_emocional = 'neutral'
+    # Evolución temporal (si hay historial)
+    evolucion = []
+    if historial:
+        for h in historial:
+            score_hist = h.get('correctas', 0) / (h.get('correctas', 0) + h.get('incorrectas', 0) or 1)
+            evolucion.append({
+                'fecha': h.get('fecha', ''),
+                'score': round(score_hist, 3),
+                'temas_fallados': [r.get('tema') for r in h.get('respuestas', []) if not r.get('correcta')]
+            })
+    # Vector de features final
+    return {
+        'temas': temas,
+        'subtemas': subtemas,
+        'tipos_error': list(tipos_error),
+        'dificultad_fallada': list(dificultad_fallada),
+        'dificultad_stats': dificultad_stats,
+        'error_stats': error_stats,
+        'patrones': list(patrones),
+        'total': total,
+        'correctas': correctas,
+        'incorrectas': incorrectas,
+        'nivel_global': nivel_global,
+        'temas_nivel': temas_nivel,
+        'subtemas_nivel': subtemas_nivel,
+        'dificultad_nivel': dificultad_nivel,
+        'error_nivel': error_nivel,
+        'progreso': progreso,
+        'estado_emocional': estado_emocional,
+        'evolucion': evolucion
+    }
+
+def resumen_recomendacion(recomendacion: str, max_chars: int = 220) -> str:
+    """
+    Extrae el resumen más importante de la recomendación para mostrar en el dashboard.
+    - Toma la primera frase relevante (hasta el primer punto y seguido) o corta a max_chars.
+    - Elimina saltos de línea y espacios extra.
+    """
+    if not isinstance(recomendacion, str):
+        return ''
+    texto = recomendacion.replace('\n', ' ').replace('  ', ' ').strip()
+    # Busca el primer punto y seguido después de 60 caracteres (para evitar frases introductorias muy cortas)
+    punto = texto.find('.', 60)
+    if punto != -1:
+        resumen = texto[:punto+1]
+    else:
+        resumen = texto[:max_chars]
+    # Si el resumen es muy corto, amplía hasta el siguiente punto
+    if len(resumen) < 60 and len(texto) > max_chars:
+        punto2 = texto.find('.', max_chars)
+        if punto2 != -1:
+            resumen = texto[:punto2+1]
+    return resumen.strip()

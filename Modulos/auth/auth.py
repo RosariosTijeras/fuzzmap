@@ -1,182 +1,153 @@
 """
-Modulo para autentificar, registrar y guardar usuarios
-Ruta de este archivo: Modulos/ui/auth.py
+Modulo para la autentificacion, registro y para guardar la informacion de los usuarios
+Ruta de este archivo: Modulos/auth/auth.py
+
+En este modulo cree las siguiente funciones:
+- funcion para el registro de nuevos usuarios
+- funcion para el loguin de usuarios ya creados
+- funcion para el convertir las contraseñas en hash SHA256
+- funcion para guardar los datos del usuario en un archivo JSON
+
 """
 
-import json # se usa para leer y guardar informacion de los usuarios en un archivo json
-import hashlib # se usa para encriptar la contrasena del usuario
-from pathlib import Path # se usa para cargar el json desde la carpeta de datos
+import json  # libreria para leer y guardar la información de los usuarios en formato JSON
+import hashlib  # libreria para encriptar las contraseñas usando SHA256
+from pathlib import Path  # libreria para manejar rutas de archivos de forma dinamica
 
-"""
-la funcion Path() crea una ruta a un archivo o carpeta
-en este caso, la ruta es "Datos/users.json"
-por lo tanto carga el archivo users.json desde la carpeta Datos
-"""
-archivo_usuario = Path("Datos") / "users.json"
+# esta es la ruta al archivo JSON donde se guardan a los usuarios
+archivo_usuario = Path ("Datos") / "users.json"
+                  # Path("Datos") / "users.json" es una forma de crear una ruta relativa al directorio actual del script
+                  # para que sea dinamico a pesar de la estructura de las carpetas
 
+def _cargar_usuarios () -> dict:
+    """
+    Carga y devuelve el diccionario de usuarios desde el archivo JSON.
 
-# Cargar el archivo JSON de usuarios
-def _cargar_usuarios () -> dict: # retorna un diccionario
+    Returns:
+        dict: Diccionario con los usuarios registrados. Si el archivo no existe o está vacío, retorna un diccionario vacío.
+
+    Example:
+        >>> usuarios = _cargar_usuarios ()
+        >>> print (usuarios)
+        {'usuario1': {'usuario': 'usuario1', 'contrasena': '...', 'nombre': '...', ...}}
+    """
+    # Verifica si el archivo de usuarios existe
     
-    """
-    lee y devuelve el contenido de archivo_usuario como un diccionario
-    {
-        usuario1: {
-            "usuario": "usuario1",
-            "contrasena": "contrasena1"
-            "nombre": "Nombre1",
-            "apellido": "Apellido1",
-        },
-        usuario2: {
-            "usuario": "usuario2",
-            "contrasena": "contrasena2"
-            "nombre": "Nombre2",
-            "apellido": "Apellido2",
-        }
-    }
-    si el archivo no existe o esta vacio, devuelve un diccionario vacio {}
-    """
     if not archivo_usuario.exists():
         
-        # si nunca se registro un usuario retorna un diccionario vacio
+        # Si nunca se registro un usuario, retorna un diccionario vacío
         return {}
-    
+
     else:
         
-        # lee el archivo como texto y encoding es para evitar errores de codificacion
+        # Lee el archivo como texto (UTF-8 para soportar caracteres especiales)
         datos_raw = archivo_usuario.read_text(encoding="utf-8")
         
-        # si el archivo esta vacio, retorna un diccionario vacio
+        # Si el archivo está vacío, retorna un diccionario vacío
         if not datos_raw:
             
             return {}
-    
-        # parsear el contenido del archivo JSON a un diccionario
-        return json.loads(datos_raw)
-    
-# Guardar el archivo JSON de usuarios
-def _guardar_usuarios (usuarios: dict) -> None:
-    
-    """
-    Guarda el diccionario de usuarios en archivo_usuario como un archivo JSON
-    con la siguiente estructura.
-    {
-        usuario1: {
-            "usuario": "usuario1",
-            "contrasena": "contrasena1"
-            "nombre": "Nombre1",
-            "apellido": "Apellido1",
-        },
-        usuario2: {
-            "usuario": "usuario2",
-            "contrasena": "contrasena2"
-            "nombre": "Nombre2",
-            "apellido": "Apellido2",
-        }
-    }
-    """
-    
-    
-    # serializamos el diccionario a un string JSON
-    # osea que convertimos el diccionario a un string JSON
-    datos_json = json.dumps(usuarios, indent=2, ensure_ascii=False)
-    """
-    la funcion json.dumps: convierte un diccionario a un string JSON
-    y como argmentos le pasamos:
-    - usuarios: que es el diccionario a convertir
-    - indent=2: para que el json tenga una sangria de 2 espacios
-    - ensure_ascii=False: para que el json soporte caracteres especiales
-    """
-    # y ahora escribimos el string JSON en el archivo
-    # en caso de no exitir el archivo, lo crea
-    archivo_usuario.write_text(datos_json, encoding="utf-8")
-    """
-    la funcion write_text: escribe un string en un archivo
-    y como argmentos le pasamos:
-    - datos_json: que es el string JSON a escribir
-    - encoding="utf-8": para evitar errores de codificacion, utf-8 es el encoding mas comun
-    """
-    
-# Función para encriptar la contraseña
-def hash_contrasena (contrasena: str) -> str:
-    
-    """
-    encripta la contrasena del usuario
-    y retorna un hash SHA256 de la contrasena
-    """
-    # codificamos la contrasena a bytes
-    return hashlib.sha256(contrasena.encode("utf-8")).hexdigest()
-    """
-    la funcion hashlib.sha256: crea un hash SHA256 de la contrasena
-    y como argmentos le pasamos:
-    - contrasena.encode("utf-8"): que es la contrasena a encriptar
-    - hexdigest(): convierte el hash a un string hexadecimal
-    """
-
-
-# Función para registrar un nuevo usuario
-def registrar_usuario (usuario: str, contrasena: str, nombre: str, apellido: str, edad: int, sexo: str) -> bool:
-    
-    """
-    registra un nuevo usuario con los siguientes parametros:
-        - usuario: el nombre de usuario
-        - contrasena: la contrasena del usuario
-        - nombre: el nombre del usuario
-        - apellido: el apellido del usuario
-        - edad: la edad del usuario
-        - sexo: el sexo del usuario
-    y retorna True si el registro fue exitoso
-    o False si el usuario ya existe
-    """
-    
-    # se carga el archivo de usuarios
-    # para comprobar si el usuario ya existe
-    usuarios = _cargar_usuarios()
-    
-    if usuario in usuarios:
         
-        # si el usuario ya existe, retorna False
+        # Convierte el contenido JSON a un diccionario de Python
+        return json.loads(datos_raw)
+
+
+def _guardar_usuarios(usuarios: dict) -> None:
+    """
+    Guarda el diccionario de usuarios en el archivo JSON.
+
+    Args:
+        usuarios (dict): Diccionario con los datos de los usuarios.
+
+    Example:
+        >>> _guardar_usuarios({'usuario1': {...}})
+    """
+    # Serializa el diccionario a un string JSON con indentación y soporte UTF-8
+    datos_json = json.dumps(usuarios, indent=2, ensure_ascii=False)
+    # Escribe el string JSON en el archivo (crea el archivo si no existe)
+    archivo_usuario.write_text(datos_json, encoding="utf-8")
+
+
+def hash_contrasena(contrasena: str) -> str:
+    """
+    Genera un hash SHA256 de la contraseña proporcionada.
+
+    Args:
+        contrasena (str): Contraseña en texto plano.
+
+    Returns:
+        str: Hash hexadecimal de la contraseña.
+
+    Example:
+        >>> hash_contrasena('mi_password')
+        '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
+    """
+    # Codifica la contraseña a bytes y genera el hash SHA256
+    return hashlib.sha256(contrasena.encode("utf-8")).hexdigest()
+
+
+def registrar_usuario(usuario: str, contrasena: str, nombre: str, apellido: str, edad: int, sexo: str) -> bool:
+    """
+    Registra un nuevo usuario en el sistema.
+
+    Args:
+        usuario (str): Nombre de usuario único.
+        contrasena (str): Contraseña del usuario.
+        nombre (str): Nombre real del usuario.
+        apellido (str): Apellido del usuario.
+        edad (int): Edad del usuario.
+        sexo (str): Sexo del usuario.
+
+    Returns:
+        bool: True si el registro fue exitoso, False si el usuario ya existe.
+
+    Example:
+        >>> registrar_usuario('juan', '1234', 'Juan', 'Pérez', 20, 'M')
+        True
+    """
+    # Carga los usuarios existentes para comprobar si el usuario ya existe
+    usuarios = _cargar_usuarios()
+    if usuario in usuarios:
+        # Si el usuario ya existe, retorna False
         return False
     else:
-        # si el usuario no existe, lo agrega al diccionario
+        # Si el usuario no existe, lo agrega al diccionario con los datos y la contraseña encriptada
         usuarios[usuario] = {
             "usuario": usuario,
-            "contrasena": hash_contrasena(contrasena),
+            "contrasena": hash_contrasena(contrasena),  # Guarda la contraseña encriptada
             "nombre": nombre,
             "apellido": apellido,
             "edad": edad,
             "sexo": sexo
         }
-        
-        # y guarda el diccionario en el archivo JSON
+        # Guarda el diccionario actualizado en el archivo JSON
         _guardar_usuarios(usuarios)
-        
-        # retorna True si el registro fue exitoso
+        # Retorna True si el registro fue exitoso
         return True
-    
-# funcion para autentificar el acceso de un usuario
-def autenticar_usuario (usuario: str, contrasena: str) -> bool:
+
+
+def autenticar_usuario(usuario: str, contrasena: str) -> bool:
     """
-    autentifica el acceso de un usuario con los siguientes parametros:
-        - usuario: el nombre de usuario
-        - contrasena: la contrasena del usuario
-    y retorna True si el usuario existe y la contrasena es correcta
-    o False si el usuario no existe o la contrasena es incorrecta
+    Autentica el acceso de un usuario.
+
+    Args:
+        usuario (str): Nombre de usuario.
+        contrasena (str): Contraseña en texto plano.
+
+    Returns:
+        bool: True si la autenticación es exitosa, False en caso contrario.
+
+    Example:
+        >>> autenticar_usuario('juan', '1234')
+        True
     """
-    
-    # primero se carga el archivo de usuarios
+    # Carga los usuarios registrados
     usuarios = _cargar_usuarios()
-    
-    # si el usuario no existe, retorna False
+    # Si el usuario no existe, retorna False
     if usuario not in usuarios:
-        
         return False
-    
-    else: 
-        
+    else:
+        # Obtiene el hash almacenado y compara con el hash de la contraseña ingresada
         store_hash = usuarios[usuario]["contrasena"]
         return hash_contrasena(contrasena) == store_hash
-        """
-        si el hash de la contrasena es igual al hash guardado en el archivo
-        entonces la contrasena es correcta y retorna True caso contrario retorna False
-        """
+        # Si el hash coincide, la autenticación es exitosa
