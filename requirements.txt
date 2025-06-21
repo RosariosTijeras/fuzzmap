@@ -33,3 +33,7 @@ jupyter
 
 # Cliente para integración con modelos LmStudio (instalación manual si es necesario)
 lmstudio  # No se instala por pip, es externo
+
+# Visualización interactiva de datos
+plotly
+plotly[express]  # Extensión para gráficos rápidos y sencillos con plotly
