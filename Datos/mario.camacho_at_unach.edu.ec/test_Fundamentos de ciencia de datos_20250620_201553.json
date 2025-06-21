@@ -1,0 +1,81 @@
+{
+  "materia": "Fundamentos de ciencia de datos",
+  "fecha": "20/06/2025 20:15:53",
+  "respuestas": [
+    {
+      "correcta": false,
+      "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
+      "pregunta": "¿Qué es la inteligencia artificial?",
+      "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
+      "respuesta_usuario": "A) La capacidad de una computadora para realizar un cálculo."
+    },
+    {
+      "correcta": false,
+      "explicacion": "El agrupamiento K-means es un algoritmo de aprendizaje no supervisado que busca dividir un conjunto de observaciones en K grupos, minimizando la suma de las distancias cuadradas entre las observaciones y los centros de los grupos.",
+      "pregunta": "¿Cuál de los siguientes es un ejemplo de un algoritmo de aprendizaje no supervisado?",
+      "respuesta_correcta": "A) Agrupamiento K-means",
+      "respuesta_usuario": "B) Regresión lineal"
+    },
+    {
+      "correcta": false,
+      "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+      "pregunta": "¿Qué es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "respuesta_usuario": "C) La ciencia de datos es una disciplina de filosofía y psicología que estudia cómo los seres humanos se comportan y pensan."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La UNIVAC I (Universal Automatic Computer I) fue la primera computadora ampliamente utilizada para fines comerciales. Fue desarrollada por John Mauchly y J. Presper Eckert a finales de la década de 1940.",
+      "pregunta": "¿Cuál de las siguientes afirmaciones es correcta sobre la evolución de la computación?",
+      "respuesta_correcta": "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
+      "respuesta_usuario": "B) La primera computadora fue inventada por Charles Babbage en el siglo XIX."
+    },
+    {
+      "correcta": true,
+      "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
+      "pregunta": "Que es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "respuesta_usuario": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones."
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
+      "pregunta": "En qué contexto se utiliza la ciencia de datos?",
+      "respuesta_correcta": "A) Para el análisis de textos clínicos.",
+      "respuesta_usuario": "B) Para crear técnicas de segmentación impulsadas por aprendizaje automático."
+    },
+    {
+      "correcta": true,
+      "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
+      "pregunta": "En qué áreas del conocimiento científico son más importantes los métodos de aprendizaje automático?",
+      "respuesta_correcta": "D) En medicina",
+      "respuesta_usuario": "D) En medicina"
+    },
+    {
+      "correcta": false,
+      "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
+      "pregunta": "Cuál es la definición de ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
+      "respuesta_usuario": "B) La ciencia de datos se dedica a crear modelos complejos que se mejoran al pasar tiempo."
+    },
+    {
+      "correcta": true,
+      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+      "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+      "respuesta_correcta": "C) Patrones de relación entre variables",
+      "respuesta_usuario": "C) Patrones de relación entre variables"
+    },
+    {
+      "pregunta": "¿Cuál es el objetivo de la inteligencia artificial?",
+      "respuesta_usuario": "C) Usar datos en el análisis de texto clínico y bases de datos médicas para desarrollar técnicas de diagnóstico médico.",
+      "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
+      "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
+      "correcta": false
+    }
+  ],
+  "correctas": 3,
+  "incorrectas": 7,
+  "score": 3,
+  "fuzzy_score": 0.21944444444444447,
+  "recomendacion": " Obtuviste un desempeño muy bajo en el test de Fundamentos de Ciencia de Datos, lo que indica que necesitas reforzar algunos conceptos clave. En particular, te recomiendo enfocarte en dos errores concretos:\n\n1. Pregunta sobre la definición de Inteligencia Artificial (IA): Tu respuesta fue incorrecta, creyendo que la IA es 'La capacidad de una computadora para realizar un cálculo', cuando la respuesta correcta es 'Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora'. Para mejorar, **repasa el concepto clásico de IA y sus diferencias con respecto a los cálculos simples que una computadora puede realizar**.\n2. Pregunta sobre la ciencia de datos (CD): Tu respuesta fue incorrecta, creyendo que CD es 'La ciencia de datos es una disciplina de filosofía y psicología que estudia cómo los seres humanos se comportan y pensan'. La respuesta correcta es 'La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos'. **Repasa el concepto clásico de CD y sus diferencias con respecto al análisis de la conducta humana**.\n\nPara mejorar, realiza ejercicios prácticos y consulta materiales adicionales sobre estos temas. Puedes buscar el video 'Introducción a Inteligencia Artificial' en YouTube y resolver ejercicios interactivos en plataformas como Coursera o edX. Si notas que repites errores en los mismos temas, dedicate sesiones específicas de estudio y autoevaluación. Elabora un plan de estudio semanal para consolidar tu aprendizaje.\n\nTambién te recomiendo practicar técnicas de memorización y repetir tus errores en cada sesión de estudio. Si necesitas más ayuda, considera solicitar una tutoría adicional o buscar grupos de estudios en línea que puedan ofrecer más recursos y soporte.\n\nPor último, te sugerimos seguir un plan de estudio semanal basado en la siguiente estructura:\n\n* Lunes: Revisar conceptos básicos (Inteligencia Artificial y Ciencia de Datos)\n* Miércoles: Revisar técnicas de memorización y practicar ejercicios\n* Viernes: Repasar errores y temas difíciles\n* Sábado: Solucionar problemas reales y aplicados en prácticas\n\nCon este plan de estudio semanal, esperamos que puedas mejorar significativamente en el próximo test. Buena suerte!"
+}
