@@ -1,0 +1,205 @@
+{
+    "materia": "Habilidades_Vida",
+    "preguntas": [
+        {
+            "numero": 1,
+            "pregunta": "¿Cuál es una diferencia clave entre el estrés agudo y el estrés crónico según el texto?",
+            "opciones": [
+                "a) El estrés agudo es beneficioso, mientras que el crónico siempre es dañino",
+                "b) El estrés agudo es una respuesta a estímulos inmediatos, mientras que el estrés crónico se desarrolla por exigencias prolongadas",
+                "c) El estrés agudo afecta solo a la mente, mientras que el crónico afecta solo al cuerpo"
+            ],
+            "respuesta_correcta": "b) El estrés agudo es una respuesta a estímulos inmediatos, mientras que el estrés crónico se desarrolla por exigencias prolongadas"
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Qué distingue a la ansiedad social de otros tipos de ansiedad?",
+            "opciones": [
+                "a) El temor focalizado en situaciones sociales específicas",
+                "b) La preocupación excesiva por la salud física",
+                "c) La evitación de actividades académicas"
+            ],
+            "respuesta_correcta": "a) El temor focalizado en situaciones sociales específicas"
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Cuál de las siguientes es una característica del estrés agudo en la vida universitaria?",
+            "opciones": [
+                "a) Persistente y no asociada a eventos específicos",
+                "b) Transitorio y puede ser adaptativo",
+                "c) Prolongado y siempre perjudicial"
+            ],
+            "respuesta_correcta": "b) Transitorio y puede ser adaptativo"
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Cuál es el primer paso para practicar la técnica de relajación muscular progresiva según el texto?",
+            "opciones": [
+                "a) Tensa cada grupo muscular de forma gradual durante unos 5 segundos",
+                "b) Encuentra un lugar tranquilo para sentarte o acostarte tranquilo para sentarte o acostarte,",
+                "c) Relaja el músculo lentamente"
+            ],
+            "respuesta_correcta": "b) Encuentra un lugar tranquilo para sentarte o acostarte tranquilo para sentarte o acostarte,"
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿Cuál es el impacto general de la ansiedad en la vida universitaria, según el texto?",
+            "opciones": [
+                "a) Aumento de la resiliencia académica",
+                "b) Impacto negativo en el bienestar psicológico y rendimiento académico",
+                "c) Mejora del bienestar psicológico"
+            ],
+            "respuesta_correcta": "b) Impacto negativo en el bienestar psicológico y rendimiento académico"
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Cuál de las siguientes técnicas se menciona como efectiva para aliviar tensiones y promover la calma?",
+            "opciones": [
+                "a) Meditación trascendental",
+                "b) Ejercicio físico intenso.",
+                "c) Respiración profunda"
+            ],
+            "respuesta_correcta": "c) Respiración profunda"
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿Qué puede ocurrir si el estrés crónico no se maneja adecuadamente?",
+            "opciones": [
+                "a) Puede mejorar la capacidad física del individuo",
+                "b) Puede desencadenar trastornos cardiovasculares y alteraciones psicológicas",
+                "c) Puede aumentar la productividad en el trabajo a largo plazo"
+            ],
+            "respuesta_correcta": "b) Puede desencadenar trastornos cardiovasculares y alteraciones psicológicas"
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Cuál es el primer paso para practicar la técnica de respiración profunda según el texto?",
+            "opciones": [
+                "a) Exhalar lentamente por la boca",
+                "b) Mantener la respiración durante unos segundos",
+                "c) Sentarse en una posición cómoda con la espalda recta posición cómoda con la espalda recta,"
+            ],
+            "respuesta_correcta": "c) Sentarse en una posición cómoda con la espalda recta posición cómoda con la espalda recta,"
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Por qué es importante la capacidad de adaptarse a los cambios y aprender de nuevas experiencias en un entorno académico exigente?",
+            "opciones": [
+                "a) Porque evita cualquier tipo de estrés",
+                "b) Porque es crucial para enfrentar retos académicos y personales",
+                "c) Porque asegura el éxito sin necesidad de apoyo externo"
+            ],
+            "respuesta_correcta": "b) Porque es crucial para enfrentar retos académicos y personales"
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿En qué contexto un estudiante podría aplicar la técnica de relajación muscular progresiva según el ejemplo práctico proporcionado?",
+            "opciones": [
+                "a) Antes de iniciar un examen",
+                "b) Durante una exposición oral",
+                "c) Tras largas horas de estudio horas de estudio"
+            ],
+            "respuesta_correcta": "c) Tras largas horas de estudio horas de estudio"
+        },
+        {
+            "numero": 1,
+            "pregunta": "¿Qué se recomienda hacer si la mente se distrae durante la práctica de mindfulness?",
+            "opciones": [
+                "a) Terminar la sesión de meditación",
+                "b) Redirigir gentilmente la atención a la respiración",
+                "c) Ignorar la distracción"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Cómo se define la ansiedad según Williams, T.?",
+            "opciones": [
+                "a) Como una respuesta exclusivamente somática ante situaciones de peligro",
+                "b) Como una respuesta emocional caracterizada por una preocupación y temor desproporcionados",
+                "c) Como una respuesta emocional caracterizada por una preocupación racional."
+            ],
+            "respuesta_correcta": "b) Como una respuesta emocional caracterizada por una preocupación y temor desproporcionados"
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Cuál es la principal diferencia entre el estrés y la ansiedad en el contexto universitario?",
+            "opciones": [
+                "a) El estrés siempre es perjudicial, mientras que la ansiedad es siempre positiva",
+                "b) El estrés está relacionado con el miedo, mientras que la ansiedad con la tristeza",
+                "c) El estrés es una reacción ante demandas específicas, mientras que la ansiedad es una preocupación persistente no siempre vinculada a una amenaza objetiva"
+            ],
+            "respuesta_correcta": "c) El estrés es una reacción ante demandas específicas, mientras que la ansiedad es una preocupación persistente no siempre vinculada a una amenaza objetiva"
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Qué actividad se menciona en el texto como parte de la práctica del auto-cuidado?",
+            "opciones": [
+                "a) Establecer metas académicas claras",
+                "b) Mantener un equilibrio entre estudio, descanso y ocio entre estudio, descanso y ocio",
+                "c) Participar en actividades extracurriculares"
+            ],
+            "respuesta_correcta": "b) Mantener un equilibrio entre estudio, descanso y ocio entre estudio, descanso y ocio"
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿Qué se recomienda hacer después de llenar el abdomen con aire durante la técnica de respiración profunda?",
+            "opciones": [
+                "a) Mantener la respiración durante unos segundos",
+                "b) Exhalar rápidamente",
+                "c) Inhalar más aire"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Cuál de los siguientes síntomas es común en individuos con ansiedad generalizada?",
+            "opciones": [
+                "a) Fatiga y dificultades de concentración",
+                "b) Evasión de actividades físicas intensas",
+                "c) Sentimientos de euforia"
+            ],
+            "respuesta_correcta": "a) Fatiga y dificultades de concentración"
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿En qué situación podría un estudiante aplicar la técnica de respiración profunda según el ejemplo práctico proporcionado?",
+            "opciones": [
+                "a) Durante una clase teórica",
+                "b) Antes de una presentación importante",
+                "c) Al finalizar un examen"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Qué caracteriza a la ansiedad generalizada?",
+            "opciones": [
+                "a) Un miedo intenso a situaciones sociales específicas",
+                "b) Evitación de todas las actividades sociales",
+                "c) Preocupación persistente y excesiva sobre diversos aspectos de la vida cotidiana"
+            ],
+            "respuesta_correcta": "c) Preocupación persistente y excesiva sobre diversos aspectos de la vida cotidiana"
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Cuánto tiempo se recomienda realizar la práctica de mindfulness y meditación según el texto?",
+            "opciones": [
+                "a) 10-15 minutos",
+                "b) 5-10 minutos durante",
+                "c) 20-30 minutos"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿Cuál es un síntoma común de la ansiedad social en estudiantes universitarios?",
+            "opciones": [
+                "a) Motivación para enfrentar desafíos sociales",
+                "b) Mejora en la participación en actividades grupales",
+                "c) Evitación de presentaciones orales por temor a la evaluación negativa"
+            ],
+            "respuesta_correcta": "c) Evitación de presentaciones orales por temor a la evaluación negativa"
+        }
+    ]
+}
