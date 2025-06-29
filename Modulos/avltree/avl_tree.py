@@ -1,579 +1,291 @@
-"""
-Implementacion de estructuras de datos para FuzzMap
-
-Este modulo contiene:
-1. Implementacion completa de un Arbol AVL para almacenar y organizar preguntas
-2. Algoritmos de ordenamiento (Merge Sort) y busqueda (Binary Search)
-3. Funciones auxiliares para manejo de datos educativos
-"""
-
-## ----------------------------
-## Clase AVLNode
-## ----------------------------
-
 class AVLNode:
-    """
-    Representa un nodo en el arbol AVL.
-    
-    Atributos:
-        data (dict): Diccionario con los datos de la pregunta (id, pregunta, respuesta, materia)
-        left (AVLNode): Hijo izquierdo del nodo
-        right (AVLNode): Hijo derecho del nodo
-        height (int): Altura del nodo en el arbol
-        questions_by_subject (dict): Indice secundario que agrupa preguntas por materia
-    """
-    
     def __init__(self, data):
-        """
-        Inicializa un nuevo nodo AVL.
-        
-        Args:
-            data (dict): Datos de la pregunta a almacenar en el nodo
-        """
-        self.data = data  # Diccionario con los datos de la pregunta
-        self.left = None  # Referencia al hijo izquierdo
-        self.right = None  # Referencia al hijo derecho
-        self.height = 1   # Altura inicial del nodo (1 para nodos hoja)
-        self.questions_by_subject = {}  # Indice de preguntas por materia
+        # Inicializa un nodo AVL con datos, punteros a hijos izquierdo y derecho y altura
+        self.data = data  # Los datos almacenados en el nodo
+        self.left = None  # Puntero al hijo izquierdo
+        self.right = None  # Puntero al hijo derecho
+        self.height = 1  # Altura del nodo (inicialmente 1)
+        self.questions_by_subject = {}  # Diccionario para almacenar preguntas por materia
 
     def update_height(self):
-        """
-        Actualiza la altura del nodo basandose en las alturas de sus hijos.
-        
-        La altura de un nodo es 1 + la maxima altura entre sus dos hijos.
-        Se llama automaticamente despues de inserciones o rotaciones.
-        """
-        left_height = self.left.height if self.left else 0
-        right_height = self.right.height if self.right else 0
-        self.height = 1 + max(left_height, right_height)
+        # Actualiza la altura del nodo en base a las alturas de sus hijos
+        left_height = self.left.height if self.left else 0  # Altura del hijo izquierdo
+        right_height = self.right.height if self.right else 0  # Altura del hijo derecho
+        self.height = 1 + max(left_height, right_height)  # Altura del nodo es 1 más la altura máxima de los hijos
 
     def balance_factor(self):
-        """
-        Calcula el factor de balanceo del nodo.
-        
-        Returns:
-            int: Diferencia entre altura del subarbol izquierdo y derecho
-                 Valores positivos indican mas peso a la izquierda
-                 Valores negativos indican mas peso a la derecha
-        """
-        left_height = self.left.height if self.left else 0
-        right_height = self.right.height if self.right else 0
-        return left_height - right_height
-
-
-## ----------------------------
-## Clase AVLTree
-## ----------------------------
+        # Calcula el factor de equilibrio del nodo
+        left_height = self.left.height if self.left else 0  # Altura del hijo izquierdo
+        right_height = self.right.height if self.right else 0  # Altura del hijo derecho
+        return left_height - right_height  # Factor de equilibrio (altura izquierda - altura derecha)
 
 class AVLTree:
-    """
-    Implementacion del arbol AVL auto-balanceado para almacenar preguntas.
-    
-    El arbol mantiene las preguntas ordenadas por ID y proporciona:
-    - Insercion balanceada O(log n)
-    - Busqueda eficiente por ID o materia
-    - Recuperacion de todas las materias disponibles
-    """
-    
     def __init__(self):
-        """
-        Inicializa un arbol AVL vacio.
-        """
-        self.root = None  # Raiz del arbol
-        self.size = 0     # Contador de nodos en el arbol
+        # Inicializa el árbol AVL
+        self.root = None  # Raíz del árbol
+        self.size = 0  # Tamaño del árbol (número de nodos)
 
     def insert(self, data):
-        """
-        Inserta una nueva pregunta en el arbol manteniendo el balance.
-        
-        Args:
-            data (dict): Datos de la pregunta a insertar. Debe contener:
-                        - id: Identificador unico (int)
-                        - question: Texto de la pregunta (str)
-                        - answer: Texto de la respuesta (str)
-                        - subject: Materia de la pregunta (str)
-        
-        Raises:
-            ValueError: Si los datos no tienen el formato correcto
-        """
+        # Inserta un nuevo nodo en el árbol
         if not isinstance(data, dict) or 'id' not in data:
-            raise ValueError("Los datos deben ser un diccionario con un campo 'id'")
-
-        self.root = self._insert(self.root, data)
-        self.size += 1
+            raise ValueError("Los datos deben ser un diccionario con un campo 'id'")  # Validación de entrada
+        self.root = self._insert(self.root, data)  # Llama a la función recursiva de inserción
+        self.size += 1  # Incrementa el tamaño del árbol
 
     def _insert(self, node, data):
-        """
-        Metodo interno recursivo para insertar un nodo.
-        
-        Args:
-            node (AVLNode): Nodo actual en la recursion
-            data (dict): Datos a insertar
-            
-        Returns:
-            AVLNode: El nodo (posiblemente nuevo) despues de la insercion
-        """
-        # Caso base: llegamos a una hoja, creamos nuevo nodo
+        # Función recursiva para insertar un nuevo nodo
         if not node:
-            new_node = AVLNode(data)
-            self._add_to_subject_index(new_node)
-            return new_node
-
-        # Insercion en subarbol izquierdo o derecho segun ID
+            new_node = AVLNode(data)  # Crea un nuevo nodo si no hay nodo
+            self._add_to_subject_index(new_node)  # Agrega el nodo al índice de materias
+            return new_node  # Devuelve el nuevo nodo
         if data['id'] < node.data['id']:
-            node.left = self._insert(node.left, data)
+            node.left = self._insert(node.left, data)  # Inserta en el subárbol izquierdo
         else:
-            node.right = self._insert(node.right, data)
-
-        # Actualizar altura y balancear
-        node.update_height()
-        return self._balance(node)
+            node.right = self._insert(node.right, data)  # Inserta en el subárbol derecho
+        node.update_height()  # Actualiza la altura del nodo
+        return self._balance(node)  # Balancea el nodo y devuelve el nodo equilibrado
 
     def _balance(self, node):
-        """
-        Balancea el arbol si es necesario despues de una insercion.
-        
-        Args:
-            node (AVLNode): Nodo a balancear
-            
-        Returns:
-            AVLNode: Nodo balanceado
-        """
-        balance = node.balance_factor()
-
-        # Caso Left Left (rotacion simple derecha)
+        # Balancea el nodo basado en el factor de equilibrio
+        balance = node.balance_factor()  # Calcula el factor de equilibrio
         if balance > 1 and node.left.balance_factor() >= 0:
-            return self._right_rotate(node)
-
-        # Caso Left Right (rotacion izquierda-derecha)
+            return self._right_rotate(node)  # Rotación a la derecha
         if balance > 1 and node.left.balance_factor() < 0:
-            node.left = self._left_rotate(node.left)
-            return self._right_rotate(node)
-
-        # Caso Right Right (rotacion simple izquierda)
+            node.left = self._left_rotate(node.left)  # Rotación a la izquierda en el hijo izquierdo
+            return self._right_rotate(node)  # Rotación a la derecha
         if balance < -1 and node.right.balance_factor() <= 0:
-            return self._left_rotate(node)
-
-        # Caso Right Left (rotacion derecha-izquierda)
+            return self._left_rotate(node)  # Rotación a la izquierda
         if balance < -1 and node.right.balance_factor() > 0:
-            node.right = self._right_rotate(node.right)
-            return self._left_rotate(node)
-
-        return node
+            node.right = self._right_rotate(node.right)  # Rotación a la derecha en el hijo derecho
+            return self._left_rotate(node)  # Rotación a la izquierda
+        return node  # Retorna el nodo si ya está balanceado
 
     def _left_rotate(self, z):
-        """
-        Realiza una rotacion izquierda sobre el nodo z.
-        
-        Args:
-            z (AVLNode): Nodo desbalanceado
-            
-        Returns:
-            AVLNode: Nueva raiz del subarbol
-        """
-        y = z.right
-        T2 = y.left
-
-        # Realizar rotacion
-        y.left = z
-        z.right = T2
-
-        # Actualizar alturas (z primero porque ahora esta por debajo de y)
-        z.update_height()
-        y.update_height()
-
-        return y
+        # Realiza una rotación a la izquierda
+        y = z.right  # Asigna el hijo derecho a y
+        T2 = y.left  # Almacena el hijo izquierdo de y
+        y.left = z  # El nodo z se convierte en hijo izquierdo de y
+        z.right = T2  # El hijo izquierdo de y se convierte en hijo derecho de z
+        z.update_height()  # Actualiza la altura de z
+        y.update_height()  # Actualiza la altura de y
+        return y  # Devuelve el nuevo nodo raíz
 
     def _right_rotate(self, z):
-        """
-        Realiza una rotacion derecha sobre el nodo z.
-        
-        Args:
-            z (AVLNode): Nodo desbalanceado
-            
-        Returns:
-            AVLNode: Nueva raiz del subarbol
-        """
-        y = z.left
-        T3 = y.right
-
-        # Realizar rotacion
-        y.right = z
-        z.left = T3
-
-        # Actualizar alturas
-        z.update_height()
-        y.update_height()
-
-        return y
+        # Realiza una rotación a la derecha
+        y = z.left  # Asigna el hijo izquierdo a y
+        T3 = y.right  # Almacena el hijo derecho de y
+        y.right = z  # El nodo z se convierte en hijo derecho de y
+        z.left = T3  # El hijo derecho de y se convierte en hijo izquierdo de z
+        z.update_height()  # Actualiza la altura de z
+        y.update_height()  # Actualiza la altura de y
+        return y  # Devuelve el nuevo nodo raíz
 
     def _add_to_subject_index(self, node):
-        """
-        Agrega la pregunta al indice secundario por materia.
-        
-        Args:
-            node (AVLNode): Nodo que contiene la pregunta a indexar
-        """
-        subject = node.data.get('subject', 'general')
+        # Agrega el nodo al índice de preguntas por materia
+        subject = node.data.get('subject', 'general')  # Obtiene la materia del nodo
         if subject not in node.questions_by_subject:
-            node.questions_by_subject[subject] = []
-        node.questions_by_subject[subject].append(node.data)
+            node.questions_by_subject[subject] = []  # Crea una lista si la materia no existe
+        node.questions_by_subject[subject].append(node.data)  # Agrega la pregunta a la lista de la materia
 
     def search_by_id(self, question_id):
-        """
-        Busca una pregunta por su ID.
-        
-        Args:
-            question_id (int): ID de la pregunta a buscar
-            
-        Returns:
-            dict: Datos de la pregunta si se encuentra, None en caso contrario
-        """
-        return self._search_by_id(self.root, question_id)
+        # Busca una pregunta por ID
+        return self._search_by_id(self.root, question_id)  # Llama a la función recursiva de búsqueda
 
     def _search_by_id(self, node, question_id):
-        """
-        Busqueda recursiva por ID en el arbol.
-        
-        Args:
-            node (AVLNode): Nodo actual en la recursion
-            question_id (int): ID a buscar
-            
-        Returns:
-            dict: Datos de la pregunta o None
-        """
+        # Función recursiva para buscar un ID
         if not node:
-            return None
-
+            return None  # Retorna None si el nodo no existe
         if question_id == node.data['id']:
-            return node.data
+            return node.data  # Retorna los datos del nodo si se encuentra el ID
         elif question_id < node.data['id']:
-            return self._search_by_id(node.left, question_id)
+            return self._search_by_id(node.left, question_id)  # Busca en el subárbol izquierdo
         else:
-            return self._search_by_id(node.right, question_id)
+            return self._search_by_id(node.right, question_id)  # Busca en el subárbol derecho
 
     def search_by_subject(self, subject):
-        """
-        Obtiene todas las preguntas de una materia especifica.
-        
-        Args:
-            subject (str): Nombre de la materia a buscar
-            
-        Returns:
-            list: Lista de preguntas (diccionarios) de esa materia
-        """
-        questions = []
-        self._collect_by_subject(self.root, subject, questions)
-        return questions
+        # Busca preguntas por materia
+        questions = []  # Lista para almacenar preguntas encontradas
+        self._collect_by_subject(self.root, subject, questions)  # Llama a la función recursiva de recolección
+        return questions  # Retorna la lista de preguntas
 
     def _collect_by_subject(self, node, subject, questions):
-        """
-        Recorre el arbol recolectando preguntas de una materia.
-        
-        Args:
-            node (AVLNode): Nodo actual en la recursion
-            subject (str): Materia a buscar
-            questions (list): Acumulador de resultados
-        """
+        # Función recursiva para recopilar preguntas por materia
         if not node:
-            return
-
-        # Buscar en el indice de materias del nodo actual
+            return  # Retorna si el nodo no existe
         if subject in node.questions_by_subject:
-            questions.extend(node.questions_by_subject[subject])
-
-        # Recorrer los hijos
-        self._collect_by_subject(node.left, subject, questions)
-        self._collect_by_subject(node.right, subject, questions)
+            questions.extend(node.questions_by_subject[subject])  # Agrega preguntas de la materia
+        self._collect_by_subject(node.left, subject, questions)  # Busca en el subárbol izquierdo
+        self._collect_by_subject(node.right, subject, questions)  # Busca en el subárbol derecho
 
     def get_all_subjects(self):
-        """
-        Obtiene una lista de todas las materias disponibles.
-        
-        Returns:
-            list: Lista ordenada de nombres de materias (str)
-        """
-        subjects = set()
-        self._collect_subjects(self.root, subjects)
-        return sorted(list(subjects))
+        # Devuelve todas las materias disponibles en el árbol
+        subjects = set()  # Conjunto para evitar duplicados
+        self._collect_subjects(self.root, subjects)  # Llama a la función recursiva de recopilación
+        return sorted(list(subjects))  # Retorna la lista ordenada de materias
 
     def _collect_subjects(self, node, subjects):
-        """
-        Recorre el arbol recolectando todas las materias.
-        
-        Args:
-            node (AVLNode): Nodo actual en la recursion
-            subjects (set): Conjunto acumulador de materias
-        """
+        # Función recursiva para recopilar materias
         if not node:
-            return
-
-        # Agregar materias del nodo actual
+            return  # Retorna si el nodo no existe
         for subject in node.questions_by_subject.keys():
-            subjects.add(subject)
-
-        # Recorrer los hijos
-        self._collect_subjects(node.left, subjects)
-        self._collect_subjects(node.right, subjects)
+            subjects.add(subject)  # Agrega la materia al conjunto
+        self._collect_subjects(node.left, subjects)  # Busca en el subárbol izquierdo
+        self._collect_subjects(node.right, subjects)  # Busca en el subárbol derecho
 
     def in_order_traversal(self):
-        """
-        Realiza un recorrido in-order del arbol (para debugging).
-        
-        Returns:
-            list: Lista ordenada de todos los datos en el arbol
-        """
-        elements = []
-        self._in_order_traversal(self.root, elements)
-        return elements
+        # Realiza un recorrido en orden del árbol
+        elements = []  # Lista para almacenar elementos
+        self._in_order_traversal(self.root, elements)  # Llama a la función recursiva de recorrido
+        return elements  # Retorna la lista de elementos
 
     def _in_order_traversal(self, node, elements):
-        """
-        Recorrido in-order recursivo.
-        
-        Args:
-            node (AVLNode): Nodo actual
-            elements (list): Acumulador de resultados
-        """
+        # Función recursiva para el recorrido en orden
         if node:
-            self._in_order_traversal(node.left, elements)
-            elements.append(node.data)
-            self._in_order_traversal(node.right, elements)
+            self._in_order_traversal(node.left, elements)  # Visita el subárbol izquierdo
+            elements.append(node.data)  # Agrega el nodo actual a la lista
+            self._in_order_traversal(node.right, elements)  # Visita el subárbol derecho
 
     def is_balanced(self):
-        """
-        Verifica si el arbol esta balanceado.
-        
-        Returns:
-            bool: True si el arbol esta balanceado, False si no
-        """
-        return self._check_balance(self.root) != -1
+        # Verifica si el árbol está balanceado
+        return self._check_balance(self.root) != -1  # Llama a la función recursiva de verificación
 
     def _check_balance(self, node):
-        """
-        Metodo auxiliar recursivo para verificar balance.
-        
-        Args:
-            node (AVLNode): Nodo actual
-            
-        Returns:
-            int: Altura del subarbol si esta balanceado, -1 si no
-        """
+        # Función recursiva para comprobar el balance
         if not node:
-            return 0
-
-        left_height = self._check_balance(node.left)
+            return 0  # Retorna 0 si el nodo no existe
+        left_height = self._check_balance(node.left)  # Comprueba la altura del subárbol izquierdo
         if left_height == -1:
-            return -1
-
-        right_height = self._check_balance(node.right)
+            return -1  # Retorna -1 si el subárbol izquierdo no está balanceado
+        right_height = self._check_balance(node.right)  # Comprueba la altura del subárbol derecho
         if right_height == -1:
-            return -1
-
+            return -1  # Retorna -1 si el subárbol derecho no está balanceado
         if abs(left_height - right_height) > 1:
-            return -1
-
-        return max(left_height, right_height) + 1
-
-
-## ----------------------------
-## Algoritmos de Ordenamiento y Busqueda
-## ----------------------------
+            return -1  # Retorna -1 si el nodo no está balanceado
+        return max(left_height, right_height) + 1  # Retorna la altura del nodo
 
 def merge_sort(arr, key='id'):
-    """
-    Implementacion del algoritmo Merge Sort para ordenar listas de preguntas.
-    
-    Args:
-        arr (list): Lista a ordenar
-        key (str): Clave del diccionario por la que ordenar (default: 'id')
-        
-    Returns:
-        list: Lista ordenada
-    """
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
     if len(arr) <= 1:
-        return arr
-
-    # Dividir
-    mid = len(arr) // 2
-    left_half = arr[:mid]
-    right_half = arr[mid:]
-
-    # Ordenar recursivamente
-    left_sorted = merge_sort(left_half, key)
-    right_sorted = merge_sort(right_half, key)
-
-    # Combinar
-    return _merge(left_sorted, right_sorted, key)
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
 
 def _merge(left, right, key):
-    """
-    Funcion auxiliar para combinar dos listas ordenadas.
-    
-    Args:
-        left (list): Mitad izquierda ordenada
-        right (list): Mitad derecha ordenada
-        key (str): Clave por la que ordenar
-        
-    Returns:
-        list: Lista combinada y ordenada
-    """
-    merged = []
-    left_idx = right_idx = 0
-
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
     while left_idx < len(left) and right_idx < len(right):
         if left[left_idx][key] < right[right_idx][key]:
-            merged.append(left[left_idx])
-            left_idx += 1
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
         else:
-            merged.append(right[right_idx])
-            right_idx += 1
-
-    # Agregar elementos restantes
-    merged.extend(left[left_idx:])
-    merged.extend(right[right_idx:])
-
-    return merged
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
 
 def binary_search(sorted_list, target, key='id'):
-    """
-    Implementacion de busqueda binaria en listas ordenadas.
-    
-    Args:
-        sorted_list (list): Lista ordenada donde buscar
-        target: Valor a buscar
-        key (str): Clave del diccionario donde buscar (default: 'id')
-        
-    Returns:
-        int: Indice del elemento encontrado, -1 si no se encuentra
-    """
-    low = 0
-    high = len(sorted_list) - 1
-
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
     while low <= high:
-        mid = (low + high) // 2
-        mid_val = sorted_list[mid][key]
-
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
         if mid_val < target:
-            low = mid + 1
+            low = mid + 1  # Busca en la mitad superior
         elif mid_val > target:
-            high = mid - 1
+            high = mid - 1  # Busca en la mitad inferior
         else:
-            return mid
-
-    return -1
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
 
 def sort_and_search_demo(questions):
-    """
-    Demostracion del uso combinado de Merge Sort y Binary Search.
-    
-    Args:
-        questions (list): Lista de preguntas a procesar
-        
-    Returns:
-        dict: Pregunta encontrada (en la demostracion) o None
-    """
+    # Demuestra la ordenación y búsqueda
     if not questions:
-        print("Lista de preguntas vacia")
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
         return None
-
     print("\nAntes de ordenar:")
     for q in questions[:5]:
-        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")
-
-    # Ordenar
-    sorted_questions = merge_sort(questions)
-    
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
     print("\nDespues de ordenar:")
     for q in sorted_questions[:5]:
-        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")
-
-    # Buscar
-    target_id = sorted_questions[len(sorted_questions)//2]['id']
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
     print(f"\nBuscando pregunta con ID: {target_id}")
-    
-    result_idx = binary_search(sorted_questions, target_id)
-    
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
     if result_idx != -1:
-        found = sorted_questions[result_idx]
-        print(f"Pregunta encontrada: {found['question']}")
-        return found
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
     else:
-        print("Pregunta no encontrada")
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
         return None
 
-
-## ----------------------------
-## Ejemplo de Uso
-## ----------------------------
-
 if __name__ == '__main__':
-    import json
+    import json  # Importa el módulo JSON para cargar preguntas
     
-    # Crear arbol AVL
-    avl = AVLTree()
+    avl = AVLTree()  # Crea una instancia del árbol AVL
     
-    # Función para cargar preguntas desde un archivo JSON
     def cargar_preguntas(archivo, materia):
+        # Carga preguntas desde un archivo JSON
         with open(archivo, 'r', encoding='utf-8') as f:
-            preguntas_json = json.load(f)
-        
-        questions = []
+            preguntas_json = json.load(f)  # Carga el contenido del archivo JSON
+        questions = []  # Lista para almacenar preguntas
         for i, pregunta in enumerate(preguntas_json):
             question_data = {
-                'id': i + 1,  # IDs locales por materia
-                'question': pregunta['pregunta'],
-                'answer': pregunta['respuesta_correcta'],
-                'subject': materia,  # Usamos el nombre de materia proporcionado
-                'opciones': pregunta['opciones'],
-                'explicacion': pregunta['explicacion'],
-                'dificultad': pregunta['dificultad']
+                'id': i + 1,  # Asigna un ID a cada pregunta
+                'question': pregunta['pregunta'],  # Obtiene la pregunta
+                'answer': pregunta['respuesta_correcta'],  # Obtiene la respuesta correcta
+                'subject': materia,  # Asigna la materia
+                'opciones': pregunta['opciones'],  # Obtiene las opciones
+                'explicacion': pregunta['explicacion'],  # Obtiene la explicación
+                'dificultad': pregunta['dificultad']  # Obtiene la dificultad
             }
-            questions.append(question_data)
-        return questions
+            questions.append(question_data)  # Agrega la pregunta a la lista
+        return questions  # Retorna la lista de preguntas
     
-    # Cargar preguntas de cada materia por separado
+    # Carga preguntas de dos materias diferentes
     preguntas_habilidades = cargar_preguntas('preguntas_generadas_habilidades_vida.json', 'Habilidades para la Vida')
     preguntas_ciencia = cargar_preguntas('preguntas_generadas_ciencia_datos.json', 'Ciencia de Datos')
     
-    # Insertar todas las preguntas en el AVL (se organizarán por materia automáticamente)
+    # Inserta todas las preguntas en el árbol AVL
     for q in preguntas_habilidades + preguntas_ciencia:
         avl.insert(q)
     
-    # Demostración (código original sin cambios)
     print("=== DEMOSTRACION ARBOL AVL ===")
-    print(f"Total preguntas insertadas: {avl.size}")
-    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")
+    print(f"Total preguntas insertadas: {avl.size}")  # Muestra el total de preguntas insertadas
+    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")  # Verifica el balance del árbol
+    print("\nMaterias disponibles:", avl.get_all_subjects())  # Muestra las materias disponibles
     
-    print("\nMaterias disponibles:", avl.get_all_subjects())
-    
-    # Mostrar preguntas de una materia específica
+    # Muestra preguntas por materia
     for materia in avl.get_all_subjects():
         print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
-        preguntas_materia = avl.search_by_subject(materia)
-        print(f"Total: {len(preguntas_materia)} preguntas")
-        
-        # Mostrar algunas preguntas de ejemplo
-        for q in preguntas_materia[:3]:  # Solo mostramos 3 por materia
-            print(f"\nID {q['id']}: {q['question']}")
+        preguntas_materia = avl.search_by_subject(materia)  # Obtiene preguntas de la materia
+        print(f"Total: {len(preguntas_materia)} preguntas")  # Muestra el total de preguntas
+        for q in preguntas_materia[:3]:
+            print(f"\nID {q['id']}: {q['question']}")  # Muestra la ID y pregunta
             print("Opciones:")
             for opcion in q['opciones']:
-                print(f" - {opcion}")
-            print(f"Respuesta correcta: {q['answer']}")
-            print(f"Dificultad: {q['dificultad']}")
+                print(f" - {opcion}")  # Muestra las opciones
+            print(f"Respuesta correcta: {q['answer']}")  # Muestra la respuesta correcta
+            print(f"Dificultad: {q['dificultad']}")  # Muestra la dificultad
     
-    # Demostración de búsqueda por ID
     print("\n=== BUSQUEDA POR ID ===")
-    target_id = 5
+    target_id = 5  # Define un ID objetivo para la búsqueda
     print(f"Buscando pregunta con ID {target_id}:")
-    found = avl.search_by_id(target_id)
+    found = avl.search_by_id(target_id)  # Busca la pregunta por ID
     if found:
-        print(f"Materia: {found['subject']}")
-        print(f"Pregunta: {found['question']}")
-        print(f"Respuesta: {found['answer']}")
+        print(f"Materia: {found['subject']}")  # Muestra la materia de la pregunta
+        print(f"Pregunta: {found['question']}")  # Muestra la pregunta
+        print(f"Respuesta: {found['answer']}")  # Muestra la respuesta
     else:
-        print("Pregunta no encontrada")
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
     
-    # Demostración algoritmos de ordenamiento y búsqueda
     print("\n=== DEMOSTRACION ALGORITMOS ===")
-    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)
+    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)  # Demuestra la ordenación y búsqueda
