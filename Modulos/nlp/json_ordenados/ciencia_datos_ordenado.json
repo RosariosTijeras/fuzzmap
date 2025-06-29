@@ -1,0 +1,205 @@
+{
+    "materia": "Ciencia_Datos",
+    "preguntas": [
+        {
+            "numero": 1,
+            "pregunta": "¿Cuál es el propósito principal de la Ciencia de Datos según el texto?",
+            "opciones": [
+                "a) Desarrollar sistemas operativos avanzados",
+                "b) Hacer útiles las computadoras",
+                "c) Comprender y manejar grandes cantidades de datos"
+            ],
+            "respuesta_correcta": "c) Comprender y manejar grandes cantidades de datos"
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Cuál fue la contribución principal de John W. Tukey al campo del análisis de datos?",
+            "opciones": [
+                "a) Fundación de la primera revista científica de Ciencia de Datos",
+                "b) Desarrollo de complejos algoritmos",
+                "c) Desarrollo del diagrama de caja y bigotes (Box Plot)"
+            ],
+            "respuesta_correcta": "c) Desarrollo del diagrama de caja y bigotes (Box Plot)"
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Qué aspectos influyeron en el cambio fundamental hacia aplicaciones más amplias de la informática?",
+            "opciones": [
+                "a) Fusión de informática y telecomunicaciones",
+                "b) Fusión de informática y biología",
+                "c) Aparición de la inteligencia artificial"
+            ],
+            "respuesta_correcta": "a) Fusión de informática y telecomunicaciones"
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Qué organismo se estableció en 1977 con la misión de convertir los datos en información y conocimiento?",
+            "opciones": [
+                "a) IFCS",
+                "b) ISI",
+                "c) IASC"
+            ],
+            "respuesta_correcta": "c) IASC"
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿Qué científico introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+            "opciones": [
+                "a) William S. Cleveland",
+                "b) Peter Naur",
+                "c) John W. Tukey"
+            ],
+            "respuesta_correcta": "a) William S. Cleveland"
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Qué disciplina puede beneficiarse del análisis de predictivo de noticias falsas (fake news) mediante ciencia de datos?",
+            "opciones": [
+                "a) Comunicaciones",
+                "b) Ciencias sociales",
+                "c) Procesos comerciales"
+            ],
+            "respuesta_correcta": "a) Comunicaciones"
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿Quién fue un destacado estadístico que escribió sobre el análisis de datos y su evolución hacia la Ciencia de Datos en 1962?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) William S. Cleveland",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "a) John W. Tukey"
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Cuál de las siguientes NO es una característica de la Ciencia de Datos?",
+            "opciones": [
+                "a) Se utiliza para convertir datos en información y conocimiento",
+                "b) Combina estadística y análisis de datos",
+                "c) Aplicación exclusiva en un área específica"
+            ],
+            "respuesta_correcta": "c) Aplicación exclusiva en un área específica"
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Cuál de estas opciones NO es una aplicación popular de inteligencia artificial mencionada?",
+            "opciones": [
+                "a) Chatbots",
+                "b) Procesos de selección de candidatos",
+                "c) Sistemas de reconocimiento biométrico"
+            ],
+            "respuesta_correcta": "b) Procesos de selección de candidatos"
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿Qué aplicación utiliza análisis de imágenes médicas como una de sus principales funciones?",
+            "opciones": [
+                "a) Urbanismo",
+                "b) Procesos productivos",
+                "c) Salud"
+            ],
+            "respuesta_correcta": "c) Salud"
+        },
+        {
+            "numero": 1,
+            "pregunta": "¿Qué organismo introdujo por primera vez el término \"Ciencia de Datos\" en una conferencia en 1996?",
+            "opciones": [
+                "a) IASC",
+                "b) IFCS",
+                "c) ISI"
+            ],
+            "respuesta_correcta": "b) IFCS"
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Qué aspecto fue destacado como motivo relevante para el cambio hacia más aplicaciones en informática?",
+            "opciones": [
+                "a) Fusión de informática y telecomunicaciones",
+                "b) Desarrollo de sistemas operativos avanzados",
+                "c) Fusión de informática y biología"
+            ],
+            "respuesta_correcta": "a) Fusión de informática y telecomunicaciones"
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Quién acuñó el término \"Ciencia de Datos\" en 1974?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) William S. Cleveland",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "c) Peter Naur"
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Qué técnica se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio?",
+            "opciones": [
+                "a) Muestreo y diseño de encuestas",
+                "b) Segmentación de clientes",
+                "c) Análisis de emociones en redes sociales"
+            ],
+            "respuesta_correcta": "b) Segmentación de clientes"
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿En qué fase del ciclo de vida de la ciencia de datos se generan informes y visualizaciones de datos?",
+            "opciones": [
+                "a) Comunicación de resultados",
+                "b) Almacenamiento de datos",
+                "c) Análisis de datos"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Quién introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) Peter Naur",
+                "c) William S. Cleveland"
+            ],
+            "respuesta_correcta": "c) William S. Cleveland"
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿Qué caracteriza a la Ciencia de Datos según William S. Cleveland?",
+            "opciones": [
+                "a) Combina campos como la estadística y el análisis de datos",
+                "b) Está limitada a métodos científicos tradicionales",
+                "c) Es una aplicación exclusiva en el campo de la biología"
+            ],
+            "respuesta_correcta": "a) Combina campos como la estadística y el análisis de datos"
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Cuál de las siguientes NO es una aplicación de ciencia de datos según el contenido proporcionado?",
+            "opciones": [
+                "a) Personalización de marketing",
+                "b) Mantenimiento predictivo",
+                "c) líneas de producción robóticas"
+            ],
+            "respuesta_correcta": ""
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Cuál es uno de los objetivos principales de la Ciencia de Datos?",
+            "opciones": [
+                "a) Desarrollar sistemas operativos",
+                "b) Tomar decisiones empresariales",
+                "c) Extraer información significativa de los datos"
+            ],
+            "respuesta_correcta": "c) Extraer información significativa de los datos"
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿Qué estadístico escribió sobre el futuro del análisis de datos en 1962, contribuyendo al desarrollo de la ciencia de datos?",
+            "opciones": [
+                "a) Blum, Hopcroft, & Kannan",
+                "b) John W. Tukey",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "b) John W. Tukey"
+        }
+    ]
+}
