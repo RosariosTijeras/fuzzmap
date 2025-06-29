@@ -16,25 +16,64 @@ Dependencias principales:
 - json, os, datetime, random, asyncio
 """
 
-# Importa los módulos necesarios de Flask y otros componentes del sistema
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify  # Funciones principales de Flask
-from Modulos.auth.auth import registrar_usuario, autenticar_usuario  # Funciones de autenticación
-from Modulos.auth.auth import _cargar_usuarios  # Función para cargar usuarios
-from datetime import timedelta  # Para manejo de sesiones
-import json  # Para leer y escribir archivos JSON
-import random  # Para seleccionar preguntas aleatoriamente
-from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, recommendation_features, get_user_recommendations, recomendacion_fuzzy_con_qwen3, resumen_recomendacion  # Solo funciones avanzadas
-import os  # Operaciones con el sistema de archivos
-from datetime import datetime  # Manejo de fechas y horas
-from urllib.parse import unquote  # Decodificar URLs
-import asyncio  # Para operaciones asíncronas
-import re  # Para procesar markdown básico en recomendaciones
+# LIMPIEZA DE IMPORTS Y ORDEN
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from Modulos.auth.auth import registrar_usuario, autenticar_usuario, _cargar_usuarios
+from datetime import timedelta, datetime
+import json
+import random
+import os
+from urllib.parse import unquote
+import asyncio
+import re
+from Modulos.fuzzylogic.fuzzy_evaluator import evaluate_performance, get_user_recommendations, recomendacion_fuzzy_con_qwen3, resumen_recomendacion
+from Modulos.avltree.avl_tree import AVLTree
+from Modulos.nlp.text_classifier import RespuestaAutomaticaProcessor
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
                template_folder='templates',
                static_folder='src',
                static_url_path='/ui/src')
+
+# Instancia global del árbol AVL
+avl_tree = AVLTree()
+
+# Instancia global del procesador NLP
+nlp_processor = RespuestaAutomaticaProcessor()
+
+# Función para cargar preguntas desde los JSON y agregarlas al árbol AVL
+import glob
+
+def cargar_preguntas_en_avl():
+    rutas_json = [
+        'Datos/Ciencia_Datos/preguntas_generadas/preguntas_generadas_ciencia_datos.json',
+        'Datos/Habilidades_Vida/preguntas_generadas/preguntas_generadas_habilidades_vida.json',
+        # Agrega aquí más rutas si hay más materias
+    ]
+    for ruta in rutas_json:
+        if os.path.exists(ruta):
+            with open(ruta, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    for pregunta in data:
+                        # Asegurarse de que cada pregunta tenga un id único y materia
+                        if 'id' not in pregunta:
+                            pregunta['id'] = hash(pregunta.get('pregunta', '') + pregunta.get('respuesta_correcta', ''))
+                        if 'subject' not in pregunta:
+                            if 'ciencia' in ruta.lower():
+                                pregunta['subject'] = 'Ciencia_Datos'
+                            elif 'habilidades' in ruta.lower():
+                                pregunta['subject'] = 'Habilidades_Vida'
+                            else:
+                                pregunta['subject'] = 'General'
+                        try:
+                            avl_tree.insert(pregunta)
+                        except Exception as e:
+                            print(f"[AVL] Error insertando pregunta: {e}")
+
+# Cargar preguntas al iniciar el programa
+cargar_preguntas_en_avl()
 
 # =====================
 # CREACIÓN AUTOMÁTICA DEL USUARIO ADMINISTRADOR
@@ -258,15 +297,8 @@ def comenzar_test(materia):
     if not materia_key:
         flash('Materia no válida o no implementada.', 'danger')
         return redirect(url_for('ui.dashboard'))
-    # Adaptar ruta a la nueva estructura de carpetas
-    ruta_json = f'Datos/{materia_key}/preguntas_generadas/preguntas_generadas_{materia_key.lower()}.json'
-    preguntas = []
-    import os
-    if os.path.exists(ruta_json):
-        with open(ruta_json, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                preguntas.extend(data)
+    # --- Usar AVLTree para obtener preguntas por materia ---
+    preguntas = avl_tree.search_by_subject(materia_key)
     preguntas = [q for q in preguntas if isinstance(q, dict) and 'pregunta' in q and 'opciones' in q]
     if len(preguntas) < 10:
         flash('No hay suficientes preguntas para este test. Se requieren 10 preguntas únicas.', 'danger')
@@ -302,9 +334,9 @@ def comenzar_test(materia):
             'respuesta_usuario': respuesta,
             'respuesta_correcta': correcta,
             'explicacion': preguntas_seleccionadas[pregunta_actual].get('explicacion', ''),
-            'correcta': respuesta == correcta
+            'correcta': respuesta == correcta,
+            'tema': preguntas_seleccionadas[pregunta_actual].get('tema', ''),
         })
-        # Eliminar generación de recomendación parcial en background
         session.modified = True
         siguiente = pregunta_actual + 1
         if siguiente < total_preguntas:
@@ -338,17 +370,28 @@ def _finalizar_test(materia):
     fuzzy_score = evaluate_performance(correctas, 10)
     # Extraer temas fallados si existen
     temas_fallados = [r.get('tema') for r in respuestas if not r.get('correcta') and r.get('tema')]
-    # Recomendación avanzada con IA
-    # Además de los datos actuales, incluir preguntas falladas, respuestas del usuario y explicaciones
+
+    # Enriquecer cada respuesta con justificación y retroalimentación NLP
+    respuestas_enriquecidas = []
+    for r in respuestas:
+        justificacion = nlp_processor.obtener_justificacion_ollama(r['pregunta'], r['respuesta_correcta'])
+        retroalimentacion = nlp_processor.obtener_retroalimentacion_ollama(r['pregunta'], r['respuesta_correcta'])
+        r_enriquecida = dict(r)
+        r_enriquecida['justificacion'] = justificacion
+        r_enriquecida['retroalimentacion'] = retroalimentacion
+        respuestas_enriquecidas.append(r_enriquecida)
+
     preguntas_falladas = [
         {
             'pregunta': r.get('pregunta'),
             'respuesta_usuario': r.get('respuesta_usuario'),
             'respuesta_correcta': r.get('respuesta_correcta'),
             'explicacion': r.get('explicacion', ''),
-            'tema': r.get('tema', '')
+            'tema': r.get('tema', ''),
+            'justificacion': r.get('justificacion', ''),
+            'retroalimentacion': r.get('retroalimentacion', '')
         }
-        for r in respuestas if not r.get('correcta')
+        for r in respuestas_enriquecidas if not r.get('correcta')
     ]
     resultados_test = {
         'materia': materia,
@@ -357,6 +400,7 @@ def _finalizar_test(materia):
         'total': correctas + incorrectas,
         'temas_fallados': temas_fallados,
         'preguntas_falladas': preguntas_falladas,
+        'respuestas_nlp': respuestas_enriquecidas,
     }
     # --- Recopilar historial de tests previos de la misma materia ---
     historial_materia = []
@@ -383,8 +427,27 @@ def _finalizar_test(materia):
                         ]
                     })
     resultados_test['historial_materia'] = historial_materia
+    # --- Construir prompt enriquecido para el LLM ---
+    prompt_llm = (
+        f"Resumen del test de la materia: {materia}\n"
+        f"Preguntas respondidas: {len(respuestas_enriquecidas)}\n"
+        f"Correctas: {correctas}, Incorrectas: {incorrectas}\n"
+        f"Puntaje difuso: {fuzzy_score}\n"
+        f"Temas fallados: {', '.join(temas_fallados) if temas_fallados else 'Ninguno'}\n\n"
+        "Errores y retroalimentación por pregunta:\n"
+    )
+    for r in respuestas_enriquecidas:
+        if not r.get('correcta'):
+            prompt_llm += (
+                f"- Pregunta: {r['pregunta']}\n"
+                f"  Respuesta del usuario: {r['respuesta_usuario']}\n"
+                f"  Respuesta correcta: {r['respuesta_correcta']}\n"
+                f"  Justificación: {r.get('justificacion', '')}\n"
+                f"  Retroalimentación: {r.get('retroalimentacion', '')}\n\n"
+            )
+    prompt_llm += "\nPor favor, genera una recomendación personalizada y concreta para el usuario, en español, basada en sus errores, retroalimentación y desempeño difuso. Sé claro, breve y motivador."
+    # --- Llamar al LLM con el prompt enriquecido ---
     try:
-        # Usar recomendación avanzada con Qwen3-4B
         usuario = session.get('user')
         user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
         recomendacion_path = os.path.join(user_folder, 'recomendacion_parcial.json')
@@ -394,12 +457,11 @@ def _finalizar_test(materia):
                 data_rec = json.load(f)
                 rec = data_rec.get('recomendacion')
         if not rec:
-            rec = asyncio.run(recomendacion_fuzzy_con_qwen3(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
-        # Limpiar archivo temporal después de usarlo
+            rec = asyncio.run(recomendacion_fuzzy_con_qwen3(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados, prompt_extra=prompt_llm))
         if os.path.exists(recomendacion_path):
             os.remove(recomendacion_path)
     except Exception as e:
-        rec = "[Error: No se pudo obtener recomendación personalizada del modelo AI. Se muestra una recomendación genérica.]\n" + recommendation(fuzzy_score, correctas, correctas + incorrectas, temas_fallados)
+        rec = "[Error: No se pudo obtener recomendación personalizada del modelo AI. Se muestra una recomendación genérica.]\n" + resumen_recomendacion(f"Puntaje: {fuzzy_score}. Temas fallados: {temas_fallados}")
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
     os.makedirs(user_folder, exist_ok=True)
     from datetime import datetime
@@ -414,7 +476,7 @@ def _finalizar_test(materia):
             if hasattr(v, '__class__') and v.__class__.__name__ == 'PredictionResult':
                 r_serial[k] = str(v)
         return r_serial
-    respuestas_serializables = [serializar_respuesta(r) for r in respuestas]
+    respuestas_serializables = [serializar_respuesta(r) for r in respuestas_enriquecidas]
     with open(test_file, 'w', encoding='utf-8') as f:
         json.dump({
             'materia': materia,
@@ -428,7 +490,7 @@ def _finalizar_test(materia):
         }, f, ensure_ascii=False, indent=2)
     session['test_resultados'] = {
         'materia_nombre': materia,
-        'preguntas': respuestas,
+        'preguntas': respuestas_enriquecidas,
         'correctas': correctas,
         'incorrectas': incorrectas,
         'score': score,
