@@ -5,7 +5,7 @@ class AVLNode:
         self.left = None  # Puntero al hijo izquierdo
         self.right = None  # Puntero al hijo derecho
         self.height = 1  # Altura del nodo (inicialmente 1)
-        self.questions_by_subject = {}  # Diccionario para almacenar preguntas por materia
+        
 
     def update_height(self):
         # Actualiza la altura del nodo en base a las alturas de sus hijos
@@ -24,27 +24,40 @@ class AVLTree:
         # Inicializa el árbol AVL
         self.root = None  # Raíz del árbol
         self.size = 0  # Tamaño del árbol (número de nodos)
+        self.questions_by_subject = {}  # Índice centralizado de preguntas por materia
+
+    def _add_to_subject_index(self, data):  # Cambiado para recibir data directamente
+        # Agrega una pregunta al índice por materia
+        subject = data.get('subject', 'general')
+        if subject not in self.questions_by_subject:
+            self.questions_by_subject[subject] = []
+        self.questions_by_subject[subject].append(data)
 
     def insert(self, data):
         # Inserta un nuevo nodo en el árbol
         if not isinstance(data, dict) or 'id' not in data:
             raise ValueError("Los datos deben ser un diccionario con un campo 'id'")  # Validación de entrada
-        self.root = self._insert(self.root, data)  # Llama a la función recursiva de inserción
-        self.size += 1  # Incrementa el tamaño del árbol
+        if 'id' not in data:
+            data['id'] = self.size + 1  # Asignar un ID si no existe
+        
+        self._add_to_subject_index(data)  # Actualiza índice primero
+        self.root = self._insert(self.root, data)
+        self.size += 1
 
     def _insert(self, node, data):
         # Función recursiva para insertar un nuevo nodo
         if not node:
             new_node = AVLNode(data)  # Crea un nuevo nodo si no hay nodo
-            self._add_to_subject_index(new_node)  # Agrega el nodo al índice de materias
             return new_node  # Devuelve el nuevo nodo
+        
         if data['id'] < node.data['id']:
             node.left = self._insert(node.left, data)  # Inserta en el subárbol izquierdo
         else:
             node.right = self._insert(node.right, data)  # Inserta en el subárbol derecho
+        
         node.update_height()  # Actualiza la altura del nodo
         return self._balance(node)  # Balancea el nodo y devuelve el nodo equilibrado
-
+    
     def _balance(self, node):
         # Balancea el nodo basado en el factor de equilibrio
         balance = node.balance_factor()  # Calcula el factor de equilibrio
@@ -80,13 +93,14 @@ class AVLTree:
         y.update_height()  # Actualiza la altura de y
         return y  # Devuelve el nuevo nodo raíz
 
-    def _add_to_subject_index(self, node):
-        # Agrega el nodo al índice de preguntas por materia
-        subject = node.data.get('subject', 'general')  # Obtiene la materia del nodo
-        if subject not in node.questions_by_subject:
-            node.questions_by_subject[subject] = []  # Crea una lista si la materia no existe
-        node.questions_by_subject[subject].append(node.data)  # Agrega la pregunta a la lista de la materia
+    def search_by_subject(self, subject):
+        # Busca preguntas por materia usando el índice centralizado
+        return self.questions_by_subject.get(subject, []).copy()  # Devuelve copia para evitar modificaciones
 
+    def get_all_subjects(self):
+        # Devuelve todas las materias disponibles en el árbol
+        return sorted(list(self.questions_by_subject.keys()))  # Usa el índice centralizado
+    
     def search_by_id(self, question_id):
         # Busca una pregunta por ID
         return self._search_by_id(self.root, question_id)  # Llama a la función recursiva de búsqueda
@@ -103,34 +117,12 @@ class AVLTree:
             return self._search_by_id(node.right, question_id)  # Busca en el subárbol derecho
 
     def search_by_subject(self, subject):
-        # Busca preguntas por materia
-        questions = []  # Lista para almacenar preguntas encontradas
-        self._collect_by_subject(self.root, subject, questions)  # Llama a la función recursiva de recolección
-        return questions  # Retorna la lista de preguntas
-
-    def _collect_by_subject(self, node, subject, questions):
-        # Función recursiva para recopilar preguntas por materia
-        if not node:
-            return  # Retorna si el nodo no existe
-        if subject in node.questions_by_subject:
-            questions.extend(node.questions_by_subject[subject])  # Agrega preguntas de la materia
-        self._collect_by_subject(node.left, subject, questions)  # Busca en el subárbol izquierdo
-        self._collect_by_subject(node.right, subject, questions)  # Busca en el subárbol derecho
+        return self.questions_by_subject.get(subject, []).copy()
 
     def get_all_subjects(self):
-        # Devuelve todas las materias disponibles en el árbol
-        subjects = set()  # Conjunto para evitar duplicados
-        self._collect_subjects(self.root, subjects)  # Llama a la función recursiva de recopilación
-        return sorted(list(subjects))  # Retorna la lista ordenada de materias
+        return sorted(list(self.questions_by_subject.keys()))
 
-    def _collect_subjects(self, node, subjects):
-        # Función recursiva para recopilar materias
-        if not node:
-            return  # Retorna si el nodo no existe
-        for subject in node.questions_by_subject.keys():
-            subjects.add(subject)  # Agrega la materia al conjunto
-        self._collect_subjects(node.left, subjects)  # Busca en el subárbol izquierdo
-        self._collect_subjects(node.right, subjects)  # Busca en el subárbol derecho
+   
 
     def in_order_traversal(self):
         # Realiza un recorrido en orden del árbol
@@ -228,64 +220,70 @@ def sort_and_search_demo(questions):
         return None
 
 if __name__ == '__main__':
-    import json  # Importa el módulo JSON para cargar preguntas
+    import json
     
-    avl = AVLTree()  # Crea una instancia del árbol AVL
+    avl = AVLTree()
     
     def cargar_preguntas(archivo, materia):
-        # Carga preguntas desde un archivo JSON
         with open(archivo, 'r', encoding='utf-8') as f:
-            preguntas_json = json.load(f)  # Carga el contenido del archivo JSON
-        questions = []  # Lista para almacenar preguntas
-        for i, pregunta in enumerate(preguntas_json):
+            preguntas_json = json.load(f)
+        questions = []
+        
+        for i, pregunta in enumerate(preguntas_json['preguntas']):
+            # Creamos un ID único combinando número de pregunta y materia
+            unique_id = int(f"{pregunta['numero']}{hash(materia) % 1000}")
+            
             question_data = {
-                'id': i + 1,  # Asigna un ID a cada pregunta
-                'question': pregunta['pregunta'],  # Obtiene la pregunta
-                'answer': pregunta['respuesta_correcta'],  # Obtiene la respuesta correcta
-                'subject': materia,  # Asigna la materia
-                'opciones': pregunta['opciones'],  # Obtiene las opciones
-                'explicacion': pregunta['explicacion'],  # Obtiene la explicación
-                'dificultad': pregunta['dificultad']  # Obtiene la dificultad
+                'id': unique_id,
+                'numero': pregunta['numero'],
+                'question': pregunta['pregunta'],
+                'answer': pregunta['respuesta_correcta'],
+                'subject': materia,
+                'options': pregunta['opciones'],
+                'feedback': pregunta['retroalimentacion'],
+                'explanation': pregunta['justificacion']
             }
-            questions.append(question_data)  # Agrega la pregunta a la lista
-        return questions  # Retorna la lista de preguntas
+            questions.append(question_data)
+        return questions
     
-    # Carga preguntas de dos materias diferentes
-    preguntas_habilidades = cargar_preguntas('preguntas_generadas_habilidades_vida.json', 'Habilidades para la Vida')
-    preguntas_ciencia = cargar_preguntas('preguntas_generadas_ciencia_datos.json', 'Ciencia de Datos')
+    # Carga preguntas
+    preguntas_habilidades = cargar_preguntas('habilidades_vida_ordenado_completado.json', 'Habilidades para la Vida')
+    preguntas_ciencia = cargar_preguntas('ciencia_datos_ordenado_completado.json', 'Ciencia de Datos')
     
-    # Inserta todas las preguntas en el árbol AVL
+    # Inserta preguntas en el árbol AVL
     for q in preguntas_habilidades + preguntas_ciencia:
         avl.insert(q)
     
     print("=== DEMOSTRACION ARBOL AVL ===")
-    print(f"Total preguntas insertadas: {avl.size}")  # Muestra el total de preguntas insertadas
-    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")  # Verifica el balance del árbol
-    print("\nMaterias disponibles:", avl.get_all_subjects())  # Muestra las materias disponibles
+    print(f"Total preguntas insertadas: {avl.size}")
+    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")
+    print("\nMaterias disponibles:", avl.get_all_subjects())
     
     # Muestra preguntas por materia
     for materia in avl.get_all_subjects():
         print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
-        preguntas_materia = avl.search_by_subject(materia)  # Obtiene preguntas de la materia
-        print(f"Total: {len(preguntas_materia)} preguntas")  # Muestra el total de preguntas
-        for q in preguntas_materia[:3]:
-            print(f"\nID {q['id']}: {q['question']}")  # Muestra la ID y pregunta
+        preguntas_materia = avl.search_by_subject(materia)
+        print(f"Total: {len(preguntas_materia)} preguntas")
+        for q in preguntas_materia:
+            print(f"\nID {q['id']} (Número {q['numero']}): {q['question']}")
             print("Opciones:")
-            for opcion in q['opciones']:
-                print(f" - {opcion}")  # Muestra las opciones
-            print(f"Respuesta correcta: {q['answer']}")  # Muestra la respuesta correcta
-            print(f"Dificultad: {q['dificultad']}")  # Muestra la dificultad
+            for opcion in q['options']:
+                print(f" - {opcion}")
+            print(f"Respuesta correcta: {q['answer']}")
+            print(f"Retroalimentación: {q.get('feedback', 'No disponible')}")
+            print(f"Justificación: {q.get('explanation', 'No disponible')}")
     
     print("\n=== BUSQUEDA POR ID ===")
-    target_id = 5  # Define un ID objetivo para la búsqueda
+    # Buscamos el ID de la primera pregunta de habilidades
+    target_id = preguntas_habilidades[0]['id']
     print(f"Buscando pregunta con ID {target_id}:")
-    found = avl.search_by_id(target_id)  # Busca la pregunta por ID
+    found = avl.search_by_id(target_id)
     if found:
-        print(f"Materia: {found['subject']}")  # Muestra la materia de la pregunta
-        print(f"Pregunta: {found['question']}")  # Muestra la pregunta
-        print(f"Respuesta: {found['answer']}")  # Muestra la respuesta
+        print(f"Materia: {found['subject']}")
+        print(f"Pregunta: {found['question']}")
+        print(f"Respuesta: {found['answer']}")
     else:
-        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        print("Pregunta no encontrada")
     
     print("\n=== DEMOSTRACION ALGORITMOS ===")
-    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)  # Demuestra la ordenación y búsqueda
+    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)
