@@ -275,8 +275,11 @@ if __name__ == '__main__':
         return questions
     
     # Carga preguntas con manejo de errores
-    preguntas_habilidades = cargar_preguntas('habilidades_vida_ordenado_completado.json', 'Habilidades para la Vida')
-    preguntas_ciencia = cargar_preguntas('ciencia_datos_ordenado_completado.json', 'Ciencia de Datos')
+    script_dir = os.path.dirname(__file__)
+    habilidades_file = os.path.join(script_dir, 'habilidades_vida_ordenado_completado.json')
+    ciencia_file = os.path.join(script_dir, 'ciencia_datos_ordenado_completado.json')
+    preguntas_habilidades = cargar_preguntas(habilidades_file, 'Habilidades para la Vida')
+    preguntas_ciencia = cargar_preguntas(ciencia_file, 'Ciencia de Datos')
     
     print(f"\nTotal preguntas cargadas de Habilidades: {len(preguntas_habilidades)}")
     print(f"Total preguntas cargadas de Ciencia de Datos: {len(preguntas_ciencia)}")
