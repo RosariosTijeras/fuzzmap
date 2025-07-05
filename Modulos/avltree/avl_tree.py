@@ -248,7 +248,7 @@ def cargar_preguntas(archivo, materia):
         List[Dict]: Lista de diccionarios con los datos de las preguntas.
     """
     if not os.path.exists(archivo):
-        print(f"Archivo {archivo} no encontrado")
+        logging.error(f"Archivo {archivo} no encontrado")
         return []
         
     try:
