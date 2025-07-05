@@ -122,7 +122,7 @@
             "justificacion": "La aplicación en cuestión utiliza análisis de imágenes médicas como una de sus principales funciones en el área de la salud. Esto se hace para ayudar en el diagnóstico y tratamiento de diferentes enfermedades mediante la inspección y examen de imágenes médicas, tales como rayos X, tomografía computarizada (TC), resonancia magnética nuclear (RMN) o ecografías."
         },
         {
-            "numero": 1,
+            "numero": 11,
             "pregunta": "¿Qué organismo introdujo por primera vez el término \"Ciencia de Datos\" en una conferencia en 1996?",
             "opciones": [
                 "a) IASC",
@@ -134,7 +134,7 @@
             "justificacion": "La respuesta correcta es que el término \"Ciencia de Datos\" fue introducido por primera vez en una conferencia en 1996 por el IFCS (Instituto para la Ciencia de Computadores e Inteligencia Artificial en Fráncfort, Alemania). La razón es que este instituto organizó una conferencia titulada \"KDD-'96: 3.ª Conferencia Internacional sobre Minería de Datos y Aprendizaje Automático\" en la que se trató por primera vez el término y el campo como disciplina propia."
         },
         {
-            "numero": 2,
+            "numero": 12,
             "pregunta": "¿Qué aspecto fue destacado como motivo relevante para el cambio hacia más aplicaciones en informática?",
             "opciones": [
                 "a) Fusión de informática y telecomunicaciones",
@@ -146,7 +146,7 @@
             "justificacion": "La fusión de informática y telecomunicaciones ha sido un aspecto destacado como motivo relevante para el cambio hacia más aplicaciones en informática debido a que este híbrido ha permitido la integración de servicios y tecnologías digitales, lo que ha facilitado una comunicación más rápida y eficiente en todo tipo de ámbitos."
         },
         {
-            "numero": 3,
+            "numero": 13,
             "pregunta": "¿Quién acuñó el término \"Ciencia de Datos\" en 1974?",
             "opciones": [
                 "a) John W. Tukey",
@@ -158,7 +158,7 @@
             "justificacion": "La respuesta correcta es que el término \"Ciencia de Datos\" fue acuñado por Peter Naur en 1974. Esto se debe a que en ese año Naur escribió un artículo titulado \"Circuito cerrado de información\", donde utilizó el término \"Ciencia de Datos\" por primera vez para referirse a la disciplina encargada del procesamiento y análisis de datos en una máquina o sistema de computación."
         },
         {
-            "numero": 4,
+            "numero": 14,
             "pregunta": "¿Qué técnica se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio?",
             "opciones": [
                 "a) Muestreo y diseño de encuestas",
@@ -170,7 +170,7 @@
             "justificacion": "La técnica correcta para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio es la segmentación de clientes porque mediante su aplicación, se puede dividir al mercado en diferentes grupos homogéneos de clientes con características similares (preferencias, comportamientos, niveles de ingreso, etc.) y así poder adaptar el precio y las recomendaciones de productos a cada grupo, lo que permite mejorar la eficiencia y la competitividad del negocio."
         },
         {
-            "numero": 5,
+            "numero": 15,
             "pregunta": "¿En qué fase del ciclo de vida de la ciencia de datos se generan informes y visualizaciones de datos?",
             "opciones": [
                 "a) Comunicación de resultados",
@@ -182,7 +182,7 @@
             "justificacion": "La fase del ciclo de vida de la ciencia de datos en que se generan informes y visualizaciones de datos es la \"Comunicación de resultados\". En esta etapa, los datos procesados y analizados son presentados en formatos claro e interpretables (tablas, gráficos, mapas, etc.) para compartir las conclusiones y recomendaciones con otras personas. La comunicación adecuada de resultados es importante para comprender los insight generados por la ciencia de datos, tomar decisiones informadas y abordar problemas efectivamente."
         },
         {
-            "numero": 6,
+            "numero": 16,
             "pregunta": "¿Quién introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
             "opciones": [
                 "a) John W. Tukey",
@@ -194,7 +194,7 @@
             "justificacion": "La respuesta correcta \"c) William S. Cleveland\" es la que está correcta porque él fue uno de los principales impulsores en la unificación de la ciencia de datos como disciplina en 2001. Este científico estadístico y profesor de MIT publicó el libro \"Visualizing Data\", donde estableció las bases teóricas para esta disciplina. Su trabajo contribuyó a la consolidación de la ciencia de datos como una disciplina separada, enfatizando su importancia en procesar, analizar y presentar información de manera eficiente."
         },
         {
-            "numero": 7,
+            "numero": 17,
             "pregunta": "¿Qué caracteriza a la Ciencia de Datos según William S. Cleveland?",
             "opciones": [
                 "a) Combina campos como la estadística y el análisis de datos",
@@ -206,7 +206,7 @@
             "justificacion": "La respuesta correcta refleja que, según William S. Cleveland, la Ciencia de Datos combina dos campos importantes: la estadística y el análisis de datos. Esto es importante porque la estadística proporciona las herramientas matemáticas necesarias para analizar los datos, mientras que el análisis de datos se enfoca en aplicar estas herramientas y métodos para extraer información significativa de los conjuntos de datos."
         },
         {
-            "numero": 8,
+            "numero": 18,
             "pregunta": "¿Cuál de las siguientes NO es una aplicación de ciencia de datos según el contenido proporcionado?",
             "opciones": [
                 "a) Personalización de marketing",
@@ -218,7 +218,7 @@
             "justificacion": "La aplicación de ciencia de datos se refiere al uso de estadísticas, modelos matemáticos y herramientas de análisis para extraer y analizar información de grandes conjuntos de datos con el objetivo de tomar decisiones o hacer predicciones. La línea de producción robótica no se considera una aplicación de ciencia de datos, ya que no involucra la extracción, análisis ni interpretación de datos para obtener información, tomar decisiones o realizar predicciones en un contexto automatizado."
         },
         {
-            "numero": 9,
+            "numero": 19,
             "pregunta": "¿Cuál es uno de los objetivos principales de la Ciencia de Datos?",
             "opciones": [
                 "a) Desarrollar sistemas operativos",
@@ -230,7 +230,7 @@
             "justificacion": "La respuesta correcta es extraer información significativa de los datos porque uno de los objetivos principales de la Ciencia de Datos (CD) es encontrar patrones, tendencias o anomalías en los datos recopilados para ayudar a tomar decisiones informadas y hacer predicciones precisas. Esto se logra utilizando diferentes técnicas estadísticas, analítica de datos, aprendizaje automático e investigación operativa."
         },
         {
-            "numero": 10,
+            "numero": 20,
             "pregunta": "¿Qué estadístico escribió sobre el futuro del análisis de datos en 1962, contribuyendo al desarrollo de la ciencia de datos?",
             "opciones": [
                 "a) Blum, Hopcroft, & Kannan",
