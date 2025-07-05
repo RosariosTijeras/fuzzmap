@@ -1,0 +1,245 @@
+{
+    "materia": "Habilidades_Vida",
+    "preguntas": [
+        {
+            "numero": 1,
+            "pregunta": "¿Cuál es una diferencia clave entre el estrés agudo y el estrés crónico según el texto?",
+            "opciones": [
+                "a) El estrés agudo es beneficioso, mientras que el crónico siempre es dañino",
+                "b) El estrés agudo es una respuesta a estímulos inmediatos, mientras que el estrés crónico se desarrolla por exigencias prolongadas",
+                "c) El estrés agudo afecta solo a la mente, mientras que el crónico afecta solo al cuerpo"
+            ],
+            "respuesta_correcta": "b) El estrés agudo es una respuesta a estímulos inmediatos, mientras que el estrés crónico se desarrolla por exigencias prolongadas",
+            "retroalimentacion": "¡Exacto! El estrés agudo es una respuesta inmediata a un estímulo, mientras que el estrés crónico se desarrolla gradualmente debido a situaciones prolongadas de estrés.",
+            "justificacion": "La diferencia clave entre el estrés agudo y el estrés crónico según el texto es que el estrés agudo se refiere a una respuesta inmediata a un estímulo que generalmente es temporal y no se prolonga mucho, mientras que el estrés crónico se desarrolla debido a exigencias prolongadas o estados de tensión continuos. En otras palabras, mientras que el estrés agudo surge en respuesta a un evento específico, el estrés crónico es una situación de tensión que se mantiene durante mucho tiempo."
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Qué distingue a la ansiedad social de otros tipos de ansiedad?",
+            "opciones": [
+                "a) El temor focalizado en situaciones sociales específicas",
+                "b) La preocupación excesiva por la salud física",
+                "c) La evitación de actividades académicas"
+            ],
+            "respuesta_correcta": "a) El temor focalizado en situaciones sociales específicas",
+            "retroalimentacion": "La ansiedad social se distingue de otros tipos de ansiedad debido a que el temor focalizado en situaciones sociales específicas es su característica principal. Es decir, esta ansiedad aparece cuando una persona se enfrenta a interacciones sociales o evaluaciones sociales.",
+            "justificacion": "La ansiedad social se distingue de otros tipos de ansiedad porque su foco principal es el temor a las situaciones sociales específicas. Esto significa que la persona siente mucha angustia en interacciones con otras personas, como hablar en público o hacer nuevos amigos. La ansiedad social también es conocida como timidez excesiva y puede estar relacionada con problemas emocionales mayores si no se trata adecuadamente."
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Cuál de las siguientes es una característica del estrés agudo en la vida universitaria?",
+            "opciones": [
+                "a) Persistente y no asociada a eventos específicos",
+                "b) Transitorio y puede ser adaptativo",
+                "c) Prolongado y siempre perjudicial"
+            ],
+            "respuesta_correcta": "b) Transitorio y puede ser adaptativo",
+            "retroalimentacion": "Correcto! El estrés agudo es transitorio y puede servir de incentivo a aumentar el rendimiento académico en ciertas ocasiones. Recuerda cuidarte y buscar ayuda si lo necesitas para enfrentarlo.",
+            "justificacion": "La respuesta correcta 'b) Transitorio y puede ser adaptativo' es válida porque el estrés agudo en la vida universitaria es un tipo de estrés que surge de una situación específica que dura un período limitado y, si se maneja adecuadamente, puede ser utilizado para incrementar la motivación y mejorar el desempeño académico. Por otro lado, el estrés crónico es el que surge de situaciones prolongadas que pueden tener efectos negativos en la salud mental y física."
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Cuál es el primer paso para practicar la técnica de relajación muscular progresiva según el texto?",
+            "opciones": [
+                "a) Tensa cada grupo muscular de forma gradual durante unos 5 segundos",
+                "b) Encuentra un lugar tranquilo para sentarte o acostarte,",
+                "c) Relaja el músculo lentamente"
+            ],
+            "respuesta_correcta": "b) Encuentra un lugar tranquilo para sentarte o acostarte,",
+            "retroalimentacion": "El primer paso para practicar la técnica de relajación muscular progresiva según el texto es encontrar un lugar tranquilo para sentarte o acostarte. ¡Espero que encuentres una buena sesión de relajación!",
+            "justificacion": "La respuesta correcta es \"Encuentra un lugar tranquilo para sentarse o acostarte tranquilo\" porque una ambientación serena y calmada es fundamental para poder practicar con éxito la técnica de relajación muscular progresiva. Esta ambientación permite a nuestro cuerpo y mente desprendernos del estrés y la ansiedad que habitualmente acompañan a muchas personas en sus actividades diarias, facilitando así una mayor capacidad de relajación y descanso."
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿Cuál es el impacto general de la ansiedad en la vida universitaria, según el texto?",
+            "opciones": [
+                "a) Aumento de la resiliencia académica",
+                "b) Impacto negativo en el bienestar psicológico y rendimiento académico",
+                "c) Mejora del bienestar psicológico"
+            ],
+            "respuesta_correcta": "b) Impacto negativo en el bienestar psicológico y rendimiento académico",
+            "retroalimentacion": "Está en punto, tu respuesta es correcta! La ansiedad puede tener un impacto negativo sobre el bienestar psicológico y el rendimiento académico universitario.",
+            "justificacion": "La respuesta correcta 'b) Impacto negativo en el bienestar psicológico y rendimiento académico' se debe a que la ansiedad, al ser un estado emocional intensamente desagradable, puede causar problemas en el rendimiento académico debido a distracciones, preocupaciones excessivas y dificultades para concentrarse. Además, también puede afectar negativamente el bienestar psicológico del estudiante al aumentar la probabilidad de síntomas depresivos o ansiosos, como insomnio, tensión muscular y pánico."
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Cuál de las siguientes técnicas se menciona como efectiva para aliviar tensiones y promover la calma?",
+            "opciones": [
+                "a) Meditación trascendental",
+                "b) Ejercicio físico intenso.",
+                "c) Respiración profunda"
+            ],
+            "respuesta_correcta": "c) Respiración profunda",
+            "retroalimentacion": "Bueno! La respiración profunda es efectiva para aliviar tensiones y promover la calma. ¡Tu respiración profunda, tú serenidad!",
+            "justificacion": "La respiración profunda ayuda a aliviar tensiones y promover la calma porque regula el sistema nervioso autónomo (SNA), reduciendo el nivel de adrenalina en el cuerpo y aumentando la producción de serotonina, un neurotransmisor que favorece el estado tranquilo."
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿Qué puede ocurrir si el estrés crónico no se maneja adecuadamente?",
+            "opciones": [
+                "a) Puede mejorar la capacidad física del individuo",
+                "b) Puede desencadenar trastornos cardiovasculares y alteraciones psicológicas",
+                "c) Puede aumentar la productividad en el trabajo a largo plazo"
+            ],
+            "respuesta_correcta": "b) Puede desencadenar trastornos cardiovasculares y alteraciones psicológicas",
+            "retroalimentacion": "Muy bien! A largo plazo, el estrés crónico no manejado puede desencadenar problemas cardiovasculares graves y alteraciones en tu estado mental, por lo que es importante buscar ayudas para controlarlo. ¡No dudes en hablar con un profesional de la salud o un terapeuta si estás experimentando estos síntomas!",
+            "justificacion": "La respuesta correcta se basa en la relación entre el estrés crónico y la salud física y mental. El estrés crónico puede aumentar los niveles de hormonas estressoras en el cuerpo, lo que a largo plazo puede provocar alteraciones cardiovasculares, como hipertensión arterial o problemas cardíacos. Además, el estrés crónico también puede desencadenar trastornos psicológicos tales como depresión y ansiedad. Esto se debe a que las altas niveles de estrés pueden alterar la función del sistema nervioso central, lo que puede conducir a una serie de síntomas emocionales y cognitivos."
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Cuál es el primer paso para practicar la técnica de respiración profunda según el texto?",
+            "opciones": [
+                "a) Exhalar lentamente por la boca",
+                "b) Mantener la respiración durante unos segundos",
+                "c) Sentarse en una posición cómoda con la espalda recta,"
+            ],
+            "respuesta_correcta": "c) Sentarse en una posición cómoda con la espalda recta,",
+            "retroalimentacion": "Bien hecho! Recuerda que la técnica de respiración profunda también puede practicarse en posición erguida o sentada, pero es importante tener la espalda recta y relajar los músculos del cuello. Asegúrate de mantener una postura cómoda y tranquila mientras practicas esta técnica para que te sientas más a gusto y logres un mejor beneficio.",
+            "justificacion": "La respuesta correcta es c) Sentarse en una posición cómoda con la espalda recta porque esto permite que las vías respiratorias se abran completamente, lo que facilita practicar la técnica de respiración profunda. Una postura errónea puede obstruir la respiración y dificultar el aprendizaje correcto de esta técnica."
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Por qué es importante la capacidad de adaptarse a los cambios y aprender de nuevas experiencias en un entorno académico exigente?",
+            "opciones": [
+                "a) Porque evita cualquier tipo de estrés",
+                "b) Porque es crucial para enfrentar retos académicos y personales",
+                "c) Porque asegura el éxito sin necesidad de apoyo externo"
+            ],
+            "respuesta_correcta": "b) Porque es crucial para enfrentar retos académicos y personales",
+            "retroalimentacion": "La capacidad de adaptarse a los cambios y aprender de nuevas experiencias es crucial porque te permite enfrentar retos académicos y personales con éxito en un entorno exigente. ¡Sigue haciéndolo!",
+            "justificacion": "La capacidad de adaptarse a los cambios y aprender de nuevas experiencias es importante en un entorno académico exigente porque permite enfrentar retos tanto académicos como personales. Esto ocurre porque al adaptarse a los cambios, se desarrollan habilidades críticas que nos permiten analizar situaciones y tomar decisiones eficaces; aprender de nuevas experiencias hace posible que ampliemos nuestras conocimientos y maduramos como individuos. Por lo tanto, es crucial para enfrentar retos académicos y personales."
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿En qué contexto un estudiante podría aplicar la técnica de relajación muscular progresiva según el ejemplo práctico proporcionado?",
+            "opciones": [
+                "a) Antes de iniciar un examen",
+                "b) Durante una exposición oral",
+                "c) Tras largas horas de estudio"
+            ],
+            "respuesta_correcta": "c) Tras largas horas de estudio",
+            "retroalimentacion": "En efecto, la técnica de relajación muscular progresiva puede ser útil para ti cuando hayas estado estudias mucho tiempo, ayudándote a desconectarte y relajarte.",
+            "justificacion": "Esta técnica se utiliza cuando un estudiante ha estado estudiando por muchas horas, lo que puede provocar una sensación de tensión física y mental. La relajación muscular progresiva ayuda a disminuir la tensión y hacer que el cuerpo y la mente se sientan más tranquilas. Esto le permite concentrarse mejor en sus estudios, alivia su ansiedad y aumenta su productividad."
+        },
+        {
+            "numero": 11,
+            "pregunta": "¿Qué se recomienda hacer si la mente se distrae durante la práctica de mindfulness?",
+            "opciones": [
+                "a) Terminar la sesión de meditación",
+                "b) Redirigir gentilmente la atención a la respiración",
+                "c) Ignorar la distracción"
+            ],
+            "respuesta_correcta": "b) Redirigir gentilmente la atención a la respiración",
+            "retroalimentacion": "Lo siento si te distrajo mientras practicas el mindfulness. Recuerda que es normal y natural que tu mente se distraiga o se vuelva inquieta, lo importante es aceptar esto y continuar con la práctica. Redirígite gentilmente tu atención a la respiración y trata de permanecer en el presente. Si te ayuda, podrías repetir una palabra o fórmula mantrica que ayude a centrarte.",
+            "justificacion": "La respuesta correcta se basa en que uno de los principios básicos del Mindfulness es enfocarse en la actividad actual, y si la mente distrae, debemos redirigirla a la respiración (el punto focal elegido) para continuar practicando mindfulness. De esta manera, podremos regresar al presente con una atención más clara."
+        },
+        {
+            "numero": 12,
+            "pregunta": "¿Cómo se define la ansiedad según Williams, T.?",
+            "opciones": [
+                "a) Como una respuesta exclusivamente somática ante situaciones de peligro",
+                "b) Como una respuesta emocional caracterizada por una preocupación y temor desproporcionados",
+                "c) Como una respuesta emocional caracterizada por una preocupación racional."
+            ],
+            "respuesta_correcta": "b) Como una respuesta emocional caracterizada por una preocupación y temor desproporcionados",
+            "retroalimentacion": "Correcto! La ansiedad según Williams se define como una respuesta emocional caracterizada por preocupaciones e inseguridades desproporcionadas. Mantente saludable y tranquilo en tus días. 😊",
+            "justificacion": "La respuesta \"como una respuesta emocional caracterizada por una preocupación y temor desproporcionados\" es la correcta según Williams, T., porque en su modelo de ansiedad se define esta emoción como una reacción excesiva o desproporcionada a un estímulo percibido peligroso, lo que provoca preocupación y miedo desmedida."
+        },
+        {
+            "numero": 13,
+            "pregunta": "¿Cuál es la principal diferencia entre el estrés y la ansiedad en el contexto universitario?",
+            "opciones": [
+                "a) El estrés siempre es perjudicial, mientras que la ansiedad es siempre positiva",
+                "b) El estrés está relacionado con el miedo, mientras que la ansiedad con la tristeza",
+                "c) El estrés es una reacción ante demandas específicas, mientras que la ansiedad es una preocupación persistente no siempre vinculada a una amenaza objetiva"
+            ],
+            "respuesta_correcta": "c) El estrés es una reacción ante demandas específicas, mientras que la ansiedad es una preocupación persistente no siempre vinculada a una amenaza objetiva",
+            "retroalimentacion": "Muy bien, lo que haces es preciso! Siempre recordemos que el estrés es una respuesta a las demandas específicas de nuestro entorno, mientras que la ansiedad es una emoción más persistente no siempre relacionada con una amenaza objetiva. Aprenderás a manejar ambos sentimientos con el tiempo! ¡Sigue adelante y continúa aprendiendo!",
+            "justificacion": "La principal diferencia entre el estrés y la ansiedad en el contexto universitario radica en que el estrés es una reacción a demandas específicas, como examenes o trabajos importantes, mientras que la ansiedad es una preocupación persistente que no siempre se basa en una amenaza objetiva. La ansiedad puede estar presente incluso cuando no hay ninguna situación estresante significativa."
+        },
+        {
+            "numero": 14,
+            "pregunta": "¿Qué actividad se menciona en el texto como parte de la práctica del auto-cuidado?",
+            "opciones": [
+                "a) Establecer metas académicas claras",
+                "b) Mantener un equilibrio entre estudio, descanso y ocio",
+                "c) Participar en actividades extracurriculares"
+            ],
+            "respuesta_correcta": "b) Mantener un equilibrio entre estudio, descanso y ocio",
+            "retroalimentacion": "Correcto! El autocuidado también se aplica al equilibrio en la vida, lo que incluye estudiar, descansar y divertirse. ¡Mantente sano!",
+            "justificacion": "La actividad mencionada en el texto como parte del auto-cuidado es mantener un equilibrio entre estudio, descanso y ocio. Esto es así porque el auto-cuidado implica tomar cuidado de uno mismo para mantenerse sano y feliz. Mantener un balance en la vida permite que cada área de la vida se desarrolle de manera saludable, lo que ayuda a reducir el estrés y mejorar la calidad de vida en general."
+        },
+        {
+            "numero": 15,
+            "pregunta": "¿Qué se recomienda hacer después de llenar el abdomen con aire durante la técnica de respiración profunda?",
+            "opciones": [
+                "a) Mantener la respiración durante unos segundos",
+                "b) Exhalar rápidamente",
+                "c) Inhalar más aire"
+            ],
+            "respuesta_correcta": "a) Mantener la respiración durante unos segundos",
+            "retroalimentacion": "Buena pregunta! A continuación, mantente con respiración llena durante unos segundos antes de hacer la parte final de la técnica de respiración profunda: desprender el diafragma y exhalar lentamente a través del bocado. ¡Recuerda que la expulsión lenta de aire es tan importante como su inhalación!",
+            "justificacion": "La explicación para esta respuesta es que manteniendo la respiración durante algunos segundos permite que el aire se distribuya uniformemente a lo largo del abdomen. Esto favorece una mayor capacidad respiratoria, mejorando así la técnica de respiración profunda."
+        },
+        {
+            "numero": 16,
+            "pregunta": "¿Cuál de los siguientes síntomas es común en individuos con ansiedad generalizada?",
+            "opciones": [
+                "a) Fatiga y dificultades de concentración",
+                "b) Evasión de actividades físicas intensas",
+                "c) Sentimientos de euforia"
+            ],
+            "respuesta_correcta": "a) Fatiga y dificultades de concentración",
+            "retroalimentacion": "¡Correcto! Fatiga y dificultades de concentración son síntomas comunes en personas con ansiedad generalizada. Es importante buscar ayuda si se notan estos síntomas en el día a día, para poder abordarlos y buscar una mejor calidad de vida.",
+            "justificacion": "La respuesta correcta es \"Fatiga y dificultades de concentración\" porque estos síntomas son comunes en personas que padecen ansiedad generalizada, ya que la constante preocupación y el estado de tensión pueden producir efectos físicos como fatiga y dificultad para concentrarse."
+        },
+        {
+            "numero": 17,
+            "pregunta": "¿En qué situación podría un estudiante aplicar la técnica de respiración profunda según el ejemplo práctico proporcionado?",
+            "opciones": [
+                "a) Durante una clase teórica",
+                "b) Antes de una presentación importante",
+                "c) Al finalizar un examen"
+            ],
+            "respuesta_correcta": "b) Antes de una presentación importante",
+            "retroalimentacion": "Claro! La técnica de respiración profunda es muy útil en situaciones estresantes como antes de una presentación importante. Ayuda a relajar y controlar el estado emocional, lo que te ayudará a hacer una presentación más efectiva. ¡Buena suerte con tu próxima presentación!",
+            "justificacion": "La técnica de respiración profunda es útil antes de una presentación importante para ayudar a reducir la ansiedad, aumentar la concentración y mejorar el rendimiento general. Esto se debe a que la respiración profunda permite aumentar el flujo sanguíneo al cerebro, lo que contribuye a enfocar la mente y ayudar a mantener un estado más tranquilo."
+        },
+        {
+            "numero": 18,
+            "pregunta": "¿Qué caracteriza a la ansiedad generalizada?",
+            "opciones": [
+                "a) Un miedo intenso a situaciones sociales específicas",
+                "b) Evitación de todas las actividades sociales",
+                "c) Preocupación persistente y excesiva sobre diversos aspectos de la vida cotidiana"
+            ],
+            "respuesta_correcta": "c) Preocupación persistente y excesiva sobre diversos aspectos de la vida cotidiana",
+            "retroalimentacion": "Estás en la zona correcta! La ansiedad generalizada es caracterizada por preocupaciones persistentes e incontrolables sobre diversos aspectos de la vida cotidiana.",
+            "justificacion": "Esta respuesta es correcta porque la ansiedad generalizada (AGPD) se caracteriza por preocupaciones persistentes e injustificadas sobre diversos aspectos de la vida cotidiana, lo que provoca una sensación de tensión, nerviosismo y estrés. Estas preocupaciones pueden estar relacionadas con los trabajos, la salud o las relaciones interpersonales, entre otros temas."
+        },
+        {
+            "numero": 19,
+            "pregunta": "¿Cuánto tiempo se recomienda realizar la práctica de mindfulness y meditación según el texto?",
+            "opciones": [
+                "a) 10-15 minutos",
+                "b) 5-10 minutos durante",
+                "c) 20-30 minutos"
+            ],
+            "respuesta_correcta": "a) 10-15 minutos",
+            "retroalimentacion": "Muy bien, la práctica de mindfulness y meditación puede realizarse en cualquier momento del día, pero se recomienda iniciar con 10 a 15 minutos por sesión. Recuerda comenzar lentamente y aumentar el tiempo según tus propias necesidades. ¡Pronto serás un maestro de la meditación!",
+            "justificacion": "La respuesta correcta es que se recomienda practicar mindfulness y meditación entre 10 a 15 minutos diarios. Esto es porque esta duración es suficiente para iniciarse en la práctica, pero no tan larga como para sentirse aburrido o molesto. Además, esta duración permite una concentración y relajación moderada, lo que ayuda a obtener beneficios significativos de la meditación."
+        },
+        {
+            "numero": 20,
+            "pregunta": "¿Cuál es un síntoma común de la ansiedad social en estudiantes universitarios?",
+            "opciones": [
+                "a) Motivación para enfrentar desafíos sociales",
+                "b) Mejora en la participación en actividades grupales",
+                "c) Evitación de presentaciones orales por temor a la evaluación negativa"
+            ],
+            "respuesta_correcta": "c) Evitación de presentaciones orales por temor a la evaluación negativa",
+            "retroalimentacion": "Claro! La evitación de presentaciones orales es un síntoma común de la ansiedad social en estudiantes universitarios, así que no te preocupes si estás experimentando eso. Hablando con profesores o compañeros puede ayudar a superarlo gradualmente. ¡Es posible superar la ansiedad social!",
+            "justificacion": "La respuesta correcta, \"Evitación de presentaciones orales por temor a la evaluación negativa\", es un síntoma común de la ansiedad social en estudiantes universitarios debido a que este tipo de situaciones pueden producir una sensación de vergüenza o miedo ante el juicio y rechazo de los demás, lo que puede llevar a una retirada de tales eventos."
+        }
+    ]
+}

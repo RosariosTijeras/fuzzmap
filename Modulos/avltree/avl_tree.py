@@ -1,3 +1,6 @@
+import json
+import os
+
 class AVLNode:
     def __init__(self, data):
         # Inicializa un nodo AVL con datos, punteros a hijos izquierdo y derecho y altura
@@ -18,6 +21,7 @@ class AVLNode:
         left_height = self.left.height if self.left else 0  # Altura del hijo izquierdo
         right_height = self.right.height if self.right else 0  # Altura del hijo derecho
         return left_height - right_height  # Factor de equilibrio (altura izquierda - altura derecha)
+
 
 class AVLTree:
     def __init__(self):
@@ -163,6 +167,7 @@ class AVLTree:
             return -1  # Retorna -1 si el nodo no está balanceado
         return max(left_height, right_height) + 1  # Retorna la altura del nodo
 
+
 def merge_sort(arr, key='id'):
     # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
     if len(arr) <= 1:
@@ -173,6 +178,7 @@ def merge_sort(arr, key='id'):
     left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
     right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
     return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
 
 def _merge(left, right, key):
     # Combina dos listas ordenadas en una lista ordenada
@@ -189,6 +195,7 @@ def _merge(left, right, key):
     merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
     return merged  # Retorna la lista combinada
 
+
 def binary_search(sorted_list, target, key='id'):
     # Implementa la búsqueda binaria en una lista ordenada
     low = 0  # Índice inferior
@@ -203,6 +210,7 @@ def binary_search(sorted_list, target, key='id'):
         else:
             return mid  # Retorna el índice si se encuentra el objetivo
     return -1  # Retorna -1 si no se encuentra el objetivo
+
 
 def sort_and_search_demo(questions):
     # Demuestra la ordenación y búsqueda
@@ -227,32 +235,64 @@ def sort_and_search_demo(questions):
         print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
         return None
 
-if __name__ == '__main__':
-    import json  # Importa el módulo JSON para cargar preguntas
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
     
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+if __name__ == '__main__':
     avl = AVLTree()  # Crea una instancia del árbol AVL
     
-    def cargar_preguntas(archivo, materia):
-        # Carga preguntas desde un archivo JSON
-        with open(archivo, 'r', encoding='utf-8') as f:
-            preguntas_json = json.load(f)  # Carga el contenido del archivo JSON
-        questions = []  # Lista para almacenar preguntas
-        for i, pregunta in enumerate(preguntas_json):
-            question_data = {
-                'id': i + 1,  # Asigna un ID a cada pregunta
-                'question': pregunta['pregunta'],  # Obtiene la pregunta
-                'answer': pregunta['respuesta_correcta'],  # Obtiene la respuesta correcta
-                'subject': materia,  # Asigna la materia
-                'opciones': pregunta['opciones'],  # Obtiene las opciones
-                'explicacion': pregunta['explicacion'],  # Obtiene la explicación
-                'dificultad': pregunta['dificultad']  # Obtiene la dificultad
-            }
-            questions.append(question_data)  # Agrega la pregunta a la lista
-        return questions  # Retorna la lista de preguntas
-    
-    # Carga preguntas de dos materias diferentes
-    preguntas_habilidades = cargar_preguntas('preguntas_generadas_habilidades_vida.json', 'Habilidades para la Vida')
-    preguntas_ciencia = cargar_preguntas('preguntas_generadas_ciencia_datos.json', 'Ciencia de Datos')
+    # Carga preguntas de los archivos proporcionados
+    preguntas_habilidades = cargar_preguntas('habilidades_vida_ordenado_completado.json', 'Habilidades_Vida')
+    preguntas_ciencia = cargar_preguntas('ciencia_datos_ordenado_completado.json', 'Ciencia_Datos')
     
     # Inserta todas las preguntas en el árbol AVL
     for q in preguntas_habilidades + preguntas_ciencia:
@@ -268,16 +308,23 @@ if __name__ == '__main__':
         print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
         preguntas_materia = avl.search_by_subject(materia)  # Obtiene preguntas de la materia
         print(f"Total: {len(preguntas_materia)} preguntas")  # Muestra el total de preguntas
-        for q in preguntas_materia[:3]:
+        for q in preguntas_materia[:3]:  # Muestra solo las primeras 3 preguntas por brevedad
             print(f"\nID {q['id']}: {q['question']}")  # Muestra la ID y pregunta
             print("Opciones:")
-            for opcion in q['opciones']:
+            for opcion in q['options']:
                 print(f" - {opcion}")  # Muestra las opciones
             print(f"Respuesta correcta: {q['answer']}")  # Muestra la respuesta correcta
-            print(f"Dificultad: {q['dificultad']}")  # Muestra la dificultad
+
+            if q.get('feedback'):
+                print(f"\nRetroalimentación: {q['feedback']}")
+
+            if q.get('explanation'):
+                print(f"\nExplicación: {q['explanation']}")
+
+            print("-" * 50)
     
     print("\n=== BUSQUEDA POR ID ===")
-    target_id = 5  # Define un ID objetivo para la búsqueda
+    target_id = preguntas_habilidades[0]['id'] if preguntas_habilidades else 1  # Usa el ID de la primera pregunta
     print(f"Buscando pregunta con ID {target_id}:")
     found = avl.search_by_id(target_id)  # Busca la pregunta por ID
     if found:

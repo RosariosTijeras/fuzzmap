@@ -1,0 +1,245 @@
+{
+    "materia": "Ciencia_Datos",
+    "preguntas": [
+        {
+            "numero": 1,
+            "pregunta": "¿Cuál es el propósito principal de la Ciencia de Datos según el texto?",
+            "opciones": [
+                "a) Desarrollar sistemas operativos avanzados",
+                "b) Hacer útiles las computadoras",
+                "c) Comprender y manejar grandes cantidades de datos"
+            ],
+            "respuesta_correcta": "c) Comprender y manejar grandes cantidades de datos",
+            "retroalimentacion": "Correcto! La Ciencia de Datos ayuda a comprender y manejar grandes cantidades de datos.",
+            "justificacion": "La pregunta se refiere a la Ciencia de Datos (Data Science). En el texto, los autores hablan sobre la importancia de manejar grandes cantidades de datos y extraer información relevante y significativa de ellos. Por lo tanto, el propósito principal de la Ciencia de Datos es comprender y manejar grandes cantidades de datos (c), según el texto proporcionado."
+        },
+        {
+            "numero": 2,
+            "pregunta": "¿Cuál fue la contribución principal de John W. Tukey al campo del análisis de datos?",
+            "opciones": [
+                "a) Fundación de la primera revista científica de Ciencia de Datos",
+                "b) Desarrollo de complejos algoritmos",
+                "c) Desarrollo del diagrama de caja y bigotes (Box Plot)"
+            ],
+            "respuesta_correcta": "c) Desarrollo del diagrama de caja y bigotes (Box Plot)",
+            "retroalimentacion": "Correcto! John W. Tukey contribuyó en gran medida con el desarrollo del diagrama de caja y bigotes, un gráfico muy útil para la visualización y análisis de conjuntos de datos. ¡Muy bien!",
+            "justificacion": "John W. Tukey contribuyó significativamente al campo del análisis de datos con su desarrollo del diagrama de caja y bigotes (Box Plot). Esto se debe a que este gráfico es una eficaz manera de representar distintas estadísticas de resumen de los datos, incluyendo la media, mediana, cuartiles inferiores e superiores, y las variaciones extremas. Además, es muy útil para identificar desviaciones grandes o outliers en un conjunto de datos."
+        },
+        {
+            "numero": 3,
+            "pregunta": "¿Qué aspectos influyeron en el cambio fundamental hacia aplicaciones más amplias de la informática?",
+            "opciones": [
+                "a) Fusión de informática y telecomunicaciones",
+                "b) Fusión de informática y biología",
+                "c) Aparición de la inteligencia artificial"
+            ],
+            "respuesta_correcta": "a) Fusión de informática y telecomunicaciones",
+            "retroalimentacion": "Respuesta: La fusión entre la informática y las telecomunicaciones influyó en el cambio fundamental hacia aplicaciones más amplias de la informática, lo que permitió mejorar la comunicación y compartir datos a gran escala.",
+            "justificacion": "La fusión de informática y telecomunicaciones influyó en el cambio fundamental hacia aplicaciones más amplias de la informática porque permitió una mayor interconexión de dispositivos informáticos a través de redes y comunicación remota, lo que abrió posibilidades para la creación de servicios en línea, Internet y las tecnologías móviles que hoy en día son fundamentalmente importantes en el funcionamiento global de nuestra sociedad."
+        },
+        {
+            "numero": 4,
+            "pregunta": "¿Qué organismo se estableció en 1977 con la misión de convertir los datos en información y conocimiento?",
+            "opciones": [
+                "a) IFCS",
+                "b) ISI",
+                "c) IASC"
+            ],
+            "respuesta_correcta": "c) IASC",
+            "retroalimentacion": "Correcto! El organismo que estableció su misión en 1977 para convertir datos en información y conocimiento fue la International Association for Statistical Computing (IASC).",
+            "justificacion": "La respuesta correcta es el \"IASC\" (International Association for Statistical Computing). Establecido en 1977, su misión es hacer que los datos se transformen en información y conocimiento a través de la colaboración entre expertos en estadística y computación. El IASC sirve para impulsar el desarrollo de métodos estadísticos y computacionales avanzados, promoviendo la investigación y el intercambio de conocimientos en estas áreas."
+        },
+        {
+            "numero": 5,
+            "pregunta": "¿Qué científico introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+            "opciones": [
+                "a) William S. Cleveland",
+                "b) Peter Naur",
+                "c) John W. Tukey"
+            ],
+            "respuesta_correcta": "a) William S. Cleveland",
+            "retroalimentacion": "Correcto! William S. Cleveland es el científico que introdujo la Ciencia de Datos como una disciplina unificada en 2001.",
+            "justificacion": "El científico que introdujo la Ciencia de Datos como una disciplina unificada en 2001 fue William S. Cleveland. Este logró hacerlo al publicar el libro \"Data-Mining: Practical Machine Learning Tools and Techniques for Probing Data\" junto con Rafeef A. R. Abdulrahim y Arthur P. Draper, donde presentó un enfoque estructurado y sistemático para explorar grandes cantidades de datos."
+        },
+        {
+            "numero": 6,
+            "pregunta": "¿Qué disciplina puede beneficiarse del análisis de predictivo de noticias falsas (fake news) mediante ciencia de datos?",
+            "opciones": [
+                "a) Comunicaciones",
+                "b) Ciencias sociales",
+                "c) Procesos comerciales"
+            ],
+            "respuesta_correcta": "a) Comunicaciones",
+            "retroalimentacion": "En resumen, la disciplina que puede beneficiarse de análisis predictivo de noticias falsas (fake news) a través de ciencia de datos es la Comunicación. Análisis predictivo ayudará a identificar patrones en las noticias falsas y así prevenir su difusión, lo que finalmente mejora la calidad de la comunicación entre personas y grupos.",
+            "justificacion": "Las comunicaciones pueden beneficiarse del análisis de predictivo de noticias falsas (fake news) mediante ciencia de datos porque esta disciplina les proporciona herramientas para identificar rápidamente información inexacta o engañosa. Esto ayuda a mejorar la calidad de la información que se comparte y proteger la integridad de las comunicaciones."
+        },
+        {
+            "numero": 7,
+            "pregunta": "¿Quién fue un destacado estadístico que escribió sobre el análisis de datos y su evolución hacia la Ciencia de Datos en 1962?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) William S. Cleveland",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "a) John W. Tukey",
+            "retroalimentacion": "Correcto! John W. Tukey es conocido por su trabajo en estadística y por haber introducido conceptos que se han convertido en fundamentales en la Ciencia de Datos.",
+            "justificacion": "La respuesta correcta, John W. Tukey, es un destacado estadístico conocido por su trabajo sobre el análisis de datos. En 1962, escribió un artículo titulado \"The Future of Data Analysis\", en el cual anticipó y describió la evolución del análisis de datos hacia la Ciencia de Datos que se ve reflejada en nuestros días. Su contribución es importante ya que sus ideas y técnicas siguen siendo relevantes hoy en día, como la visualización multidimensional de datos (que fue conocido como exploración gráfica), las técnicas de agregación de datos o las transformaciones de datos."
+        },
+        {
+            "numero": 8,
+            "pregunta": "¿Cuál de las siguientes NO es una característica de la Ciencia de Datos?",
+            "opciones": [
+                "a) Se utiliza para convertir datos en información y conocimiento",
+                "b) Combina estadística y análisis de datos",
+                "c) Aplicación exclusiva en un área específica"
+            ],
+            "respuesta_correcta": "c) Aplicación exclusiva en un área específica",
+            "retroalimentacion": "Correcto! La ciencia de datos no es aplicable exclusivamente en un área específica. Se trata de un campo que se utiliza para analizar, procesar y interpretar información en cualquier campo o área.",
+            "justificacion": "La ciencia de datos no es una aplicación exclusiva en un área específica porque se puede utilizar en cualquier campo donde se trabaje con grandes cantidades de datos, desde el análisis financiero hasta la medicina, pasando por el marketing y muchas otras áreas. Por lo tanto, no es técnicamente aplicable solo a un área específica."
+        },
+        {
+            "numero": 9,
+            "pregunta": "¿Cuál de estas opciones NO es una aplicación popular de inteligencia artificial mencionada?",
+            "opciones": [
+                "a) Chatbots",
+                "b) Procesos de selección de candidatos",
+                "c) Sistemas de reconocimiento biométrico"
+            ],
+            "respuesta_correcta": "b) Procesos de selección de candidatos",
+            "retroalimentacion": "Excelente respuesta! Recuerda que Procesos de selección de candidatos no es una aplicación popular de Inteligencia Artificial. ¡Sigues haciendo preguntas increíbles!",
+            "justificacion": "La opción \"b) Procesos de selección de candidatos\" no es una aplicación popular de inteligencia artificial mencionada porque no se trata de una tecnología de AI, sino más bien un proceso o procedimiento organizacional que utiliza herramientas de informática y algoritmos pero no es propiamente un sistema de inteligencia artificial."
+        },
+        {
+            "numero": 10,
+            "pregunta": "¿Qué aplicación utiliza análisis de imágenes médicas como una de sus principales funciones?",
+            "opciones": [
+                "a) Urbanismo",
+                "b) Procesos productivos",
+                "c) Salud"
+            ],
+            "respuesta_correcta": "c) Salud",
+            "retroalimentacion": "Correcto! La aplicación que analiza imágenes médicas es utilizada en el campo de la Salud. En particular, para diagnosticar y monitorear la salud de los pacientes. 😊",
+            "justificacion": "La aplicación en cuestión utiliza análisis de imágenes médicas como una de sus principales funciones en el área de la salud. Esto se hace para ayudar en el diagnóstico y tratamiento de diferentes enfermedades mediante la inspección y examen de imágenes médicas, tales como rayos X, tomografía computarizada (TC), resonancia magnética nuclear (RMN) o ecografías."
+        },
+        {
+            "numero": 11,
+            "pregunta": "¿Qué organismo introdujo por primera vez el término \"Ciencia de Datos\" en una conferencia en 1996?",
+            "opciones": [
+                "a) IASC",
+                "b) IFCS",
+                "c) ISI"
+            ],
+            "respuesta_correcta": "b) IFCS",
+            "retroalimentacion": "Correcto! La conferencia en la que el término \"Ciencia de Datos\" fue introducido por primera vez en 1996 fue organizada por la International Federation for Information Processing (IFCS). Felicitaciones por tu conocimiento!",
+            "justificacion": "La respuesta correcta es que el término \"Ciencia de Datos\" fue introducido por primera vez en una conferencia en 1996 por el IFCS (Instituto para la Ciencia de Computadores e Inteligencia Artificial en Fráncfort, Alemania). La razón es que este instituto organizó una conferencia titulada \"KDD-'96: 3.ª Conferencia Internacional sobre Minería de Datos y Aprendizaje Automático\" en la que se trató por primera vez el término y el campo como disciplina propia."
+        },
+        {
+            "numero": 12,
+            "pregunta": "¿Qué aspecto fue destacado como motivo relevante para el cambio hacia más aplicaciones en informática?",
+            "opciones": [
+                "a) Fusión de informática y telecomunicaciones",
+                "b) Desarrollo de sistemas operativos avanzados",
+                "c) Fusión de informática y biología"
+            ],
+            "respuesta_correcta": "a) Fusión de informática y telecomunicaciones",
+            "retroalimentacion": "Muy bien! La fusión de informática y telecomunicaciones ha sido fundamental para el cambio hacia más aplicaciones en informática. Gracias a ella, hemos podido acercar mucho las distancias entre personas y dispositivos, lo que ha permitido la aparición de nuevas soluciones tecnológicas que mejoran nuestra vida diaria. ¡Sigue explorando!",
+            "justificacion": "La fusión de informática y telecomunicaciones ha sido un aspecto destacado como motivo relevante para el cambio hacia más aplicaciones en informática debido a que este híbrido ha permitido la integración de servicios y tecnologías digitales, lo que ha facilitado una comunicación más rápida y eficiente en todo tipo de ámbitos."
+        },
+        {
+            "numero": 13,
+            "pregunta": "¿Quién acuñó el término \"Ciencia de Datos\" en 1974?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) William S. Cleveland",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "c) Peter Naur",
+            "retroalimentacion": "Correcto! El término \"Ciencia de Datos\" fue acuñado por Peter Naur en 1974. Buen trabajo!",
+            "justificacion": "La respuesta correcta es que el término \"Ciencia de Datos\" fue acuñado por Peter Naur en 1974. Esto se debe a que en ese año Naur escribió un artículo titulado \"Circuito cerrado de información\", donde utilizó el término \"Ciencia de Datos\" por primera vez para referirse a la disciplina encargada del procesamiento y análisis de datos en una máquina o sistema de computación."
+        },
+        {
+            "numero": 14,
+            "pregunta": "¿Qué técnica se utiliza para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio?",
+            "opciones": [
+                "a) Muestreo y diseño de encuestas",
+                "b) Segmentación de clientes",
+                "c) Análisis de emociones en redes sociales"
+            ],
+            "respuesta_correcta": "b) Segmentación de clientes",
+            "retroalimentacion": "La respuesta es correcta! La técnica de segmentación de clientes ayuda a crear sistemas de precio dinámico y recomendaciones personalizadas en el comercio. Esto se logra al dividir al mercado en segmentos homogéneos basados en características relevantes, como los gustos, las preferencias o las necesidades de los clientes. De esta manera, podemos ofrecerles productos y precio que mejor le encuadren, lo cual aumenta la satisfacción del cliente y la tasa de ventas. ¡Espero que te haya sido útil!",
+            "justificacion": "La técnica correcta para desarrollar sistemas de pricing dinámico y recomendaciones personalizadas en comercio es la segmentación de clientes porque mediante su aplicación, se puede dividir al mercado en diferentes grupos homogéneos de clientes con características similares (preferencias, comportamientos, niveles de ingreso, etc.) y así poder adaptar el precio y las recomendaciones de productos a cada grupo, lo que permite mejorar la eficiencia y la competitividad del negocio."
+        },
+        {
+            "numero": 15,
+            "pregunta": "¿En qué fase del ciclo de vida de la ciencia de datos se generan informes y visualizaciones de datos?",
+            "opciones": [
+                "a) Comunicación de resultados",
+                "b) Almacenamiento de datos",
+                "c) Análisis de datos"
+            ],
+            "respuesta_correcta": "a) Comunicación de resultados",
+            "retroalimentacion": "La respuesta es correcta. En la fase de \"Comunicación de resultados\" se generan informes y visualizaciones de datos. Esto permite compartir los hallazgos obtenidos del análisis de los datos, facilitando su interpretación e influencia en decisiones.",
+            "justificacion": "La fase del ciclo de vida de la ciencia de datos en que se generan informes y visualizaciones de datos es la \"Comunicación de resultados\". En esta etapa, los datos procesados y analizados son presentados en formatos claro e interpretables (tablas, gráficos, mapas, etc.) para compartir las conclusiones y recomendaciones con otras personas. La comunicación adecuada de resultados es importante para comprender los insight generados por la ciencia de datos, tomar decisiones informadas y abordar problemas efectivamente."
+        },
+        {
+            "numero": 16,
+            "pregunta": "¿Quién introdujo la Ciencia de Datos como una disciplina unificada en 2001?",
+            "opciones": [
+                "a) John W. Tukey",
+                "b) Peter Naur",
+                "c) William S. Cleveland"
+            ],
+            "respuesta_correcta": "c) William S. Cleveland",
+            "retroalimentacion": "Correcto! William S. Cleveland es conocido por haber introducido la Ciencia de Datos como una disciplina unificada en 2001.",
+            "justificacion": "La respuesta correcta \"c) William S. Cleveland\" es la que está correcta porque él fue uno de los principales impulsores en la unificación de la ciencia de datos como disciplina en 2001. Este científico estadístico y profesor de MIT publicó el libro \"Visualizing Data\", donde estableció las bases teóricas para esta disciplina. Su trabajo contribuyó a la consolidación de la ciencia de datos como una disciplina separada, enfatizando su importancia en procesar, analizar y presentar información de manera eficiente."
+        },
+        {
+            "numero": 17,
+            "pregunta": "¿Qué caracteriza a la Ciencia de Datos según William S. Cleveland?",
+            "opciones": [
+                "a) Combina campos como la estadística y el análisis de datos",
+                "b) Está limitada a métodos científicos tradicionales",
+                "c) Es una aplicación exclusiva en el campo de la biología"
+            ],
+            "respuesta_correcta": "a) Combina campos como la estadística y el análisis de datos",
+            "retroalimentacion": "¡Excelente respuesta! William S. Cleveland consideraba que la Ciencia de Datos combina campos como la estadística y el análisis de datos, enfatizando en las técnicas visuales para ayudar a extraer información significativa y accesible de los datos. ¡Tu respuesta refleja bien esta idea!",
+            "justificacion": "La respuesta correcta refleja que, según William S. Cleveland, la Ciencia de Datos combina dos campos importantes: la estadística y el análisis de datos. Esto es importante porque la estadística proporciona las herramientas matemáticas necesarias para analizar los datos, mientras que el análisis de datos se enfoca en aplicar estas herramientas y métodos para extraer información significativa de los conjuntos de datos."
+        },
+        {
+            "numero": 18,
+            "pregunta": "¿Cuál de las siguientes NO es una aplicación de ciencia de datos según el contenido proporcionado?",
+            "opciones": [
+                "a) Personalización de marketing",
+                "b) Mantenimiento predictivo",
+                "c) líneas de producción robóticas"
+            ],
+            "respuesta_correcta": "c) líneas de producción robóticas",
+            "retroalimentacion": "La aplicación de ciencia de datos que se ha proporcionado es correcta, la línea de producción robótica no está directamente relacionada con la ciencia de datos, ya que los procesos de producción industrial generalmente no utilizan algoritmos de aprendizaje automático o análisis estadístico como técnicas principales para el funcionamiento. Sin embargo, la ciencia de datos puede contribuir a mejorar las eficiencias en una línea de producción robótica mediante analítica predictiva, máquinas aprendices o inteligencia artificial.",
+            "justificacion": "La aplicación de ciencia de datos se refiere al uso de estadísticas, modelos matemáticos y herramientas de análisis para extraer y analizar información de grandes conjuntos de datos con el objetivo de tomar decisiones o hacer predicciones. La línea de producción robótica no se considera una aplicación de ciencia de datos, ya que no involucra la extracción, análisis ni interpretación de datos para obtener información, tomar decisiones o realizar predicciones en un contexto automatizado."
+        },
+        {
+            "numero": 19,
+            "pregunta": "¿Cuál es uno de los objetivos principales de la Ciencia de Datos?",
+            "opciones": [
+                "a) Desarrollar sistemas operativos",
+                "b) Tomar decisiones empresariales",
+                "c) Extraer información significativa de los datos"
+            ],
+            "respuesta_correcta": "c) Extraer información significativa de los datos",
+            "retroalimentacion": "Excelente! Has identificado uno de los objetivos principales de la Ciencia de Datos: extraer información significativa de los datos. Sigue explorando más sobre esta fascinante área para profundizar en tus conocimientos. ¡Suerte en tus investigaciones!",
+            "justificacion": "La respuesta correcta es extraer información significativa de los datos porque uno de los objetivos principales de la Ciencia de Datos (CD) es encontrar patrones, tendencias o anomalías en los datos recopilados para ayudar a tomar decisiones informadas y hacer predicciones precisas. Esto se logra utilizando diferentes técnicas estadísticas, analítica de datos, aprendizaje automático e investigación operativa."
+        },
+        {
+            "numero": 20,
+            "pregunta": "¿Qué estadístico escribió sobre el futuro del análisis de datos en 1962, contribuyendo al desarrollo de la ciencia de datos?",
+            "opciones": [
+                "a) Blum, Hopcroft, & Kannan",
+                "b) John W. Tukey",
+                "c) Peter Naur"
+            ],
+            "respuesta_correcta": "b) John W. Tukey",
+            "retroalimentacion": "Correcto! John W. Tukey fue uno de los pioneros en el análisis de datos e hizo contribuciones importantes al desarrollo de la ciencia de datos.",
+            "justificacion": "La respuesta correcta es John W. Tukey, ya que fue un estadístico prolífico quien contribuyó al desarrollo de la ciencia de datos en 1962. Se le conoce por su trabajo pionero en la visualización de datos y por introducir términos como \"exploratorio\" en el análisis estadístico, lo que contribuyó a hacer más accesible esta disciplina para científicos de otras áreas."
+        }
+    ]
+}
