@@ -162,7 +162,7 @@
             "pregunta": "¿Qué actividad se menciona en el texto como parte de la práctica del auto-cuidado?",
             "opciones": [
                 "a) Establecer metas académicas claras",
-                "b) Mantener un equilibrio entre estudio, descanso y ocio entre estudio, descanso y ocio",
+                "b) Mantener un equilibrio entre estudio, descanso y ocio",
                 "c) Participar en actividades extracurriculares"
             ],
             "respuesta_correcta": "b) Mantener un equilibrio entre estudio, descanso y ocio entre estudio, descanso y ocio",
