@@ -1,0 +1,37 @@
+{
+  "materia": "Fundamentos de ciencia de datos",
+  "fecha": "15/07/2025 17:03:14",
+  "respuestas": [
+    {
+      "correcta": true,
+      "dificultad": 1,
+      "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
+      "pregunta": "Los modelos de aprendizaje automático son capaces de detectar patrones en los datos, pero ¿qué tipos de patrones se pueden detectar?",
+      "respuesta_correcta": "C) Patrones de relación entre variables",
+      "respuesta_usuario": "C) Patrones de relación entre variables"
+    },
+    {
+      "correcta": false,
+      "dificultad": 1,
+      "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
+      "pregunta": "Que es la ciencia de datos?",
+      "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
+      "respuesta_usuario": "C) La ciencia de datos se dedica a la creación de modelos que pueden predecir comportamientos futuros."
+    },
+    {
+      "pregunta": "¿Qué es la ciencia de datos?",
+      "respuesta_usuario": "B) La ciencia de datos es una disciplina de programación que se utiliza para crear aplicaciones con grandes cantidades de datos.",
+      "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
+      "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
+      "correcta": false,
+      "dificultad": 1
+    }
+  ],
+  "correctas": 1,
+  "incorrectas": 2,
+  "score": 3.3,
+  "fuzzy_score": 0.247398484474096,
+  "nivel_usado": 1,
+  "nuevo_nivel": 1,
+  "recomendacion": "⭐ Excelente trabajo. Solo pequeños ajustes: repasa conceptos específicos que fallaste."
+}

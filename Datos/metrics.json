@@ -1,0 +1,64 @@
+{
+  "system_performance": {
+    "search_times": [
+      {
+        "time": 0.001,
+        "type": "test",
+        "timestamp": "2025-07-15T16:10:56.244624"
+      }
+    ],
+    "ai_processing_times": [
+      {
+        "time": 1.5,
+        "operation": "test",
+        "timestamp": "2025-07-15T16:10:56.255775"
+      },
+      {
+        "time": 0.10771512985229492,
+        "operation": "quick_recommendation",
+        "timestamp": "2025-07-15T17:02:42.131350"
+      },
+      {
+        "time": 0.11749982833862305,
+        "operation": "quick_recommendation",
+        "timestamp": "2025-07-15T17:03:14.566727"
+      }
+    ],
+    "total_requests": 92,
+    "avg_response_time": 0.029702539547629976,
+    "last_updated": "2025-07-15T18:01:01.495597"
+  },
+  "user_activity": {
+    "total_users": 3,
+    "active_users_today": 0,
+    "students": 0,
+    "teachers": 0,
+    "last_login_times": {
+      "admin@unach.edu.ec": "2025-07-15T17:52:31.796980",
+      "mario.camacho@unach.edu.ec": "2025-07-15T16:56:37.057614",
+      "profesor@unach.edu.ec": "2025-07-15T18:01:01.222633"
+    },
+    "test_attempts_today": 2
+  },
+  "question_stats": {
+    "total_questions": 22,
+    "questions_by_subject": {
+      "Ciencia_Datos": 11,
+      "Habilidades_Vida": 11
+    },
+    "difficulty_distribution": {
+      "facil": 20,
+      "medio": 2,
+      "dificil": 0
+    }
+  },
+  "test_performance": {
+    "total_tests": 2,
+    "avg_score": 5.0,
+    "completion_rate": 0,
+    "avg_duration": 14.686392784118652,
+    "tests_by_subject": {
+      "Fundamentos de ciencia de datos": 2
+    }
+  }
+}

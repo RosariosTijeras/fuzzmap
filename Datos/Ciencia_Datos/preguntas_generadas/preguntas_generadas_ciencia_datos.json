@@ -9,7 +9,7 @@
     ],
     "respuesta_correcta": "C) La primera computadora de propósito general, la UNIVAC I, fue desarrollada en la década de 1940.",
     "explicacion": "La UNIVAC I (Universal Automatic Computer I) fue la primera computadora ampliamente utilizada para fines comerciales. Fue desarrollada por John Mauchly y J. Presper Eckert a finales de la década de 1940.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Historia de la computación"
   },
   {
@@ -22,7 +22,7 @@
     ],
     "respuesta_correcta": "A) La ciencia de datos es una disciplina de matemáticas y estadística que estudia cómo extraer información de datos.",
     "explicacion": "La definición correcta de la ciencia de datos es 'una disciplina de matemáticas y estadística que se ocupa del estudio de la naturaleza y de los procesos mediante el uso de datos'.",
-    "dificultad": "media",
+    "dificultad": 1,
     "tema": "ciencia de datos"
   },
   {
@@ -35,7 +35,7 @@
     ],
     "respuesta_correcta": "A) La ciencia de datos es el estudio de los datos para descubrir patrones y relaciones.",
     "explicacion": "La ciencia de datos se dedica a la colección, almacenamiento, manipulación, análisis y visualización de datos. Su objetivo es descubrir patrones, relaciones e insights que pueden informar decisiones.",
-    "dificultad": "media",
+    "dificultad": 1,
     "tema": "ciencia de datos"
   },
   {
@@ -48,7 +48,7 @@
     ],
     "respuesta_correcta": "A) Agrupamiento K-means",
     "explicacion": "El agrupamiento K-means es un algoritmo de aprendizaje no supervisado que busca dividir un conjunto de observaciones en K grupos, minimizando la suma de las distancias cuadradas entre las observaciones y los centros de los grupos.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Aprendizaje automático"
   },
   {
@@ -61,7 +61,7 @@
     ],
     "respuesta_correcta": "A) Para el análisis de textos clínicos.",
     "explicacion": "La ciencia de datos se utiliza en varios contextos, pero uno importante es en la medicina para el análisis de textos clínicos y otros datos médicos.",
-    "dificultad": "media",
+    "dificultad": 3,
     "tema": "Salud"
   },
   {
@@ -74,7 +74,7 @@
     ],
     "respuesta_correcta": "A) Crear sistemas robóticos capaces de realizar tareas humanas.",
     "explicacion": "El objetivo de la inteligencia artificial es crear sistemas computacionales que puedan realizar tareas en las que, aún hoy en día, solo los seres humanos son capaces de hacerlas, como reconocer fotos o traducir idiomas.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Inteligencia Artificial"
   },
   {
@@ -87,7 +87,7 @@
     ],
     "respuesta_correcta": "C) Patrones de relación entre variables",
     "explicacion": "Los modelos de aprendizaje automático se utilizan para descubrir relaciones y correlaciones entre diferentes variables en los datos. Esto puede incluir relaciones lineales, no lineales o no lineales.",
-    "dificultad": "media",
+    "dificultad": 1,
     "tema": "Aprendizaje Automático"
   },
   {
@@ -100,7 +100,7 @@
     ],
     "respuesta_correcta": "A) La ciencia de datos es el estudio de la información y cómo se utiliza para tomar decisiones.",
     "explicacion": "La ciencia de datos es un campo que estudia el proceso de recolección, almacenamiento, organización y utilización de datos para resolver problemas reales y tomar decisiones informadas.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "ciencia de datos"
   },
   {
@@ -113,7 +113,7 @@
     ],
     "respuesta_correcta": "D) En medicina",
     "explicacion": "Los métodos de aprendizaje automático son más importantes en el ámbito de la medicina, donde se utilizan para optimizar diagnósticos médicos, analizar bases de datos clínicas y detectar tempranas enfermedades.",
-    "dificultad": "media",
+    "dificultad": 3,
     "tema": "Ciencia de datos en la salud"
   },
   {
@@ -126,7 +126,20 @@
     ],
     "respuesta_correcta": "C) Una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora.",
     "explicacion": "La inteligencia artificial es una simulación de la capacidad humana de pensamiento y solución de problemas en una computadora. En otras palabras, es el proceso de programar una máquina para que sea capaz de actuar y pensar de manera similar a un ser humano.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Inteligencia Artificial"
+  },
+  {
+    "pregunta": "¿Cuál es la diferencia entre sesgo y varianza en machine learning?",
+    "opciones": [
+      "A) Son lo mismo",
+      "B) Sesgo es error por simplicidad, varianza por sensibilidad",
+      "C) Solo importa la varianza",
+      "D) Solo importa el sesgo"
+    ],
+    "respuesta_correcta": "B) Sesgo es error por simplicidad, varianza por sensibilidad",
+    "explicacion": "El sesgo es el error debido a suposiciones simplificadas, la varianza es la sensibilidad a pequeños cambios en los datos de entrenamiento.",
+    "tema": "Teoría ML",
+    "dificultad": 3
   }
 ]

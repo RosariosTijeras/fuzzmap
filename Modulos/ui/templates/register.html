@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <title>FuzzMap – Registro</title>
 
   <!-- Icono de la pestaña del navegador -->
   <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
 
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
 
   <style>
     /* Fondo con degradado oscuro y centrado vertical/horizontal */
     body {
       min-height: 100vh;
-      background: linear-gradient(120deg, rgba(137,247,254,0.55) 0%, rgba(102,166,255,0.65) 50%, rgba(60,40,120,0.75) 100%);
+      background: linear-gradient(120deg, rgba(137, 247, 254, 0.55) 0%, rgba(102, 166, 255, 0.65) 50%, rgba(60, 40, 120, 0.75) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -30,7 +34,8 @@
 
     /* Tarjeta del formulario de registro */
     .register-form-card {
-      background: rgba(255,255,255,0.45); /* Blanco translúcido, más integrado */
+      background: rgba(255, 255, 255, 0.45);
+      /* Blanco translúcido, más integrado */
       border-radius: 22px;
       box-shadow: 0 4px 32px #66a6ff44;
       padding: 2.5rem 2rem;
@@ -83,7 +88,8 @@
     }
 
     /* Efecto de foco en los campos de formulario */
-    .form-control:focus, .form-select:focus {
+    .form-control:focus,
+    .form-select:focus {
       border-color: #0dabda;
       box-shadow: 0 0 0 0.2rem #66a6ff33;
     }
@@ -95,7 +101,9 @@
     }
 
     @media (max-width: 991px) {
-      .wallpaper-img { display: none; }
+      .wallpaper-img {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -118,11 +126,11 @@
 
           <!-- Mensajes flash para mostrar errores o avisos -->
           {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-sm">{{ message }}</div>
-              {% endfor %}
-            {% endif %}
+          {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-sm">{{ message }}</div>
+          {% endfor %}
+          {% endif %}
           {% endwith %}
 
           <!-- Formulario de registro -->
@@ -132,11 +140,8 @@
             <div class="mb-3">
               <label for="correo" class="form-label">📧 Correo institucional</label>
               <div class="input-group">
-                <input type="text" name="correo" id="correo" class="form-control"
-                       placeholder="ejemplo.apellido"
-                       pattern="^[a-zA-Z0-9._-]+$"
-                       title="Solo la parte antes de @unach.edu.ec"
-                       required />
+                <input type="text" name="correo" id="correo" class="form-control" placeholder="ejemplo.apellido"
+                  pattern="^[a-zA-Z0-9._-]+$" title="Solo la parte antes de @unach.edu.ec" required />
                 <span class="input-group-text">@unach.edu.ec</span>
               </div>
             </div>
@@ -144,41 +149,73 @@
             <!-- Contraseña -->
             <div class="mb-3">
               <label for="contrasena" class="form-label">🔑 Contraseña</label>
-              <input type="password" name="contrasena" id="contrasena" class="form-control" placeholder="Mínimo 8 caracteres 🔒" required/>
+              <input type="password" name="contrasena" id="contrasena" class="form-control"
+                placeholder="Mínimo 8 caracteres 🔒" required />
             </div>
 
             <!-- Repite contraseña -->
             <div class="mb-3">
               <label for="contrasena2" class="form-label">🔑 Repite Contraseña</label>
-              <input type="password" name="contrasena2" id="contrasena2" class="form-control" placeholder="Vuelve a escribir tu contraseña 🔒" required/>
+              <input type="password" name="contrasena2" id="contrasena2" class="form-control"
+                placeholder="Vuelve a escribir tu contraseña 🔒" required />
             </div>
 
             <!-- Nombres -->
             <div class="mb-3">
               <label for="nombres" class="form-label">🧑‍🎓 Nombres</label>
-              <input type="text" name="nombres" id="nombres" class="form-control" placeholder="Tus nombres completos" required/>
+              <input type="text" name="nombres" id="nombres" class="form-control" placeholder="Tus nombres completos"
+                required />
             </div>
 
             <!-- Apellidos -->
             <div class="mb-3">
               <label for="apellidos" class="form-label">🧑‍🎓 Apellidos</label>
-              <input type="text" name="apellidos" id="apellidos" class="form-control" placeholder="Tus apellidos completos" required/>
+              <input type="text" name="apellidos" id="apellidos" class="form-control"
+                placeholder="Tus apellidos completos" required />
             </div>
 
             <!-- Edad y Sexo en dos columnas -->
             <div class="mb-3 row">
               <div class="col-6">
                 <label for="edad" class="form-label">🎂 Edad</label>
-                <input type="number" name="edad" id="edad" class="form-control" min="0" max="120" step="1" placeholder="Tu edad" required/>
+                <input type="number" name="edad" id="edad" class="form-control" min="0" max="120" step="1"
+                  placeholder="Tu edad" required />
               </div>
               <div class="col-6">
                 <label for="sexo" class="form-label">⚧️ Sexo</label>
                 <select name="sexo" id="sexo" class="form-select" required>
                   <option value="" disabled selected>Selecciona...</option>
-                  <option value="M">M</option>
-                  <option value="F">F</option>
-                  <option value="O">O</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                  <option value="O">Otro</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Tipo de usuario -->
+            <div class="mb-3">
+              <label for="tipo_usuario" class="form-label">👥 Tipo de Usuario</label>
+              <select name="tipo_usuario" id="tipo_usuario" class="form-select" required>
+                <option value="" disabled selected>Selecciona tu rol...</option>
+                <option value="alumno">🎓 Alumno - Acceso a tests y dashboard personal</option>
+                <option value="maestro">👨‍🏫 Maestro - Panel de gestión y estadísticas de alumnos</option>
+              </select>
+              <div class="form-text">Los maestros tendrán acceso a herramientas exclusivas para monitorear el progreso
+                de sus estudiantes.</div>
+            </div>
+
+            <!-- Nivel inicial de dificultad -->
+            <div class="mb-3">
+              <label for="nivel_inicial" class="form-label">🎯 Nivel de Dificultad Inicial</label>
+              <select class="form-select" id="nivel_inicial" name="nivel_inicial" required>
+                <option value="1" selected>🟢 Básico (Nivel 1) - Recomendado para principiantes</option>
+                <option value="2">🟡 Intermedio (Nivel 2) - Si tienes experiencia previa</option>
+                <option value="3">🔴 Avanzado (Nivel 3) - Solo para usuarios experimentados</option>
+              </select>
+              <div class="form-text">
+                <i class="bi bi-info-circle"></i>
+                Este nivel se ajustará automáticamente según tu rendimiento en los tests. El sistema utilizará
+                algoritmos inteligentes para adaptar la dificultad a tu progreso.
               </div>
             </div>
 
@@ -198,10 +235,43 @@
 
       <!-- Columna derecha: imagen decorativa más pequeña -->
       <div class="col-lg-6 col-md-6 d-none d-md-flex justify-content align-items-center">
-        <img src="{{ url_for('ui.static', filename='register.png') }}" class="wallpaper-img" alt="Fondo" style="max-width: 500px; min-width: 550px;"/>
+        <img src="{{ url_for('ui.static', filename='register.png') }}" class="wallpaper-img" alt="Fondo"
+          style="max-width: 500px; min-width: 550px;" />
       </div>
 
     </div>
   </div>
+
+  <script>
+    // Controlar visibilidad del campo de nivel según tipo de usuario
+    document.getElementById('tipo_usuario').addEventListener('change', function () {
+      const nivelContainer = document.querySelector('#nivel_inicial').closest('.mb-3');
+
+      if (this.value === 'maestro') {
+        nivelContainer.style.display = 'none';
+        // Quitar required del nivel para maestros
+        document.getElementById('nivel_inicial').removeAttribute('required');
+      } else {
+        nivelContainer.style.display = 'block';
+        // Agregar required del nivel para estudiantes
+        document.getElementById('nivel_inicial').setAttribute('required', 'required');
+      }
+    });
+
+    // Inicializar visibilidad
+    document.addEventListener('DOMContentLoaded', function () {
+      const tipoUsuario = document.getElementById('tipo_usuario').value;
+      const nivelContainer = document.querySelector('#nivel_inicial').closest('.mb-3');
+
+      if (tipoUsuario === 'maestro') {
+        nivelContainer.style.display = 'none';
+        document.getElementById('nivel_inicial').removeAttribute('required');
+      } else {
+        nivelContainer.style.display = 'block';
+        document.getElementById('nivel_inicial').setAttribute('required', 'required');
+      }
+    });
+  </script>
 </body>
+
 </html>

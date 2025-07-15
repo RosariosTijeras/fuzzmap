@@ -54,50 +54,32 @@ def load_all_questions():
     data_dir = "Datos"
     
     # Cargar preguntas de Ciencia de Datos
-    cd_file = os.path.join(data_dir, "Ciencia_Datos", "preguntas_generadas", "preguntas_generadas_ciencia_datos.json")
+    cd_file = os.path.join(data_dir, "Ciencia_Datos", "banco_preguntas", "bancodepreguntas_global_cienciadatos.json")
     if os.path.exists(cd_file):
         try:
             with open(cd_file, 'r', encoding='utf-8') as f:
                 cd_questions = json.load(f)
-                for i, question in enumerate(cd_questions):
-                    if isinstance(question, dict):
-                        # Asegurar formato correcto
-                        question_formatted = {
-                            'id': question.get('id', f'cd_{i+1}'),
-                            'pregunta': question.get('pregunta', ''),
-                            'opciones': question.get('opciones', []),
-                            'respuesta_correcta': question.get('respuesta_correcta', ''),
-                            'explicacion': question.get('explicacion', ''),
-                            'dificultad': question.get('dificultad', 'media'),
-                            'tema': question.get('tema', 'Fundamentos'),
-                            'materia': 'Ciencia_Datos'
-                        }
-                        questions_tree.insert(question_formatted)
+                for question in cd_questions:
+                    if isinstance(question, dict) and 'id' in question:
+                        # Asegurar que tenga materia
+                        question['materia'] = question.get('materia', 'Ciencia_Datos')
+                        questions_tree.insert(question)
                         total_questions += 1
             print(f"✅ Cargadas {len(cd_questions)} preguntas de Ciencia de Datos")
         except Exception as e:
             print(f"❌ Error cargando preguntas de Ciencia de Datos: {e}")
     
     # Cargar preguntas de Habilidades para la Vida
-    hv_file = os.path.join(data_dir, "Habilidades_Vida", "preguntas_generadas", "preguntas_generadas_habilidades_vida.json")
+    hv_file = os.path.join(data_dir, "Habilidades_Vida", "banco_preguntas", "bancodepreguntas_global_habilidadesvida.json")
     if os.path.exists(hv_file):
         try:
             with open(hv_file, 'r', encoding='utf-8') as f:
                 hv_questions = json.load(f)
-                for i, question in enumerate(hv_questions):
-                    if isinstance(question, dict):
-                        # Asegurar formato correcto
-                        question_formatted = {
-                            'id': question.get('id', f'hv_{i+1}'),
-                            'pregunta': question.get('pregunta', ''),
-                            'opciones': question.get('opciones', []),
-                            'respuesta_correcta': question.get('respuesta_correcta', ''),
-                            'explicacion': question.get('explicacion', ''),
-                            'dificultad': question.get('dificultad', 'media'),
-                            'tema': question.get('tema', 'Fundamentos'),
-                            'materia': 'Habilidades_Vida'
-                        }
-                        questions_tree.insert(question_formatted)
+                for question in hv_questions:
+                    if isinstance(question, dict) and 'id' in question:
+                        # Asegurar que tenga materia
+                        question['materia'] = question.get('materia', 'Habilidades_Vida')
+                        questions_tree.insert(question)
                         total_questions += 1
             print(f"✅ Cargadas {len(hv_questions)} preguntas de Habilidades para la Vida")
         except Exception as e:

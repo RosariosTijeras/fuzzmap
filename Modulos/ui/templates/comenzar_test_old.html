@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>FuzzMap – Comenzar Test</title>
+  <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      min-height: 100vh;
+      background: linear-gradient(120deg, rgba(137,247,254,0.55) 0%, rgba(102,166,255,0.65) 50%, rgba(60,40,120,0.75) 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .test-container {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .test-card {
+      background: rgba(255,255,255,0.45);
+      border-radius: 22px;
+      box-shadow: 0 4px 32px #66a6ff44;
+      padding: 2.5rem 2rem;
+      border: 2px solid #66a6ff33;
+      backdrop-filter: blur(2px);
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 600px;
+    }
+    .test-title {
+      color: #0dabda;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      font-size: 2rem;
+      text-align: center;
+    }
+    .test-question {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 1.2rem;
+    }
+    .test-options label {
+      display: block;
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      padding: 0.7rem 1rem;
+      margin-bottom: 0.7rem;
+      cursor: pointer;
+      border: 2px solid #66a6ff22;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .test-options input[type="radio"]:checked + label {
+      border: 2px solid #0dabda;
+      box-shadow: 0 2px 12px #0dabda33;
+      background: #e6f7ff;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #66a6ff 0%, #0dabda 100%);
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      box-shadow: 0 2px 8px #66a6ff33;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(90deg, #0dabda 0%, #66a6ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px #0dabda44;
+    }
+    .test-progress {
+      margin-bottom: 1.2rem;
+      color: #0dabda;
+      font-weight: 600;
+      text-align: right;
+    }
+    .test-feedback {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .timer-box {
+      background: #fff6e0;
+      color: #ff9800;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1.2rem;
+      border: 2px solid #ffb34744;
+      box-shadow: 0 2px 8px #ff980022;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container test-container">
+    <div class="test-card">
+      <div class="test-title">Test de {{ materia_nombre }}</div>
+      <div class="timer-box" id="timer">Tiempo restante: <span id="timer-min">{{ tiempo_restante // 60 }}</span>:<span id="timer-sec">{{ '%02d' % (tiempo_restante % 60) }}</span></div>
+      <div class="test-progress">Pregunta {{ pregunta_actual + 1 }} de {{ total_preguntas }}</div>
+      <form method="post" id="test-form">
+        <div class="test-question">{{ pregunta['pregunta'] }}</div>
+        <div class="test-options">
+          {% for opcion in pregunta['opciones'] %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="respuesta" id="opcion{{ loop.index }}" value="{{ opcion }}" required>
+              <label class="form-check-label" for="opcion{{ loop.index }}">{{ opcion }}</label>
+            </div>
+          {% endfor %}
+        </div>
+        {% if pregunta_actual + 1 == total_preguntas %}
+          <button type="button" class="btn btn-danger w-100 mt-2" id="finalizar-btn">Finalizar test</button>
+        {% else %}
+          <button type="submit" class="btn btn-primary w-100 mt-3">Siguiente</button>
+        {% endif %}
+      </form>
+      {% if feedback %}
+        <div class="test-feedback text-{{ 'success' if feedback_correcta else 'danger' }}">{{ feedback }}</div>
+      {% endif %}
+    </div>
+  </div>
+  <script>
+    // Asegura que el valor sea string y lo convierte a número en JS
+    let tiempo = Number('{{ tiempo_restante|default(0, true)|int }}');
+    let timer = setInterval(function() {
+      if (tiempo <= 0) {
+        clearInterval(timer);
+        document.getElementById('test-form').submit();
+      } else {
+        tiempo--;
+        document.getElementById('timer-min').textContent = Math.floor(tiempo / 60);
+        document.getElementById('timer-sec').textContent = ("0" + (tiempo % 60)).slice(-2);
+      }
+    }, 1000);
+    // Detener el temporizador al finalizar test manualmente
+    document.getElementById('finalizar-btn').addEventListener('click', function() {
+      clearInterval(timer);
+      document.getElementById('test-form').submit();
+    });
+  </script>
+</body>
+</html>

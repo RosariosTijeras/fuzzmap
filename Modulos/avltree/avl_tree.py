@@ -1,5 +1,8 @@
 import json
 import os
+import random
+import time
+from collections import defaultdict
 
 class AVLNode:
     def __init__(self, data):
@@ -8,7 +11,6 @@ class AVLNode:
         self.left = None  # Puntero al hijo izquierdo
         self.right = None  # Puntero al hijo derecho
         self.height = 1  # Altura del nodo (inicialmente 1)
-        self.questions_by_subject = {}  # Diccionario para almacenar preguntas por materia
 
     def update_height(self):
         # Actualiza la altura del nodo en base a las alturas de sus hijos
@@ -28,19 +30,43 @@ class AVLTree:
         # Inicializa el árbol AVL
         self.root = None  # Raíz del árbol
         self.size = 0  # Tamaño del árbol (número de nodos)
+        # Índice compuesto para búsquedas ultrarrápidas
+        self.composite_index = defaultdict(list)  # {(dificultad, materia): [preguntas]}
+        self.difficulty_index = defaultdict(list)  # {dificultad: [preguntas]}
+        self.subject_index = defaultdict(list)  # {materia: [preguntas]}
+        self.all_questions = []  # Lista completa de preguntas para búsquedas rápidas
 
     def insert(self, data):
         # Inserta un nuevo nodo en el árbol
         if not isinstance(data, dict) or 'id' not in data:
             raise ValueError("Los datos deben ser un diccionario con un campo 'id'")  # Validación de entrada
+        
+        # Agregar a índices compuestos para búsquedas ultrarrápidas
+        self._add_to_indexes(data)
+        
         self.root = self._insert(self.root, data)  # Llama a la función recursiva de inserción
         self.size += 1  # Incrementa el tamaño del árbol
+
+    def _add_to_indexes(self, data):
+        """Agrega la pregunta a todos los índices para búsquedas O(1)"""
+        dificultad = data.get('dificultad', 'medio')
+        materia = data.get('materia', 'general')  # Cambio de 'subject' a 'materia'
+        
+        # Índice compuesto (dificultad, materia)
+        composite_key = (dificultad, materia)
+        self.composite_index[composite_key].append(data)
+        
+        # Índices individuales
+        self.difficulty_index[dificultad].append(data)
+        self.subject_index[materia].append(data)
+        
+        # Lista completa
+        self.all_questions.append(data)
 
     def _insert(self, node, data):
         # Función recursiva para insertar un nuevo nodo
         if not node:
             new_node = AVLNode(data)  # Crea un nuevo nodo si no hay nodo
-            self._add_to_subject_index(new_node)  # Agrega el nodo al índice de materias
             return new_node  # Devuelve el nuevo nodo
         if data['id'] < node.data['id']:
             node.left = self._insert(node.left, data)  # Inserta en el subárbol izquierdo
@@ -85,11 +111,102 @@ class AVLTree:
         return y  # Devuelve el nuevo nodo raíz
 
     def _add_to_subject_index(self, node):
-        # Agrega el nodo al índice de preguntas por materia
-        subject = node.data.get('subject', 'general')  # Obtiene la materia del nodo
-        if subject not in node.questions_by_subject:
-            node.questions_by_subject[subject] = []  # Crea una lista si la materia no existe
-        node.questions_by_subject[subject].append(node.data)  # Agrega la pregunta a la lista de la materia
+        # Método legacy - ahora usamos índices compuestos
+        pass
+
+    # =====================
+    # MÉTODOS DE BÚSQUEDA OPTIMIZADOS
+    # =====================
+    
+    def search_by_difficulty_and_subject(self, dificultad, materia, algorithm='composite'):
+        """
+        Busca preguntas por dificultad y materia usando diferentes algoritmos
+        - composite: O(1) usando índice compuesto
+        - binary: O(log n) usando búsqueda binaria en árbol
+        - linear: O(n) recorrido lineal (para comparación)
+        """
+        start_time = time.time()
+        
+        if algorithm == 'composite':
+            result = self._search_composite(dificultad, materia)
+        elif algorithm == 'binary':
+            result = self._search_binary(dificultad, materia)
+        elif algorithm == 'linear':
+            result = self._search_linear(dificultad, materia)
+        else:
+            raise ValueError("Algoritmo no válido. Use: 'composite', 'binary', o 'linear'")
+        
+        end_time = time.time()
+        search_time = end_time - start_time
+        
+        # Registrar métrica de tiempo de búsqueda
+        try:
+            from ..metrics.metrics_collector import metrics_collector
+            metrics_collector.record_search_time(search_time, f"avl_{algorithm}")
+        except:
+            pass  # Evitar errores si no se puede registrar la métrica
+        
+        return result
+    
+    def _search_composite(self, dificultad, materia):
+        """Búsqueda O(1) usando índice compuesto - MÁS RÁPIDO"""
+        composite_key = (dificultad, materia)
+        return list(self.composite_index.get(composite_key, []))
+    
+    def _search_binary(self, dificultad, materia):
+        """Búsqueda O(log n) + filtrado usando árbol binario"""
+        # Primero buscar por dificultad en el índice
+        questions_by_difficulty = self.difficulty_index.get(dificultad, [])
+        # Filtrar por materia
+        return [q for q in questions_by_difficulty if q.get('subject') == materia]
+    
+    def _search_linear(self, dificultad, materia):
+        """Búsqueda O(n) recorrido lineal - MÁS LENTO (para comparación)"""
+        result = []
+        for question in self.all_questions:
+            if (question.get('dificultad') == dificultad and 
+                question.get('subject') == materia):
+                result.append(question)
+        return result
+    
+    def get_questions_for_user_level(self, materia, nivel_usuario, count=15):
+        """
+        Obtiene preguntas para el nivel del usuario, mezclando niveles cercanos si es necesario
+        Args:
+            materia: La materia de las preguntas
+            nivel_usuario: El nivel del usuario (1-3)
+            count: Cantidad de preguntas a devolver
+        Returns:
+            Lista de preguntas del nivel y niveles cercanos
+        """
+        preguntas = []
+        
+        # Primero intentar obtener del nivel exacto
+        preguntas_nivel = self.search_by_difficulty_and_subject_composite(nivel_usuario, materia)
+        preguntas.extend(preguntas_nivel)
+        
+        # Si no hay suficientes, agregar de niveles cercanos
+        if len(preguntas) < count:
+            # Agregar del nivel anterior si existe
+            if nivel_usuario > 1:
+                preguntas_anterior = self.search_by_difficulty_and_subject_composite(nivel_usuario - 1, materia)
+                preguntas.extend(preguntas_anterior)
+            
+            # Agregar del nivel siguiente si existe
+            if nivel_usuario < 3 and len(preguntas) < count:
+                preguntas_siguiente = self.search_by_difficulty_and_subject_composite(nivel_usuario + 1, materia)
+                preguntas.extend(preguntas_siguiente)
+        
+        # Eliminar duplicados manteniendo el orden
+        seen = set()
+        preguntas_unicas = []
+        for pregunta in preguntas:
+            pregunta_id = pregunta.get('id', str(pregunta))
+            if pregunta_id not in seen:
+                seen.add(pregunta_id)
+                preguntas_unicas.append(pregunta)
+        
+        return preguntas_unicas[:count]
 
     def search_by_id(self, question_id):
         # Busca una pregunta por ID
@@ -166,6 +283,61 @@ class AVLTree:
         if abs(left_height - right_height) > 1:
             return -1  # Retorna -1 si el nodo no está balanceado
         return max(left_height, right_height) + 1  # Retorna la altura del nodo
+
+    # =====================
+    # MÉTODOS DE BÚSQUEDA CON NOMBRES ESPECÍFICOS PARA COMPATIBILIDAD
+    # =====================
+    
+    def search_by_difficulty_and_subject_composite(self, dificultad, materia):
+        """Búsqueda ultrarrápida O(1) usando índice compuesto"""
+        return self._search_composite(dificultad, materia)
+    
+    def search_by_difficulty_and_subject_binary(self, dificultad, materia):
+        """Búsqueda O(log n) usando búsqueda binaria"""
+        return self._search_binary(dificultad, materia)
+    
+    def search_by_difficulty_and_subject_linear(self, dificultad, materia):
+        """Búsqueda O(n) lineal para comparación de rendimiento"""
+        return self._search_linear(dificultad, materia)
+    
+    def get_questions_for_user_level(self, materia, nivel_usuario, count=15):
+        """
+        Obtiene preguntas para el nivel del usuario, mezclando niveles cercanos si es necesario
+        Args:
+            materia: La materia de las preguntas
+            nivel_usuario: El nivel del usuario (1-3)
+            count: Cantidad de preguntas a devolver
+        Returns:
+            Lista de preguntas del nivel y niveles cercanos
+        """
+        preguntas = []
+        
+        # Primero intentar obtener del nivel exacto
+        preguntas_nivel = self.search_by_difficulty_and_subject_composite(nivel_usuario, materia)
+        preguntas.extend(preguntas_nivel)
+        
+        # Si no hay suficientes, agregar de niveles cercanos
+        if len(preguntas) < count:
+            # Agregar del nivel anterior si existe
+            if nivel_usuario > 1:
+                preguntas_anterior = self.search_by_difficulty_and_subject_composite(nivel_usuario - 1, materia)
+                preguntas.extend(preguntas_anterior)
+            
+            # Agregar del nivel siguiente si existe
+            if nivel_usuario < 3 and len(preguntas) < count:
+                preguntas_siguiente = self.search_by_difficulty_and_subject_composite(nivel_usuario + 1, materia)
+                preguntas.extend(preguntas_siguiente)
+        
+        # Eliminar duplicados manteniendo el orden
+        seen = set()
+        preguntas_unicas = []
+        for pregunta in preguntas:
+            pregunta_id = pregunta.get('id', str(pregunta))
+            if pregunta_id not in seen:
+                seen.add(pregunta_id)
+                preguntas_unicas.append(pregunta)
+        
+        return preguntas_unicas[:count]
 
 
 def merge_sort(arr, key='id'):
@@ -287,52 +459,136 @@ def cargar_preguntas(archivo, materia):
         return []
 
 
-if __name__ == '__main__':
-    avl = AVLTree()  # Crea una instancia del árbol AVL
-    
-    # Carga preguntas de los archivos proporcionados
-    preguntas_habilidades = cargar_preguntas('habilidades_vida_ordenado_completado.json', 'Habilidades_Vida')
-    preguntas_ciencia = cargar_preguntas('ciencia_datos_ordenado_completado.json', 'Ciencia_Datos')
-    
-    # Inserta todas las preguntas en el árbol AVL
-    for q in preguntas_habilidades + preguntas_ciencia:
-        avl.insert(q)
-    
-    print("=== DEMOSTRACION ARBOL AVL ===")
-    print(f"Total preguntas insertadas: {avl.size}")  # Muestra el total de preguntas insertadas
-    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")  # Verifica el balance del árbol
-    print("\nMaterias disponibles:", avl.get_all_subjects())  # Muestra las materias disponibles
-    
-    # Muestra preguntas por materia
-    for materia in avl.get_all_subjects():
-        print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
-        preguntas_materia = avl.search_by_subject(materia)  # Obtiene preguntas de la materia
-        print(f"Total: {len(preguntas_materia)} preguntas")  # Muestra el total de preguntas
-        for q in preguntas_materia[:3]:  # Muestra solo las primeras 3 preguntas por brevedad
-            print(f"\nID {q['id']}: {q['question']}")  # Muestra la ID y pregunta
-            print("Opciones:")
-            for opcion in q['options']:
-                print(f" - {opcion}")  # Muestra las opciones
-            print(f"Respuesta correcta: {q['answer']}")  # Muestra la respuesta correcta
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
 
-            if q.get('feedback'):
-                print(f"\nRetroalimentación: {q['feedback']}")
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
 
-            if q.get('explanation'):
-                print(f"\nExplicación: {q['explanation']}")
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
 
-            print("-" * 50)
-    
-    print("\n=== BUSQUEDA POR ID ===")
-    target_id = preguntas_habilidades[0]['id'] if preguntas_habilidades else 1  # Usa el ID de la primera pregunta
-    print(f"Buscando pregunta con ID {target_id}:")
-    found = avl.search_by_id(target_id)  # Busca la pregunta por ID
-    if found:
-        print(f"Materia: {found['subject']}")  # Muestra la materia de la pregunta
-        print(f"Pregunta: {found['question']}")  # Muestra la pregunta
-        print(f"Respuesta: {found['answer']}")  # Muestra la respuesta
-    else:
-        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
-    
-    print("\n=== DEMOSTRACION ALGORITMOS ===")
-    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)  # Demuestra la ordenación y búsqueda
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False

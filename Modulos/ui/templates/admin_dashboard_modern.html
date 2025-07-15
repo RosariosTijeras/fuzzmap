@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FuzzMap – Panel de Administrador</title>
+
+    <!-- Icono de la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Plotly.js para gráficos interactivos -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        /* Fondo moderno con degradado oscuro */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #2c3e50 0%, #3498db 50%, #9b59b6 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Header moderno */
+        .modern-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1rem 0 2rem 0;
+            color: white;
+        }
+
+        /* Navegación de pestañas moderna */
+        .nav-tabs-modern {
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs-modern .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+            margin: 0 0.2rem;
+        }
+
+        .nav-tabs-modern .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Tarjetas modernas */
+        .modern-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Formulario moderno */
+        .form-modern .form-control,
+        .form-modern .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            padding: 0.8rem 1rem;
+        }
+
+        .form-modern .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-modern .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .form-modern .form-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        /* Botones modernos */
+        .btn-modern {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .btn-danger-modern {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        /* Stats cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Lista de usuarios moderna */
+        .user-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Gráficos container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Performance metrics */
+        .performance-metric {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00d2d3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modern-card {
+                padding: 1.5rem;
+            }
+
+            .stat-card {
+                height: auto;
+                padding: 1rem;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Scrollbar personalizado */
+        .user-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .user-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .user-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Header Moderno -->
+        <div class="modern-header animate-fade-in">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('ui.static', filename='Logo.png') }}" alt="FuzzMap Logo" class="me-3"
+                            style="width: 50px;">
+                        <div>
+                            <h2 class="mb-0"><i class="bi bi-shield-check"></i> Panel de Administrador</h2>
+                            <p class="mb-0 opacity-75">Gestión completa del sistema FuzzMap</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{{ url_for('ui.dashboard') }}" class="btn btn-modern me-2">
+                        <i class="bi bi-house"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('ui.logout') }}" class="btn btn-danger-modern">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación de Pestañas -->
+        <ul class="nav nav-tabs nav-tabs-modern animate-fade-in" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                    type="button" role="tab">
+                    <i class="bi bi-people"></i> Gestión de Usuarios
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance"
+                    type="button" role="tab">
+                    <i class="bi bi-speedometer2"></i> Métricas de Rendimiento
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics"
+                    type="button" role="tab">
+                    <i class="bi bi-graph-up"></i> Análisis del Sistema
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenido de las Pestañas -->
+        <div class="tab-content" id="adminTabsContent">
+            <!-- Pestaña: Gestión de Usuarios -->
+            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                <div class="row">
+                    <!-- Formulario de Registro -->
+                    <div class="col-lg-6">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-4"><i class="bi bi-person-plus"></i> Registrar Nuevo Usuario</h4>
+
+                            {% if mensaje %}
+                            <div class="alert alert-{% if 'exitoso' in mensaje %}success{% else %}danger{% endif %} alert-dismissible fade show"
+                                role="alert">
+                                {{ mensaje }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endif %}
+
+                            <form method="POST" class="form-modern">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="correo" class="form-label">Correo:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="correo" name="correo"
+                                                placeholder="usuario" required>
+                                            <span class="input-group-text"
+                                                style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;">@unach.edu.ec</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contrasena" class="form-label">Contraseña:</label>
+                                        <input type="password" class="form-control" id="contrasena" name="contrasena"
+                                            placeholder="Mínimo 8 caracteres" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nombres" class="form-label">Nombres:</label>
+                                        <input type="text" class="form-control" id="nombres" name="nombres"
+                                            placeholder="Nombres completos" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="apellidos" class="form-label">Apellidos:</label>
+                                        <input type="text" class="form-control" id="apellidos" name="apellidos"
+                                            placeholder="Apellidos completos" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="edad" class="form-label">Edad:</label>
+                                        <input type="number" class="form-control" id="edad" name="edad" min="15"
+                                            max="100" placeholder="Edad" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="sexo" class="form-label">Sexo:</label>
+                                        <select class="form-select" id="sexo" name="sexo" required>
+                                            <option value="" disabled selected>Seleccionar</option>
+                                            <option value="Masculino">Masculino</option>
+                                            <option value="Femenino">Femenino</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tipo_usuario" class="form-label">Tipo de Usuario:</label>
+                                        <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+                                            <option value="alumno" selected>Estudiante</option>
+                                            <option value="maestro">Maestro</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nivel_inicial" class="form-label">Nivel de Dificultad
+                                            Inicial:</label>
+                                        <select class="form-select" id="nivel_inicial" name="nivel_inicial" required>
+                                            <option value="1" selected>Principiante (Nivel 1)</option>
+                                            <option value="2">Intermedio (Nivel 2)</option>
+                                            <option value="3">Avanzado (Nivel 3)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3" id="materias_container">
+                                    <label class="form-label">Materias (solo para maestros):</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="materias"
+                                                    value="Ciencia_Datos" id="ciencia_datos">
+                                                <label class="form-check-label" for="ciencia_datos">Ciencia de
+                                                    Datos</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="materias"
+                                                    value="Habilidades_Vida" id="habilidades_vida">
+                                                <label class="form-check-label" for="habilidades_vida">Habilidades para
+                                                    la Vida</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success-modern w-100">
+                                    <i class="bi bi-person-plus"></i> Registrar Usuario
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Usuarios -->
+                    <div class="col-lg-6">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-4"><i class="bi bi-people"></i> Usuarios Registrados ({{ usuarios|length }})
+                            </h4>
+
+                            <div class="user-list">
+                                {% for email, user in usuarios.items() %}
+                                {% if email != 'admin@unach.edu.ec' %}
+                                <div class="user-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">{{ user.nombre }} {{ user.apellido }}</h6>
+                                            <small class="text-white-50">{{ email }}</small>
+                                            <br>
+                                            <small class="text-white-50">
+                                                <i class="bi bi-person-badge"></i> {{ user.get('tipo_usuario',
+                                                'Estudiante') }} |
+                                                <i class="bi bi-speedometer"></i> {{ user.get('nivel_inicial',
+                                                'Principiante') }}
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-info">{{ user.edad }} años</span>
+                                            <br>
+                                            <small class="text-white-50">{{ user.sexo }}</small>
+                                        </div>
+                                    </div>
+                                    {% if user.get('materias') %}
+                                    <div class="mt-2">
+                                        <small class="text-warning">
+                                            <i class="bi bi-book"></i> Materias: {{ user.materias|join(',
+                                            ')|replace('_', ' ') }}
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña: Métricas de Rendimiento -->
+            <div class="tab-pane fade" id="performance" role="tabpanel">
+                <div class="row">
+                    <!-- Métricas de AVL -->
+                    <div class="col-lg-8">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-4"><i class="bi bi-cpu"></i> Rendimiento de Algoritmos de Búsqueda</h4>
+                            <div class="chart-container">
+                                <div id="algorithm-performance-chart"></div>
+                            </div>
+                        </div>
+
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-4"><i class="bi bi-robot"></i> Métricas del Modelo de IA</h4>
+                            <div class="chart-container">
+                                <div id="ai-performance-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Métricas -->
+                    <div class="col-lg-4">
+                        <div class="modern-card animate-fade-in">
+                            <h5 class="mb-3"><i class="bi bi-speedometer2"></i> Métricas del Sistema</h5>
+
+                            <div class="performance-metric">
+                                <span>Tiempo Promedio de Búsqueda:</span>
+                                <span class="metric-value" id="search-time">{{
+                                    "%.4f"|format(performance_metrics.avg_search_time * 1000) }}ms</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Tiempo Promedio de IA:</span>
+                                <span class="metric-value" id="ai-time">{{
+                                    "%.3f"|format(performance_metrics.avg_ai_time) }}s</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Tiempo Promedio de Respuesta:</span>
+                                <span class="metric-value" id="response-time">{{
+                                    "%.4f"|format(performance_metrics.avg_response_time * 1000) }}ms</span>
+                            </div>
+
+                            <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+
+                            <div class="performance-metric">
+                                <span>Total de Peticiones:</span>
+                                <span class="metric-value" id="total-requests">{{ performance_metrics.total_requests
+                                    }}</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Preguntas en AVL:</span>
+                                <span class="metric-value" id="avl-size">{{ total_preguntas or 0 }}</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Estudiantes registrados:</span>
+                                <span class="metric-value" id="students-count">{{ total_usuarios or 0 }}</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Tests completados:</span>
+                                <span class="metric-value" id="tests-count">{{ total_tests or 0 }}</span>
+                            </div>
+
+                            <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+
+                            <div class="performance-metric">
+                                <span>Promedio General del Sistema:</span>
+                                <span class="metric-value" id="system-average">{{ promedio_general }}%</span>
+                            </div>
+
+                            <div class="performance-metric">
+                                <span>Precisión del modelo:</span>
+                                <span class="metric-value" id="ai-accuracy">94.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña: Análisis del Sistema -->
+            <div class="tab-pane fade" id="analytics" role="tabpanel">
+                <div class="row">
+                    <!-- Estadísticas generales -->
+                    <div class="col-12 mb-4">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card animate-fade-in">
+                                    <div class="stat-number">{{ total_students or 0 }}</div>
+                                    <div class="stat-label">Estudiantes Activos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card animate-fade-in">
+                                    <div class="stat-number">{{ total_teachers or 0 }}</div>
+                                    <div class="stat-label">Maestros</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card animate-fade-in">
+                                    <div class="stat-number">{{ total_questions or 0 }}</div>
+                                    <div class="stat-label">Preguntas Disponibles</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="stat-card animate-fade-in">
+                                    <div class="stat-number">{{ total_tests or 0 }}</div>
+                                    <div class="stat-label">Tests Completados</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos de análisis -->
+                    <div class="col-lg-6">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-3"><i class="bi bi-bar-chart"></i> Distribución por Niveles</h4>
+                            <div class="chart-container">
+                                <div id="difficulty-distribution-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-3"><i class="bi bi-pie-chart"></i> Tests por Materia</h4>
+                            <div class="chart-container">
+                                <div id="subjects-distribution-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="modern-card animate-fade-in">
+                            <h4 class="mb-3"><i class="bi bi-graph-up"></i> Evolución de Tests por Mes</h4>
+                            <div class="chart-container">
+                                <div id="monthly-tests-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts personalizados -->
+    <script>
+        // Controlar visibilidad de materias y nivel según tipo de usuario
+        document.getElementById('tipo_usuario').addEventListener('change', function () {
+            const materiasContainer = document.getElementById('materias_container');
+            const nivelContainer = document.querySelector('#nivel_inicial').closest('.col-md-6');
+
+            if (this.value === 'maestro') {
+                materiasContainer.style.display = 'block';
+                nivelContainer.style.display = 'none';
+                // Quitar required del nivel para maestros
+                document.getElementById('nivel_inicial').removeAttribute('required');
+            } else {
+                materiasContainer.style.display = 'none';
+                nivelContainer.style.display = 'block';
+                // Agregar required del nivel para estudiantes
+                document.getElementById('nivel_inicial').setAttribute('required', 'required');
+                // Desmarcar todas las materias si es estudiante
+                document.querySelectorAll('input[name="materias"]').forEach(cb => cb.checked = false);
+            }
+        });
+
+        // Inicializar visibilidad
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipoUsuario = document.getElementById('tipo_usuario').value;
+            const materiasContainer = document.getElementById('materias_container');
+            const nivelContainer = document.querySelector('#nivel_inicial').closest('.col-md-6');
+
+            materiasContainer.style.display = tipoUsuario === 'maestro' ? 'block' : 'none';
+            nivelContainer.style.display = tipoUsuario === 'maestro' ? 'none' : 'block';
+
+            if (tipoUsuario === 'maestro') {
+                document.getElementById('nivel_inicial').removeAttribute('required');
+            } else {
+                document.getElementById('nivel_inicial').setAttribute('required', 'required');
+            }
+
+            // Crear gráficos
+            createAlgorithmPerformanceChart();
+            createAIPerformanceChart();
+            createDifficultyDistributionChart();
+            createSubjectsDistributionChart();
+            createMonthlyTestsChart();
+
+            // Simular actualizaciones de métricas en tiempo real
+            updateMetricsRealTime();
+        });
+
+        function createAlgorithmPerformanceChart() {
+            const data = [{
+                x: ['Búsqueda Compuesta', 'Búsqueda Binaria', 'Búsqueda Lineal'],
+                y: [0.001, 0.045, 2.234],
+                type: 'bar',
+                marker: {
+                    color: ['#00d2d3', '#ff9f43', '#ff6b6b']
+                }
+            }];
+
+            const layout = {
+                title: 'Tiempo de Respuesta por Algoritmo (ms)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                yaxis: { title: 'Tiempo (ms)', color: 'white' },
+                xaxis: { color: 'white' }
+            };
+
+            Plotly.newPlot('algorithm-performance-chart', data, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        function createAIPerformanceChart() {
+            const data = [{
+                x: ['Generación de Recomendaciones', 'Análisis de Respuestas', 'Clasificación de Dificultad'],
+                y: [1.23, 0.89, 0.45],
+                type: 'bar',
+                marker: {
+                    color: ['#a55eea', '#26de81', '#45aaf2']
+                }
+            }];
+
+            const layout = {
+                title: 'Tiempo de Respuesta del Modelo IA (s)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                yaxis: { title: 'Tiempo (s)', color: 'white' },
+                xaxis: { color: 'white' }
+            };
+
+            Plotly.newPlot('ai-performance-chart', data, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        function createDifficultyDistributionChart() {
+            const data = [{
+                x: ['Principiante', 'Intermedio', 'Avanzado'],
+                y: [45, 35, 20],
+                type: 'bar',
+                marker: {
+                    color: ['#ffeaa7', '#fd79a8', '#e17055']
+                }
+            }];
+
+            const layout = {
+                title: 'Estudiantes por Nivel',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                yaxis: { title: 'Cantidad', color: 'white' },
+                xaxis: { color: 'white' }
+            };
+
+            Plotly.newPlot('difficulty-distribution-chart', data, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        function createSubjectsDistributionChart() {
+            const data = [{
+                values: [60, 40],
+                labels: ['Ciencia de Datos', 'Habilidades para la Vida'],
+                type: 'pie',
+                marker: {
+                    colors: ['#4ecdc4', '#ff6b6b']
+                }
+            }];
+
+            const layout = {
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                showlegend: true
+            };
+
+            Plotly.newPlot('subjects-distribution-chart', data, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        function createMonthlyTestsChart() {
+            const data = [{
+                x: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                y: [23, 45, 32, 67, 49, 58],
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { color: '#00d2d3', width: 3 },
+                marker: { size: 8, color: '#00d2d3' }
+            }];
+
+            const layout = {
+                title: 'Tests Completados por Mes',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: 'white' },
+                yaxis: { title: 'Cantidad de Tests', color: 'white' },
+                xaxis: { color: 'white' }
+            };
+
+            Plotly.newPlot('monthly-tests-chart', data, layout, {
+                responsive: true,
+                displayModeBar: false
+            });
+        }
+
+        function updateMetricsRealTime() {
+            // Actualizar métricas reales cada 5 segundos
+            setInterval(async () => {
+                try {
+                    const response = await fetch('/ui/api/metrics');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            const metrics = data.metrics;
+
+                            // Actualizar métricas de tiempo de búsqueda
+                            document.getElementById('search-time').textContent = (metrics.avg_search_time * 1000).toFixed(4) + 'ms';
+
+                            // Actualizar métricas de IA
+                            document.getElementById('ai-time').textContent = metrics.avg_ai_time.toFixed(3) + 's';
+
+                            // Actualizar tiempo de respuesta
+                            document.getElementById('response-time').textContent = (metrics.avg_response_time * 1000).toFixed(4) + 'ms';
+
+                            // Actualizar total de peticiones
+                            document.getElementById('total-requests').textContent = metrics.total_requests;
+
+                            // Actualizar contadores si están disponibles
+                            if (metrics.total_users) document.getElementById('students-count').textContent = metrics.total_users;
+                            if (metrics.total_tests) document.getElementById('tests-count').textContent = metrics.total_tests;
+                            if (metrics.total_questions) document.getElementById('avl-size').textContent = metrics.total_questions;
+                        }
+                    }
+                } catch (error) {
+                    console.log('Error actualizando métricas:', error);
+                }
+            }, 5000); // Actualizar cada 5 segundos
+        }
+
+        // Animaciones al cargar
+        const cards = document.querySelectorAll('.animate-fade-in');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

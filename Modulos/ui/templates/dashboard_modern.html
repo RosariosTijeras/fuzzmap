@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FuzzMap – Dashboard Moderno</title>
+
+    <!-- Icono de la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Plotly.js para gráficos interactivos -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        /* Fondo moderno con degradado oscuro */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Header moderno */
+        .modern-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1rem 0 2rem 0;
+            color: white;
+        }
+
+        /* Tarjetas modernas */
+        .modern-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Stats cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Botones modernos */
+        .btn-modern {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .btn-danger-modern {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        /* Gráficos container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Timeline moderno */
+        .timeline-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #667eea;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        /* Nivel badge */
+        .nivel-badge {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modern-card {
+                padding: 1.5rem;
+            }
+
+            .stat-card {
+                height: auto;
+                padding: 1rem;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Header Moderno -->
+        <div class="modern-header animate-fade-in">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('ui.static', filename='Logo.png') }}" alt="FuzzMap Logo" class="me-3"
+                            style="width: 50px;">
+                        <div>
+                            <h2 class="mb-0">¡Hola {{ nombre }} {{ apellido }}! 👋</h2>
+                            <p class="mb-0 opacity-75">Tu nivel actual: <span class="nivel-badge">{{ nivel_actual
+                                    }}</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="{{ url_for('ui.logout') }}" class="btn btn-danger-modern">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Generales -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-number">{{ mi_promedio|round(1) }}</div>
+                    <div class="stat-label">Tu Promedio</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-number"># {{ mi_posicion if mi_posicion else 'N/A' }}</div>
+                    <div class="stat-label">Tu Posición</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-number">{{ total_tests }}</div>
+                    <div class="stat-label">Tests Realizados</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-number">{{ mejor_score }}</div>
+                    <div class="stat-label">Mejor Puntuación</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Panel principal -->
+            <div class="col-lg-8">
+                <!-- Ranking de Estudiantes -->
+                {% if ranking_chart %}
+                <div class="modern-card animate-fade-in">
+                    <h4 class="mb-3"><i class="bi bi-trophy-fill text-warning"></i> Ranking de Estudiantes</h4>
+                    <div class="chart-container">
+                        <div id="ranking-chart"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Tu Evolución -->
+                {% if evolution_chart %}
+                <div class="modern-card animate-fade-in">
+                    <h4 class="mb-3"><i class="bi bi-graph-up text-info"></i> Tu Evolución</h4>
+                    <div class="chart-container">
+                        <div id="evolution-chart"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Tests Disponibles -->
+                <div class="modern-card animate-fade-in">
+                    <h4 class="mb-3"><i class="bi bi-play-circle text-success"></i> Iniciar Nuevo Test</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a href="{{ url_for('ui.comenzar_test', materia='Fundamentos de ciencia de datos') }}"
+                                class="btn btn-modern w-100">
+                                <i class="bi bi-brain"></i> Ciencia de Datos
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="{{ url_for('ui.comenzar_test', materia='Habilidades para la vida') }}"
+                                class="btn btn-modern w-100">
+                                <i class="bi bi-heart"></i> Habilidades para la Vida
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel lateral -->
+            <div class="col-lg-4">
+                <!-- Historial Reciente -->
+                <div class="modern-card animate-fade-in">
+                    <h5 class="mb-3"><i class="bi bi-clock-history"></i> Historial Reciente</h5>
+                    {% if historial_tests %}
+                    {% for test in historial_tests %}
+                    <div class="timeline-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ test.materia|replace('_', ' ') }}</strong>
+                                <br>
+                                <small class="opacity-75">{{ test.fecha }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{% if test.score >= 7 %}success{% else %}danger{% endif %}">
+                                    {{ test.score }}/10
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('ui.estadisticas_usuario') }}" class="btn btn-modern btn-sm">
+                            Ver Historial Completo
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-center opacity-75">¡Inicia tu primer test!</p>
+                    {% endif %}
+                </div>
+
+                <!-- Recomendación General -->
+                {% if recomendacion_general %}
+                <div class="modern-card animate-fade-in">
+                    <h5 class="mb-3"><i class="bi bi-lightbulb"></i> Recomendación</h5>
+                    <div class="opacity-90">
+                        {{ recomendacion_general|markdown_to_html|safe }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts para gráficos -->
+    <script>
+        // Gráfico de ranking
+        {% if ranking_chart %}
+        document.addEventListener('DOMContentLoaded', function () {
+            var rankingData = {{ ranking_chart| safe
+        }};
+        Plotly.newPlot('ranking-chart', rankingData.data, rankingData.layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    });
+        {% endif %}
+
+        // Gráfico de evolución
+        {% if evolution_chart %}
+        document.addEventListener('DOMContentLoaded', function () {
+            var evolutionData = {{ evolution_chart| safe
+        }};
+        Plotly.newPlot('evolution-chart', evolutionData.data, evolutionData.layout, {
+            responsive: true,
+            displayModeBar: false
+        });
+    });
+        {% endif %}
+
+        // Animaciones al scroll
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.animate-fade-in');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animationDelay = `${index * 0.1}s`;
+                }, 100);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -5,7 +5,8 @@
     "nombre": "Administrador",
     "apellido": "Principal",
     "edad": 30,
-    "sexo": "Otro"
+    "sexo": "Otro",
+    "tipo_usuario": "admin"
   },
   "mario.camacho@unach.edu.ec": {
     "usuario": "mario.camacho@unach.edu.ec",
@@ -14,9 +15,40 @@
     "apellido": "Camacho Monar",
     "edad": 22,
     "sexo": "M",
+    "tipo_usuario": "alumno",
+    "nivel_dificultad": 2,
     "materias": [
       "Fundamentos de ciencia de datos",
       "Habilidades para la vida"
+    ]
+  },
+  "estudiante1@unach.edu.ec": {
+    "usuario": "estudiante1@unach.edu.ec",
+    "contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "nombre": "Ana Maria",
+    "apellido": "Apolo",
+    "edad": 26,
+    "sexo": "F",
+    "tipo_usuario": "alumno",
+    "nivel_dificultad": 1,
+    "materias": [
+      "Estructura de datos",
+      "Fundamentos de ciencia de datos",
+      "Habilidades para la vida",
+      "Probabilidad y estadística",
+      "Programación 2"
+    ]
+  },
+  "profesor@unach.edu.ec": {
+    "usuario": "profesor@unach.edu.ec",
+    "contrasena": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+    "nombre": "asdasd",
+    "apellido": "asdasd",
+    "edad": 30,
+    "sexo": "Masculino",
+    "tipo_usuario": "maestro",
+    "materias": [
+      "Habilidades_Vida"
     ]
   }
 }
