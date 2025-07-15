@@ -426,12 +426,111 @@ def teacher_dashboard():
     # Obtener estadísticas de alumnos del maestro
     teacher_stats = _get_teacher_stats(usuario, materias_asignadas)
     
-    return render_template('teacher_dashboard.html',
-                         usuario=usuario,
-                         nombre=nombre,
-                         apellido=apellido,
-                         materias_asignadas=materias_asignadas,
-                         **teacher_stats)
+    # Crear una versión ultra-limpia de los datos para Jinja
+    try:
+        import json
+        
+        # Serializar todo a JSON y luego deserializar para garantizar limpieza
+        clean_teacher_stats = json.loads(json.dumps(teacher_stats, default=str))
+        
+        # Verificar que charts_data sea accesible
+        charts_data = clean_teacher_stats.get('charts_data', {})
+        if not isinstance(charts_data, dict):
+            charts_data = {}
+        
+        # Asegurar estructura básica de charts_data
+        default_chart = {'labels': [], 'values': [], 'colors': ['#667eea']}
+        charts_data.setdefault('ranking_chart', default_chart.copy())
+        charts_data.setdefault('niveles_chart', default_chart.copy())
+        charts_data.setdefault('materias_chart', default_chart.copy())
+        
+        print(f"✅ Template data preparado correctamente")
+        print(f"   📊 Charts_data keys: {list(charts_data.keys())}")
+        
+        # Aplicar limpieza ultra-defensiva antes de pasar al template
+        ultra_clean_data = _clean_data_for_json({
+            'usuario': usuario,
+            'nombre': nombre,
+            'apellido': apellido,
+            'materias_asignadas': materias_asignadas,
+            **clean_teacher_stats
+        }, "template_data")
+        
+        # Convertir charts_data a JSON strings para evitar problemas con Jinja2
+        import json
+        if 'charts_data' in ultra_clean_data:
+            charts = ultra_clean_data['charts_data']
+            ultra_clean_data['charts_json'] = {
+                'ranking_labels': json.dumps(charts.get('ranking_chart', {}).get('labels', [])),
+                'ranking_values': json.dumps(charts.get('ranking_chart', {}).get('values', [])),
+                'ranking_colors': json.dumps(charts.get('ranking_chart', {}).get('colors', ['#667eea'])),
+                
+                'niveles_labels': json.dumps(charts.get('niveles_chart', {}).get('labels', ['Sin datos'])),
+                'niveles_values': json.dumps(charts.get('niveles_chart', {}).get('values', [1])),
+                'niveles_colors': json.dumps(charts.get('niveles_chart', {}).get('colors', ['#667eea'])),
+                
+                'materias_labels': json.dumps(charts.get('materias_chart', {}).get('labels', [])),
+                'materias_values': json.dumps(charts.get('materias_chart', {}).get('values', [])),
+                'materias_colors': json.dumps(charts.get('materias_chart', {}).get('colors', ['#667eea']))
+            }
+        
+        # Verificación final de serialización
+        try:
+            # Remover charts_data original para evitar conflictos
+            test_data = {k: v for k, v in ultra_clean_data.items() if k != 'charts_data'}
+            test_json = json.dumps(test_data)
+            print(f"✅ Template data final es serializable JSON ({len(test_json)} chars)")
+        except Exception as final_error:
+            print(f"❌ Error final de serialización: {final_error}")
+            # En caso de error extremo, usar datos mínimos seguros
+            ultra_clean_data = {
+                'usuario': str(usuario),
+                'nombre': str(nombre),
+                'apellido': str(apellido),
+                'materias_asignadas': [str(m) for m in materias_asignadas],
+                'stats_por_materia': {},
+                'ranking_alumnos': [],
+                'total_alumnos': 0,
+                'total_tests': 0,
+                'promedio_general': 0.0,
+                'charts_json': {
+                    'ranking_labels': '[]',
+                    'ranking_values': '[]', 
+                    'ranking_colors': '["#667eea"]',
+                    'niveles_labels': '["Sin datos"]',
+                    'niveles_values': '[1]',
+                    'niveles_colors': '["#667eea"]',
+                    'materias_labels': '[]',
+                    'materias_values': '[]',
+                    'materias_colors': '["#667eea"]'
+                }
+            }
+        
+        return render_template('teacher_dashboard.html', **ultra_clean_data)
+                             
+    except Exception as e:
+        print(f"❌ Error preparando datos para template: {e}")
+        
+        # Fallback con datos mínimos
+        fallback_data = {
+            'stats_por_materia': {},
+            'ranking_alumnos': [],
+            'total_alumnos': 0,
+            'total_tests': 0,
+            'promedio_general': 0.0,
+            'charts_data': {
+                'ranking_chart': {'labels': [], 'values': [], 'colors': ['#667eea']},
+                'niveles_chart': {'labels': ['Sin datos'], 'values': [1], 'colors': ['#667eea']},
+                'materias_chart': {'labels': [], 'values': [], 'colors': ['#667eea']}
+            }
+        }
+        
+        return render_template('teacher_dashboard.html',
+                             usuario=usuario,
+                             nombre=nombre,
+                             apellido=apellido,
+                             materias_asignadas=materias_asignadas,
+                             **fallback_data)
 
 def _sort_by_fecha(item):
     """Función auxiliar para ordenar por fecha"""
@@ -440,6 +539,60 @@ def _sort_by_fecha(item):
 def _sort_by_promedio(item):
     """Función auxiliar para ordenar ranking por promedio"""
     return item[1]['promedio']
+
+def _clean_data_for_json(data, context="unknown"):
+    """
+    Limpia datos para asegurar que sean serializables a JSON
+    Convierte todos los tipos no serializables a tipos básicos
+    """
+    print(f"   🧹 Limpiando datos para JSON: {context}")
+    
+    try:
+        if isinstance(data, dict):
+            cleaned = {}
+            for key, value in data.items():
+                # Limpiar clave
+                clean_key = str(key) if key is not None else "null"
+                # Limpiar valor recursivamente
+                cleaned[clean_key] = _clean_data_for_json(value, f"{context}.{clean_key}")
+            return cleaned
+            
+        elif isinstance(data, (list, tuple)):
+            return [_clean_data_for_json(item, f"{context}[{i}]") for i, item in enumerate(data)]
+            
+        elif isinstance(data, (int, float)):
+            # Asegurar que sea un número válido
+            if isinstance(data, float):
+                if data != data:  # NaN check
+                    return 0.0
+                elif data == float('inf') or data == float('-inf'):
+                    return 0.0
+                else:
+                    return float(data)
+            return int(data)
+            
+        elif isinstance(data, str):
+            return str(data)
+            
+        elif isinstance(data, bool):
+            return bool(data)
+            
+        elif data is None:
+            return None
+            
+        elif callable(data):
+            # Si es una función, convertir a string descriptivo
+            print(f"   ⚠️ Función detectada en {context}: {data}")
+            return f"<function: {str(data)}>"
+            
+        else:
+            # Para cualquier otro tipo, convertir a string
+            print(f"   ⚠️ Tipo no reconocido en {context}: {type(data)} - {data}")
+            return str(data)
+            
+    except Exception as e:
+        print(f"   ❌ Error limpiando {context}: {e}")
+        return None
 
 def _get_teacher_stats(teacher_email, materias_asignadas):
     """
@@ -477,14 +630,35 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
         for alumno_email in alumnos.keys():
             alumno_folder = os.path.join('Datos', alumno_email.replace('@', '_at_'))
             if os.path.isdir(alumno_folder):
-                # Buscar tests de esta materia
-                pattern = os.path.join(alumno_folder, f'test_{materia}_*.json')
-                test_files = glob.glob(pattern)
+                # Mapear nombres de materias para la búsqueda
+                materia_variations = []
+                if materia == "Habilidades_Vida":
+                    materia_variations = ["Habilidades_Vida", "Habilidades para la vida"]
+                elif materia == "Ciencia_Datos":
+                    materia_variations = ["Ciencia_Datos", "Fundamentos de ciencia de datos"]
+                else:
+                    materia_variations = [materia, materia.replace("_", " ")]
                 
-                print(f"     👤 {alumno_email}: {len(test_files)} tests encontrados")
+                # Buscar tests de esta materia con múltiples patrones posibles
+                test_files = []
+                for variation in materia_variations:
+                    patterns = [
+                        os.path.join(alumno_folder, f'test_{variation}_*.json'),
+                        os.path.join(alumno_folder, f'test_*{variation}*.json')
+                    ]
+                    for pattern in patterns:
+                        test_files.extend(glob.glob(pattern))
+                
+                # Eliminar duplicados
+                test_files = list(set(test_files))
+                
+                print(f"     👤 {alumno_email}: {len(test_files)} tests encontrados para {materia}")
+                if test_files:
+                    print(f"        📄 Archivos: {[os.path.basename(f) for f in test_files]}")
                 
                 for test_file in test_files:
                     try:
+                        import json
                         with open(test_file, 'r', encoding='utf-8') as f:
                             test_data = json.load(f)
                             
@@ -941,15 +1115,35 @@ def _finalizar_test(materia):
         # Generar recomendación usando el sistema de lógica difusa existente
         print(f"🤖 Generando recomendación para {usuario}...")
         
+        # Extraer datos necesarios para la recomendación
+        score = float(score)
+        correctas = int(correctas)
+        total_preguntas = int(total_preguntas)
+        
         # Usar el sistema de recomendaciones existente del módulo fuzzy_evaluator
-        rec = recomendacion_fuzzy_con_qwen3(resultados_test)
+        # Primero intentar con IA, si falla usar fallback
+        try:
+            import asyncio
+            # Llamar función async correctamente
+            rec = asyncio.run(recomendacion_fuzzy_con_qwen3(
+                resultados_test, 
+                score, 
+                correctas, 
+                total_preguntas, 
+                temas_fallados
+            ))
+        except Exception as ai_error:
+            print(f"⚠️ Error con IA (usando fallback): {ai_error}")
+            # Usar recomendación difusa básica como fallback
+            from Modulos.fuzzylogic.fuzzy_evaluator import recommendation
+            rec = recommendation(score, correctas, total_preguntas, temas_fallados)
         
         if not rec or len(str(rec).strip()) < 10:
             # Fallback a recomendación basada en reglas
             rec = generar_recomendacion_respaldo(score, nivel_usado, len(preguntas_falladas))
             
     except Exception as e:
-        print(f"❌ Error generando recomendación IA: {e}")
+        print(f"❌ Error generando recomendación: {e}")
         # Recomendación de respaldo basada en reglas
         rec = generar_recomendacion_respaldo(score, nivel_usado, len(preguntas_falladas))
     
@@ -1506,55 +1700,55 @@ def _get_admin_stats():
 
 def generar_recomendacion_respaldo(score, nivel_usado, num_falladas):
     """
-    Recomendación de respaldo sin IA (instantánea)
+    Genera una recomendación de respaldo basada en reglas cuando la IA no funciona
     """
-    if score >= 8:
-        return f"🏆 ¡Excelente! Dominas el nivel {nivel_usado}. Considera avanzar al siguiente nivel."
-    elif score >= 6:
-        return f"👍 Buen trabajo en nivel {nivel_usado}. Repasa {num_falladas} temas específicos para perfeccionar."
-    elif score >= 4:
-        return f"📖 Progreso sólido. Dedica tiempo extra a los {num_falladas} conceptos que necesitan refuerzo."
-    else:
-        return f"💪 ¡No te rindas! Vuelve a estudiar los fundamentos. Práctica diaria de 20min mejorará tu rendimiento."
+    if score >= 90:
+        return f"""**¡Excelente trabajo!** 🎉
 
-def _clean_data_for_json(data, debug_path="root"):
-    """
-    Limpia recursivamente los datos para asegurar que sean serializables JSON
-    """
-    import copy
-    import json
+Has demostrado un dominio sobresaliente en el nivel {nivel_usado}. 
+
+**Próximos pasos:**
+- Considera avanzar al siguiente nivel de dificultad
+- Explora temas avanzados en la materia
+- Comparte tu conocimiento ayudando a otros estudiantes
+
+¡Sigue así!"""
     
-    if isinstance(data, dict):
-        cleaned = {}
-        for key, value in data.items():
-            try:
-                cleaned_value = _clean_data_for_json(value, f"{debug_path}.{key}")
-                cleaned[str(key)] = cleaned_value
-            except Exception as e:
-                print(f"❌ Error limpiando {debug_path}.{key}: {e}")
-                cleaned[str(key)] = str(value)
-        return cleaned
-    elif isinstance(data, (list, tuple)):
-        cleaned_list = []
-        for i, item in enumerate(data):
-            try:
-                cleaned_item = _clean_data_for_json(item, f"{debug_path}[{i}]")
-                cleaned_list.append(cleaned_item)
-            except Exception as e:
-                print(f"❌ Error limpiando {debug_path}[{i}]: {e}")
-                cleaned_list.append(str(item))
-        return cleaned_list
-    elif hasattr(data, '__call__'):
-        # Es una función o método, convertir a string
-        print(f"⚠️ Función/método encontrado en {debug_path}: {type(data)}")
-        return f"<función: {type(data).__name__}>"
-    elif isinstance(data, (int, float, str, bool)) or data is None:
-        return data
+    elif score >= 70:
+        return f"""**¡Buen trabajo!** 👍
+
+Tu rendimiento en el nivel {nivel_usado} es sólido, aunque hay {num_falladas} áreas de oportunidad.
+
+**Recomendaciones:**
+- Repasa los temas donde tuviste errores
+- Practica con ejercicios similares
+- Consolida tu conocimiento antes de avanzar
+
+¡Vas por buen camino!"""
+    
+    elif score >= 50:
+        return f"""**Necesitas reforzar algunos conceptos** 📚
+
+Tu puntuación sugiere que hay {num_falladas} áreas importantes que requieren atención.
+
+**Plan de mejora:**
+- Dedica tiempo extra a estudiar los temas fallados
+- Busca recursos adicionales (videos, ejercicios)
+- Considera pedir ayuda a tu profesor
+- Practica más antes del siguiente test
+
+¡No te desanimes, el aprendizaje es un proceso!"""
+    
     else:
-        # Cualquier otro tipo, verificar si es serializable
-        try:
-            json.dumps(data)
-            return data
-        except:
-            print(f"⚠️ Tipo no serializable en {debug_path}: {type(data)}")
-            return str(data)
+        return f"""**Es momento de reforzar las bases** 🔄
+
+Tu resultado indica que necesitas trabajar en los fundamentos del nivel {nivel_usado}.
+
+**Estrategia recomendada:**
+- Revisa todos los conceptos básicos de la materia
+- Practica con ejercicios más simples primero
+- Busca apoyo académico adicional
+- Considera estudiar en grupo
+- No avances hasta dominar estos temas
+
+¡Con esfuerzo y dedicación lo lograrás!"""

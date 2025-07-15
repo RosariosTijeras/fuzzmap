@@ -24,21 +24,24 @@
         "timestamp": "2025-07-15T17:03:14.566727"
       }
     ],
-    "total_requests": 92,
-    "avg_response_time": 0.029702539547629976,
-    "last_updated": "2025-07-15T18:01:01.495597"
+    "total_requests": 165,
+    "avg_response_time": 0.7804475642695572,
+    "last_updated": "2025-07-15T18:33:51.044582"
   },
   "user_activity": {
-    "total_users": 3,
+    "total_users": 6,
     "active_users_today": 0,
     "students": 0,
     "teachers": 0,
     "last_login_times": {
-      "admin@unach.edu.ec": "2025-07-15T17:52:31.796980",
-      "mario.camacho@unach.edu.ec": "2025-07-15T16:56:37.057614",
-      "profesor@unach.edu.ec": "2025-07-15T18:01:01.222633"
+      "admin@unach.edu.ec": "2025-07-15T18:28:51.904782",
+      "mario.camacho@unach.edu.ec": "2025-07-15T18:33:50.653609",
+      "profesor@unach.edu.ec": "2025-07-15T18:25:19.111997",
+      "profesor2@unach.edu.ec": "2025-07-15T18:26:15.636282",
+      "habilidades@unach.edu.ec": "2025-07-15T18:33:34.385194",
+      "ana@unach.edu.ec": "2025-07-15T18:30:12.860805"
     },
-    "test_attempts_today": 2
+    "test_attempts_today": 3
   },
   "question_stats": {
     "total_questions": 22,
@@ -53,12 +56,13 @@
     }
   },
   "test_performance": {
-    "total_tests": 2,
-    "avg_score": 5.0,
+    "total_tests": 3,
+    "avg_score": 6.666666666666667,
     "completion_rate": 0,
-    "avg_duration": 14.686392784118652,
+    "avg_duration": 12.382090330123901,
     "tests_by_subject": {
-      "Fundamentos de ciencia de datos": 2
+      "Fundamentos de ciencia de datos": 2,
+      "Habilidades para la vida": 1
     }
   }
 }
