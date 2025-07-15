@@ -445,6 +445,9 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
     """
     Obtiene estadísticas específicas para el dashboard del maestro
     """
+    print(f"\n👨‍🏫 CALCULANDO STATS PARA MAESTRO: {teacher_email}")
+    print(f"   📚 Materias asignadas: {materias_asignadas}")
+    
     usuarios = _cargar_usuarios()
     students_tree = get_students_tree()
     
@@ -452,11 +455,20 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
     alumnos = {email: data for email, data in usuarios.items() 
                if data.get('tipo_usuario', 'alumno') == 'alumno'}
     
+    print(f"   👥 Alumnos encontrados: {len(alumnos)}")
+    
     # Estadísticas por materia
     stats_por_materia = {}
-    todos_los_alumnos = []
+    
+    # Verificar que materias_asignadas sea una lista válida
+    if not materias_asignadas:
+        materias_asignadas = []
+    elif not isinstance(materias_asignadas, list):
+        materias_asignadas = [materias_asignadas]
     
     for materia in materias_asignadas:
+        print(f"   📖 Procesando materia: {materia}")
+        
         # Obtener resultados de tests de esta materia
         resultados_materia = []
         niveles_distribucion = {'1': 0, '2': 0, '3': 0}
@@ -469,32 +481,40 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
                 pattern = os.path.join(alumno_folder, f'test_{materia}_*.json')
                 test_files = glob.glob(pattern)
                 
+                print(f"     👤 {alumno_email}: {len(test_files)} tests encontrados")
+                
                 for test_file in test_files:
                     try:
                         with open(test_file, 'r', encoding='utf-8') as f:
                             test_data = json.load(f)
-                            resultados_materia.append({
-                                'alumno': alumno_email,
-                                'nombre': f"{alumnos[alumno_email].get('nombre', '')} {alumnos[alumno_email].get('apellido', '')}",
-                                'fecha': test_data.get('fecha', ''),
-                                'score': test_data.get('score', 0),
-                                'nivel_usado': test_data.get('nivel_usado', '1')
-                            })
+                            
+                            # Asegurar que todos los datos sean del tipo correcto
+                            alumno_nombre = f"{alumnos[alumno_email].get('nombre', '')} {alumnos[alumno_email].get('apellido', '')}"
+                            
+                            resultado = {
+                                'alumno': str(alumno_email),
+                                'nombre': str(alumno_nombre),
+                                'fecha': str(test_data.get('fecha', '')),
+                                'score': float(test_data.get('score', 0)),
+                                'nivel_usado': str(test_data.get('nivel_usado', '1'))
+                            }
+                            resultados_materia.append(resultado)
                             
                             # Contar niveles
                             nivel = str(test_data.get('nivel_usado', '1'))
                             if nivel in niveles_distribucion:
                                 niveles_distribucion[nivel] += 1
-                    except:
+                    except Exception as e:
+                        print(f"     ❌ Error leyendo {test_file}: {e}")
                         continue
         
         # Estadísticas de la materia
         if resultados_materia:
-            scores = [r['score'] for r in resultados_materia]
-            # Crear resultados recientes sin objetos lambda
+            scores = [float(r['score']) for r in resultados_materia]
+            # Crear resultados recientes serializables
             resultados_ordenados = []
             for resultado in resultados_materia:
-                # Crear copia serializable del resultado
+                # Asegurar que todos los campos sean serializables
                 resultado_limpio = {
                     'alumno': str(resultado['alumno']),
                     'nombre': str(resultado['nombre']),
@@ -508,11 +528,11 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
             try:
                 resultados_ordenados.sort(key=_sort_by_fecha, reverse=True)
                 resultados_recientes = resultados_ordenados[:10]
-            except:
-                # Si hay error en el ordenamiento, tomar los primeros 10
+            except Exception as e:
+                print(f"     ⚠️ Error ordenando resultados: {e}")
                 resultados_recientes = resultados_ordenados[:10]
             
-            stats_por_materia[materia] = {
+            stats_por_materia[str(materia)] = {
                 'total_tests': int(len(resultados_materia)),
                 'promedio': float(round(sum(scores) / len(scores), 2)),
                 'mejor_score': float(max(scores)),
@@ -521,8 +541,9 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
                 'resultados_recientes': resultados_recientes,
                 'niveles_distribucion': {str(k): int(v) for k, v in niveles_distribucion.items()}
             }
+            print(f"     ✅ {len(resultados_materia)} tests procesados")
         else:
-            stats_por_materia[materia] = {
+            stats_por_materia[str(materia)] = {
                 'total_tests': 0,
                 'promedio': 0.0,
                 'mejor_score': 0.0,
@@ -531,73 +552,125 @@ def _get_teacher_stats(teacher_email, materias_asignadas):
                 'resultados_recientes': [],
                 'niveles_distribucion': {'1': 0, '2': 0, '3': 0}
             }
+            print(f"     📭 No hay tests para {materia}")
     
     # Ranking de alumnos general (todos los que han hecho tests en materias del maestro)
     ranking_alumnos = {}
     
     for materia in materias_asignadas:
-        for resultado in stats_por_materia[materia]['resultados_recientes']:
-            alumno = resultado['alumno']
-            if alumno not in ranking_alumnos:
-                ranking_alumnos[alumno] = {
-                    'nombre': resultado['nombre'],
-                    'scores': [],
-                    'total_tests': 0,
-                    'materias': set()
-                }
-            ranking_alumnos[alumno]['scores'].append(resultado['score'])
-            ranking_alumnos[alumno]['total_tests'] += 1
-            ranking_alumnos[alumno]['materias'].add(materia)
+        if str(materia) in stats_por_materia:
+            for resultado in stats_por_materia[str(materia)]['resultados_recientes']:
+                alumno = str(resultado['alumno'])
+                if alumno not in ranking_alumnos:
+                    ranking_alumnos[alumno] = {
+                        'nombre': str(resultado['nombre']),
+                        'scores': [],
+                        'total_tests': 0,
+                        'materias': []
+                    }
+                ranking_alumnos[alumno]['scores'].append(float(resultado['score']))
+                ranking_alumnos[alumno]['total_tests'] += 1
+                if str(materia) not in ranking_alumnos[alumno]['materias']:
+                    ranking_alumnos[alumno]['materias'].append(str(materia))
     
     # Calcular promedios para ranking y asegurar serialización
-    for alumno_data in ranking_alumnos.values():
+    for alumno_email, alumno_data in ranking_alumnos.items():
         if alumno_data['scores']:
-            alumno_data['promedio'] = round(sum(alumno_data['scores']) / len(alumno_data['scores']), 2)
-            # Convertir set a lista para serialización JSON
-            alumno_data['materias'] = list(alumno_data['materias'])
+            alumno_data['promedio'] = float(round(sum(alumno_data['scores']) / len(alumno_data['scores']), 2))
         else:
             alumno_data['promedio'] = 0.0
-            alumno_data['materias'] = []
+        # Asegurar que las materias sean una lista de strings
+        alumno_data['materias'] = [str(m) for m in alumno_data['materias']]
     
     # Ordenar ranking por promedio y crear lista serializable
     ranking_items = list(ranking_alumnos.items())
-    ranking_items.sort(key=_sort_by_promedio, reverse=True)
+    try:
+        ranking_items.sort(key=_sort_by_promedio, reverse=True)
+    except Exception as e:
+        print(f"   ⚠️ Error ordenando ranking: {e}")
+    
     ranking_ordenado = ranking_items[:10]
+    
+    print(f"   🏆 Ranking creado con {len(ranking_ordenado)} alumnos")
     
     # Crear datos serializables para gráficos
     charts_data = _create_teacher_charts(stats_por_materia, ranking_ordenado)
     
+    print(f"\n🔍 DEBUG TEACHER STATS:")
+    print(f"   📊 Materias: {list(stats_por_materia.keys())}")
+    print(f"   👥 Ranking: {len(ranking_ordenado)} alumnos")
+    print(f"   📈 Charts keys: {list(charts_data.keys()) if charts_data else 'None'}")
+    
     # Limpiar todos los datos antes de retornar para asegurar serialización JSON
-    return {
-        'stats_por_materia': _clean_data_for_json(stats_por_materia),
-        'ranking_alumnos': _clean_data_for_json(ranking_ordenado),
+    clean_stats = _clean_data_for_json(stats_por_materia, "stats_por_materia")
+    clean_ranking = _clean_data_for_json(ranking_ordenado, "ranking_alumnos")
+    clean_charts = _clean_data_for_json(charts_data, "charts_data")
+    
+    total_tests_count = sum(stats.get('total_tests', 0) for stats in stats_por_materia.values())
+    
+    # Calcular promedio general de forma segura
+    if total_tests_count > 0:
+        promedio_general = float(round(sum(stats.get('promedio', 0) * stats.get('total_tests', 0) 
+                                          for stats in stats_por_materia.values()) / total_tests_count, 2))
+    else:
+        promedio_general = 0.0
+    
+    result_data = {
+        'stats_por_materia': clean_stats,
+        'ranking_alumnos': clean_ranking,
         'total_alumnos': int(len(ranking_alumnos)),
-        'total_tests': int(sum(stats['total_tests'] for stats in stats_por_materia.values())),
-        'promedio_general': float(round(sum(stats['promedio'] * stats['total_tests'] 
-                                          for stats in stats_por_materia.values()) / 
-                                       max(sum(stats['total_tests'] for stats in stats_por_materia.values()), 1), 2)),
-        'charts_data': charts_data
+        'total_tests': int(total_tests_count),
+        'promedio_general': promedio_general,
+        'charts_data': clean_charts
     }
+    
+    # Test de serialización JSON antes de retornar
+    try:
+        import json
+        test_json = json.dumps(result_data)
+        print("✅ Datos del teacher dashboard son serializables JSON")
+        print(f"   📏 Tamaño JSON: {len(test_json)} caracteres")
+    except Exception as e:
+        print(f"❌ Error de serialización en teacher stats: {e}")
+        print(f"   Tipo de error: {type(e)}")
+    
+    return result_data
 
 def _create_teacher_charts(stats_por_materia, ranking_alumnos):
     """
     Crea datos para gráficos interactivos del dashboard del maestro
     """
+    print(f"\n🎨 CREANDO GRÁFICOS DEL MAESTRO:")
+    print(f"   📊 Materias recibidas: {list(stats_por_materia.keys()) if stats_por_materia else 'None'}")
+    print(f"   👥 Ranking recibido: {len(ranking_alumnos)} estudiantes")
+    
     # Gráfico de ranking de alumnos - Verificar que los datos sean serializables
+    ranking_labels = []
+    ranking_values = []
+    
+    for data in ranking_alumnos[:10]:
+        if len(data) >= 2 and isinstance(data[1], dict) and 'nombre' in data[1]:
+            ranking_labels.append(str(data[1]['nombre']))
+            ranking_values.append(float(data[1].get('promedio', 0)))
+    
     ranking_chart = {
-        'labels': [str(data[1]['nombre']) for data in ranking_alumnos[:10] if 'nombre' in data[1]],
-        'values': [float(data[1]['promedio']) for data in ranking_alumnos[:10] if 'promedio' in data[1]],
+        'labels': ranking_labels,
+        'values': ranking_values,
         'colors': ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', 
                   '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140']
     }
     
+    print(f"   📈 Ranking chart: {len(ranking_labels)} labels, {len(ranking_values)} values")
+    
     # Gráfico de distribución de niveles
     niveles_totals = {'1': 0, '2': 0, '3': 0}
     for materia, stats in stats_por_materia.items():
-        if 'niveles_distribucion' in stats:
-            for nivel, count in stats['niveles_distribucion'].items():
-                if nivel in niveles_totals:
-                    niveles_totals[nivel] += int(count)
+        if isinstance(stats, dict) and 'niveles_distribucion' in stats:
+            niveles_dist = stats['niveles_distribucion']
+            if isinstance(niveles_dist, dict):
+                for nivel, count in niveles_dist.items():
+                    if str(nivel) in niveles_totals:
+                        niveles_totals[str(nivel)] += int(count)
     
     niveles_chart = {
         'labels': ['Básico (Nivel 1)', 'Intermedio (Nivel 2)', 'Avanzado (Nivel 3)'],
@@ -605,19 +678,39 @@ def _create_teacher_charts(stats_por_materia, ranking_alumnos):
         'colors': ['#2ecc71', '#f39c12', '#e74c3c']
     }
     
+    print(f"   📊 Niveles chart: {niveles_totals}")
+    
     # Gráfico de rendimiento por materia
+    materia_labels = []
+    materia_values = []
+    
+    for materia, stats in stats_por_materia.items():
+        if isinstance(stats, dict) and 'promedio' in stats:
+            materia_labels.append(str(materia))
+            materia_values.append(float(stats['promedio']))
+    
     materias_chart = {
-        'labels': [str(materia) for materia in stats_por_materia.keys()],
-        'values': [float(stats['promedio']) for stats in stats_por_materia.values() if 'promedio' in stats],
+        'labels': materia_labels,
+        'values': materia_values,
         'colors': ['#9b59b6', '#1abc9c', '#f1c40f', '#e67e22', '#95a5a6']
     }
     
+    print(f"   📚 Materias chart: {len(materia_labels)} materias")
+    
     # Limpiar todos los datos para asegurar serialización JSON
     charts_data = {
-        'ranking_chart': _clean_data_for_json(ranking_chart),
-        'niveles_chart': _clean_data_for_json(niveles_chart),
-        'materias_chart': _clean_data_for_json(materias_chart)
+        'ranking_chart': _clean_data_for_json(ranking_chart, "ranking_chart"),
+        'niveles_chart': _clean_data_for_json(niveles_chart, "niveles_chart"),
+        'materias_chart': _clean_data_for_json(materias_chart, "materias_chart")
     }
+    
+    # Test de serialización
+    try:
+        import json
+        json.dumps(charts_data)
+        print("✅ Charts data es serializable JSON")
+    except Exception as e:
+        print(f"❌ Error en charts data: {e}")
     
     return charts_data
 
@@ -1424,24 +1517,44 @@ def generar_recomendacion_respaldo(score, nivel_usado, num_falladas):
     else:
         return f"💪 ¡No te rindas! Vuelve a estudiar los fundamentos. Práctica diaria de 20min mejorará tu rendimiento."
 
-def _clean_data_for_json(data):
+def _clean_data_for_json(data, debug_path="root"):
     """
     Limpia recursivamente los datos para asegurar que sean serializables JSON
     """
     import copy
+    import json
     
     if isinstance(data, dict):
         cleaned = {}
         for key, value in data.items():
-            cleaned[str(key)] = _clean_data_for_json(value)
+            try:
+                cleaned_value = _clean_data_for_json(value, f"{debug_path}.{key}")
+                cleaned[str(key)] = cleaned_value
+            except Exception as e:
+                print(f"❌ Error limpiando {debug_path}.{key}: {e}")
+                cleaned[str(key)] = str(value)
         return cleaned
     elif isinstance(data, (list, tuple)):
-        return [_clean_data_for_json(item) for item in data]
+        cleaned_list = []
+        for i, item in enumerate(data):
+            try:
+                cleaned_item = _clean_data_for_json(item, f"{debug_path}[{i}]")
+                cleaned_list.append(cleaned_item)
+            except Exception as e:
+                print(f"❌ Error limpiando {debug_path}[{i}]: {e}")
+                cleaned_list.append(str(item))
+        return cleaned_list
     elif hasattr(data, '__call__'):
         # Es una función o método, convertir a string
-        return str(data)
+        print(f"⚠️ Función/método encontrado en {debug_path}: {type(data)}")
+        return f"<función: {type(data).__name__}>"
     elif isinstance(data, (int, float, str, bool)) or data is None:
         return data
     else:
-        # Cualquier otro tipo, convertir a string
-        return str(data)
+        # Cualquier otro tipo, verificar si es serializable
+        try:
+            json.dumps(data)
+            return data
+        except:
+            print(f"⚠️ Tipo no serializable en {debug_path}: {type(data)}")
+            return str(data)
