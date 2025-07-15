@@ -22,33 +22,39 @@
       "Habilidades para la vida"
     ]
   },
-  "estudiante1@unach.edu.ec": {
-    "usuario": "estudiante1@unach.edu.ec",
-    "contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-    "nombre": "Ana Maria",
-    "apellido": "Apolo",
-    "edad": 26,
-    "sexo": "F",
-    "tipo_usuario": "alumno",
-    "nivel_dificultad": 1,
+  "ciencia@unach.edu.ec": {
+    "usuario": "ciencia@unach.edu.ec",
+    "contrasena": "7d15e9a98e05254594dd8d69b3028c0af90abb1dbb6c4b8567fee28858321632",
+    "nombre": "ciencia",
+    "apellido": "datos",
+    "edad": 20,
+    "sexo": "Masculino",
+    "tipo_usuario": "maestro",
     "materias": [
-      "Estructura de datos",
-      "Fundamentos de ciencia de datos",
-      "Habilidades para la vida",
-      "Probabilidad y estadística",
-      "Programación 2"
+      "Ciencia_Datos"
     ]
   },
-  "profesor@unach.edu.ec": {
-    "usuario": "profesor@unach.edu.ec",
-    "contrasena": "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
-    "nombre": "asdasd",
-    "apellido": "asdasd",
-    "edad": 30,
-    "sexo": "Masculino",
+  "habilidades@unach.edu.ec": {
+    "usuario": "habilidades@unach.edu.ec",
+    "contrasena": "a717afcbbbfb0ec3e2239e3e6557af99b624522bcf38803ed61963686c90e662",
+    "nombre": "habilidades",
+    "apellido": "vida",
+    "edad": 24,
+    "sexo": "Femenino",
     "tipo_usuario": "maestro",
     "materias": [
       "Habilidades_Vida"
     ]
+  },
+  "ana@unach.edu.ec": {
+    "usuario": "ana@unach.edu.ec",
+    "contrasena": "24d4b96f58da6d4a8512313bbd02a28ebf0ca95dec6e4c86ef78ce7f01e788ac",
+    "nombre": "ana maria",
+    "apellido": "apolo",
+    "edad": 25,
+    "sexo": "Femenino",
+    "tipo_usuario": "alumno",
+    "nivel_dificultad": 3,
+    "materias": []
   }
 }

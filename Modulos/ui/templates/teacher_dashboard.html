@@ -485,11 +485,11 @@
         new Chart(rankingCtx, {
             type: 'bar',
             data: {
-                labels: {{ charts_data.ranking_chart.labels | tojson if charts_data and charts_data.ranking_chart else '[]' | safe }},
+                labels: {{ charts_json.ranking_labels | safe }},
             datasets: [{
                 label: 'Promedio',
-                data: {{ charts_data.ranking_chart.values | tojson if charts_data and charts_data.ranking_chart else '[]' | safe }},
-            backgroundColor: {{ charts_data.ranking_chart.colors | tojson if charts_data and charts_data.ranking_chart else '["#667eea"]' | safe }},
+                data: {{ charts_json.ranking_values | safe }},
+            backgroundColor: {{ charts_json.ranking_colors | safe }},
             borderRadius: 8,
             borderSkipped: false,
                 }]
@@ -518,10 +518,10 @@
         new Chart(nivelesCtx, {
             type: 'doughnut',
             data: {
-                labels: {{ charts_data.niveles_chart.labels | tojson if charts_data and charts_data.niveles_chart else '["Sin datos"]' | safe }},
+                labels: {{ charts_json.niveles_labels | safe }},
             datasets: [{
-                data: {{ charts_data.niveles_chart.values | tojson if charts_data and charts_data.niveles_chart else '[1]' | safe }},
-            backgroundColor: {{ charts_data.niveles_chart.colors | tojson if charts_data and charts_data.niveles_chart else '["#667eea"]' | safe }},
+                data: {{ charts_json.niveles_values | safe }},
+            backgroundColor: {{ charts_json.niveles_colors | safe }},
             borderWidth: 0
                 }]
             },
@@ -543,10 +543,10 @@
         new Chart(materiasCtx, {
             type: 'line',
             data: {
-                labels: {{ charts_data.materias_chart.labels | tojson if charts_data and charts_data.materias_chart else '[]' | safe }},
+                labels: {{ charts_json.materias_labels | safe }},
             datasets: [{
                 label: 'Promedio por Materia',
-                data: {{ charts_data.materias_chart.values | tojson if charts_data and charts_data.materias_chart else '[]' | safe }},
+                data: {{ charts_json.materias_values | safe }},
             borderColor: '#f093fb',
             backgroundColor: 'rgba(240, 147, 251, 0.1)',
             borderWidth: 3,
