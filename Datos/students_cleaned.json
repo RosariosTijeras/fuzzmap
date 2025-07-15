@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-07-15",
+  "total_students": 2,
+  "students": [
+    {
+      "email": "mario.camacho@unach.edu.ec",
+      "correo": "mario.camacho@unach.edu.ec",
+      "nombres": "Jose Mario",
+      "apellidos": "Camacho Monar",
+      "edad": 22,
+      "sexo": "M",
+      "nivel_dificultad": 2,
+      "promedio_general": 3.14,
+      "tests_realizados": 7
+    },
+    {
+      "email": "estudiante1@unach.edu.ec",
+      "correo": "estudiante1@unach.edu.ec",
+      "nombres": "Ana Maria",
+      "apellidos": "Apolo",
+      "edad": 26,
+      "sexo": "F",
+      "nivel_dificultad": 1,
+      "promedio_general": 0.0,
+      "tests_realizados": 0
+    }
+  ]
+}

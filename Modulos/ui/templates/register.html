@@ -11,6 +11,9 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
   <style>
     /* Fondo con degradado oscuro y centrado vertical/horizontal */
     body {
@@ -189,15 +192,31 @@
               </div>
             </div>
 
-            <!-- Nuevo campo: Nivel inicial -->
+            <!-- Tipo de usuario -->
             <div class="mb-3">
-              <label for="nivel_inicial" class="form-label">Nivel de Dificultad Inicial:</label>
-              <select class="form-select" id="nivel_inicial" name="nivel_inicial" required>
-                <option value="Principiante" selected>Principiante (Recomendado para nuevos usuarios)</option>
-                <option value="Intermedio">Intermedio (Si tienes experiencia previa)</option>
-                <option value="Avanzado">Avanzado (Solo para usuarios experimentados)</option>
+              <label for="tipo_usuario" class="form-label">👥 Tipo de Usuario</label>
+              <select name="tipo_usuario" id="tipo_usuario" class="form-select" required>
+                <option value="" disabled selected>Selecciona tu rol...</option>
+                <option value="alumno">🎓 Alumno - Acceso a tests y dashboard personal</option>
+                <option value="maestro">👨‍🏫 Maestro - Panel de gestión y estadísticas de alumnos</option>
               </select>
-              <div class="form-text">Este nivel se ajustará automáticamente según tu rendimiento en los tests.</div>
+              <div class="form-text">Los maestros tendrán acceso a herramientas exclusivas para monitorear el progreso
+                de sus estudiantes.</div>
+            </div>
+
+            <!-- Nivel inicial de dificultad -->
+            <div class="mb-3">
+              <label for="nivel_inicial" class="form-label">🎯 Nivel de Dificultad Inicial</label>
+              <select class="form-select" id="nivel_inicial" name="nivel_inicial" required>
+                <option value="1" selected>🟢 Básico (Nivel 1) - Recomendado para principiantes</option>
+                <option value="2">🟡 Intermedio (Nivel 2) - Si tienes experiencia previa</option>
+                <option value="3">🔴 Avanzado (Nivel 3) - Solo para usuarios experimentados</option>
+              </select>
+              <div class="form-text">
+                <i class="bi bi-info-circle"></i>
+                Este nivel se ajustará automáticamente según tu rendimiento en los tests. El sistema utilizará
+                algoritmos inteligentes para adaptar la dificultad a tu progreso.
+              </div>
             </div>
 
             <!-- Botón de registro -->
@@ -222,6 +241,37 @@
 
     </div>
   </div>
+
+  <script>
+    // Controlar visibilidad del campo de nivel según tipo de usuario
+    document.getElementById('tipo_usuario').addEventListener('change', function () {
+      const nivelContainer = document.querySelector('#nivel_inicial').closest('.mb-3');
+
+      if (this.value === 'maestro') {
+        nivelContainer.style.display = 'none';
+        // Quitar required del nivel para maestros
+        document.getElementById('nivel_inicial').removeAttribute('required');
+      } else {
+        nivelContainer.style.display = 'block';
+        // Agregar required del nivel para estudiantes
+        document.getElementById('nivel_inicial').setAttribute('required', 'required');
+      }
+    });
+
+    // Inicializar visibilidad
+    document.addEventListener('DOMContentLoaded', function () {
+      const tipoUsuario = document.getElementById('tipo_usuario').value;
+      const nivelContainer = document.querySelector('#nivel_inicial').closest('.mb-3');
+
+      if (tipoUsuario === 'maestro') {
+        nivelContainer.style.display = 'none';
+        document.getElementById('nivel_inicial').removeAttribute('required');
+      } else {
+        nivelContainer.style.display = 'block';
+        document.getElementById('nivel_inicial').setAttribute('required', 'required');
+      }
+    });
+  </script>
 </body>
 
 </html>

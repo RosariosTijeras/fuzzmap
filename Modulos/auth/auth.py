@@ -86,7 +86,8 @@ def hash_contrasena(contrasena: str) -> str:
     return hashlib.sha256(contrasena.encode("utf-8")).hexdigest()
 
 
-def registrar_usuario(usuario: str, contrasena: str, nombre: str, apellido: str, edad: int, sexo: str) -> bool:
+def registrar_usuario(usuario: str, contrasena: str, nombre: str, apellido: str, edad: int, sexo: str, 
+                     tipo_usuario: str = 'alumno', nivel_inicial: int = None) -> bool:
     """
     Registra un nuevo usuario en el sistema.
 
@@ -97,12 +98,14 @@ def registrar_usuario(usuario: str, contrasena: str, nombre: str, apellido: str,
         apellido (str): Apellido del usuario.
         edad (int): Edad del usuario.
         sexo (str): Sexo del usuario.
+        tipo_usuario (str): Tipo de usuario ('alumno' o 'maestro').
+        nivel_inicial (int): Nivel de dificultad inicial (1-3).
 
     Returns:
         bool: True si el registro fue exitoso, False si el usuario ya existe.
 
     Example:
-        >>> registrar_usuario('juan', '1234', 'Juan', 'Pérez', 20, 'M')
+        >>> registrar_usuario('juan', '1234', 'Juan', 'Pérez', 20, 'M', 'alumno', 2)
         True
     """
     # Carga los usuarios existentes para comprobar si el usuario ya existe
@@ -112,14 +115,21 @@ def registrar_usuario(usuario: str, contrasena: str, nombre: str, apellido: str,
         return False
     else:
         # Si el usuario no existe, lo agrega al diccionario con los datos y la contraseña encriptada
-        usuarios[usuario] = {
+        user_data = {
             "usuario": usuario,
             "contrasena": hash_contrasena(contrasena),  # Guarda la contraseña encriptada
             "nombre": nombre,
             "apellido": apellido,
             "edad": edad,
-            "sexo": sexo
+            "sexo": sexo,
+            "tipo_usuario": tipo_usuario
         }
+        
+        # Solo agregar nivel_dificultad para alumnos
+        if tipo_usuario == 'alumno' and nivel_inicial is not None:
+            user_data["nivel_dificultad"] = nivel_inicial
+        
+        usuarios[usuario] = user_data
         # Guarda el diccionario actualizado en el archivo JSON
         _guardar_usuarios(usuarios)
         # Retorna True si el registro fue exitoso

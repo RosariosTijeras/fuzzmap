@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FuzzMap – Test de {{ materia_nombre }}</title>
+
+    <!-- Icono de la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Fondo moderno con degradado */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        /* Header moderno */
+        .modern-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        /* Barra de progreso moderna */
+        .progress-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .progress-text {
+            font-weight: 600;
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Tarjeta de pregunta moderna */
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Opciones de respuesta modernas */
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            background: rgba(102, 126, 234, 0.05);
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+
+        .option label {
+            font-weight: 500;
+            color: #2c3e50;
+            cursor: pointer;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .option.selected {
+            background: rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Botones modernos */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn-modern {
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary-modern {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary-modern:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Información del nivel */
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Alertas modernas */
+        .alert-modern {
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-warning-modern {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-card {
+            animation: fadeInUp 0.6s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header moderno -->
+        <div class="modern-header">
+            <h1 class="header-title">
+                <i class="bi bi-journal-check"></i>
+                Test de {{ materia_nombre }}
+            </h1>
+            <p class="header-subtitle">Evaluación adaptativa con IA • Nivel {{ nivel_usuario }}</p>
+
+            <div class="level-badge">
+                <i class="bi bi-trophy"></i>
+                {% if nivel_usuario == 1 %}
+                Nivel Básico
+                {% elif nivel_usuario == 2 %}
+                Nivel Intermedio
+                {% else %}
+                Nivel Avanzado
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Barra de progreso moderna -->
+        <div class="progress-section">
+            <div class="progress-info">
+                <span class="progress-text">
+                    <i class="bi bi-list-check"></i>
+                    Pregunta {{ pregunta_actual + 1 }} de {{ total_preguntas }}
+                </span>
+                <div class="timer" id="timer">
+                    <i class="bi bi-clock"></i>
+                    <span id="time-display">{{ tiempo_restante // 60 }}:{{ '%02d'|format(tiempo_restante % 60) }}</span>
+                </div>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar"
+                    style="width: {{ ((pregunta_actual + 1) / total_preguntas * 100)|round(1) }}%">
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'danger' else 'warning' }}-modern alert-modern">
+            <i class="bi bi-{{ 'exclamation-triangle' if category == 'danger' else 'info-circle' }}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Tarjeta de pregunta moderna -->
+        <div class="question-card">
+            <div class="question-number">
+                <i class="bi bi-question-circle"></i>
+                Pregunta {{ pregunta_actual + 1 }}
+            </div>
+
+            <div class="question-text">
+                {{ pregunta.pregunta }}
+            </div>
+
+            <form method="post" id="questionForm">
+                <div class="options-container">
+                    {% for opcion in ['A', 'B', 'C', 'D'] %}
+                    {% if pregunta['opcion_' + opcion] %}
+                    <div class="option" onclick="selectOption(this, '{{ opcion }}')">
+                        <label>
+                            <input type="radio" name="respuesta" value="{{ opcion }}" required>
+                            <strong>{{ opcion }})</strong> {{ pregunta['opcion_' + opcion] }}
+                        </label>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('ui.dashboard') }}" class="btn btn-secondary-modern">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+
+                    <button type="submit" class="btn btn-primary-modern" id="submitBtn">
+                        {% if pregunta_actual + 1 == total_preguntas %}
+                        <i class="bi bi-check-circle"></i>
+                        Finalizar Test
+                        {% else %}
+                        <i class="bi bi-arrow-right"></i>
+                        Siguiente Pregunta
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Función para seleccionar opción
+        function selectOption(element, value) {
+            // Remover selección anterior
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Seleccionar la nueva opción
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // Timer contador regresivo
+        let timeRemaining = {{ tiempo_restante }};
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('time-display').textContent =
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining <= 0) {
+                alert('¡Tiempo agotado! El test se enviará automáticamente.');
+                document.getElementById('questionForm').submit();
+                return;
+            }
+
+            timeRemaining--;
+        }
+
+        // Actualizar timer cada segundo
+        setInterval(updateTimer, 1000);
+
+        // Agregar funcionalidad de teclado
+        document.addEventListener('keydown', function (e) {
+            if (e.key >= '1' && e.key <= '4') {
+                const optionIndex = parseInt(e.key) - 1;
+                const options = document.querySelectorAll('.option');
+                if (options[optionIndex]) {
+                    const radioValue = ['A', 'B', 'C', 'D'][optionIndex];
+                    selectOption(options[optionIndex], radioValue);
+                }
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const selectedOption = document.querySelector('input[name="respuesta"]:checked');
+                if (selectedOption) {
+                    document.getElementById('questionForm').submit();
+                } else {
+                    alert('Por favor selecciona una respuesta antes de continuar.');
+                }
+            }
+        });
+
+        // Validación antes de envío
+        document.getElementById('questionForm').addEventListener('submit', function (e) {
+            const selectedOption = document.querySelector('input[name="respuesta"]:checked');
+            if (!selectedOption) {
+                e.preventDefault();
+                alert('Por favor selecciona una respuesta antes de continuar.');
+            }
+        });
+
+        // Animación de entrada
+        document.addEventListener('DOMContentLoaded', function () {
+            const questionCard = document.querySelector('.question-card');
+            questionCard.style.opacity = '0';
+            questionCard.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                questionCard.style.transition = 'all 0.6s ease';
+                questionCard.style.opacity = '1';
+                questionCard.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

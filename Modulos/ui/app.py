@@ -20,6 +20,7 @@ Dependencias principales:
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, current_app  # Funciones principales de Flask
 from Modulos.auth.auth import registrar_usuario, autenticar_usuario  # Funciones de autenticación
 from Modulos.auth.auth import _cargar_usuarios  # Función para cargar usuarios
+from Modulos.metrics.metrics_collector import metrics_collector  # Sistema de métricas
 from datetime import timedelta  # Para manejo de sesiones
 import json  # Para leer y escribir archivos JSON
 import random  # Para seleccionar preguntas aleatoriamente
@@ -28,17 +29,37 @@ import os  # Operaciones con el sistema de archivos
 from datetime import datetime  # Manejo de fechas y horas
 from urllib.parse import unquote  # Decodificar URLs
 import asyncio  # Para operaciones asíncronas
+import time  # Para medir tiempos de respuesta
 import re  # Para procesar markdown básico en recomendaciones
-import plotly.graph_objs as go  # Para gráficos interactivos
+import plotly.graph_objects as go  # Para gráficos interactivos
 import plotly.utils  # Para convertir gráficos a JSON
-import numpy as np  # Para cálculos matemáticos
-import time  # Para medición de tiempo
+import glob  # Para búsqueda de archivos
 
 # Crea el Blueprint 'ui' para la interfaz, configurando la carpeta de plantillas y estáticos
 ui = Blueprint('ui', __name__,
                template_folder='templates',
                static_folder='src',
                static_url_path='/ui/src')
+
+# Decorador para medir tiempos de respuesta
+def measure_response_time(f):
+    """Decorador que mide el tiempo de respuesta de las rutas."""
+    from functools import wraps
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        start_time = time.time()
+        try:
+            result = f(*args, **kwargs)
+            return result
+        finally:
+            end_time = time.time()
+            response_time = end_time - start_time
+            try:
+                metrics_collector.record_request(response_time)
+            except:
+                pass  # Evitar errores si no se puede registrar la métrica
+    return decorated_function
 
 # =====================
 # CREACIÓN AUTOMÁTICA DEL USUARIO ADMINISTRADOR
@@ -63,6 +84,7 @@ def crear_admin():
 # =====================
 # Permite a los usuarios iniciar sesión. Si el método es GET, muestra el formulario. Si es POST, procesa el login.
 @ui.route('/login', methods=['GET', 'POST'])
+@measure_response_time
 def login():
     if request.method == 'POST':
         # Obtiene la parte inicial del correo (sin dominio) y lo completa con el dominio institucional
@@ -73,11 +95,25 @@ def login():
         if autenticar_usuario(usuario, contrasena):
             session.permanent = True  # Hace la sesión persistente (no se cierra al cerrar el navegador)
             session['user'] = usuario  # Guarda el usuario en la sesión
-            # Si el usuario es admin, redirige al dashboard de administrador
+            
+            # Cargar información del usuario para determinar tipo
+            usuarios = _cargar_usuarios()
+            tipo_usuario = usuarios.get(usuario, {}).get('tipo_usuario', 'alumno')
+            
+            # Registrar métrica de login
+            try:
+                user_type = "teacher" if tipo_usuario == 'maestro' else "student"
+                metrics_collector.record_user_login(usuario, user_type)
+            except:
+                pass  # Evitar errores si no se puede registrar la métrica
+            
+            # Redirigir según el tipo de usuario
             if usuario == 'admin@unach.edu.ec':
                 return redirect(url_for('ui.admin_dashboard'))
+            elif tipo_usuario == 'maestro':
+                return redirect(url_for('ui.teacher_dashboard'))
             else:
-                # Si es usuario normal, redirige a su dashboard
+                # Alumno normal, redirige a su dashboard
                 return redirect(url_for('ui.dashboard'))
         else:
             # Si las credenciales son incorrectas, muestra un mensaje de error
@@ -101,7 +137,8 @@ def register():
         lastn = request.form['apellidos']
         age_str = request.form['edad']
         gender = request.form['sexo']
-        nivel_inicial = request.form.get('nivel_inicial', 'Principiante')  # Nuevo campo
+        tipo_usuario = request.form.get('tipo_usuario', 'alumno')  # Nuevo campo
+        nivel_inicial_str = request.form.get('nivel_inicial', '1')  # Nuevo campo
         
         # Validaciones
         if not all([correo_parte, pwd, pwd2, names, lastn, age_str, gender]):
@@ -113,28 +150,39 @@ def register():
         else:
             try:
                 age_int = int(age_str)
+                # Para maestros, no se requiere nivel inicial
+                if tipo_usuario == 'maestro':
+                    nivel_inicial = None  # Los maestros no tienen nivel
+                else:
+                    nivel_inicial = int(nivel_inicial_str)
             except ValueError:
-                flash('Edad inválida.', 'danger')
+                if tipo_usuario == 'alumno':
+                    flash('Edad o nivel inicial inválido.', 'danger')
+                else:
+                    flash('Edad inválida.', 'danger')
                 return render_template('register.html')
             
             # Registra el nuevo usuario usando la función correspondiente
-            ok = registrar_usuario(user, pwd, names, lastn, age_int, gender)
+            ok = registrar_usuario(user, pwd, names, lastn, age_int, gender, 
+                                 tipo_usuario=tipo_usuario, nivel_inicial=nivel_inicial)
             if ok:
-                # Añadir el usuario al árbol AVL de estudiantes
-                students_tree = get_students_tree()
-                if students_tree:
-                    student_data = {
-                        'email': user,
-                        'nombre': names,
-                        'apellido': lastn,
-                        'promedio_general': 0.0,  # Inicial
-                        'nivel_dificultad': nivel_inicial,
-                        'materias': [],
-                        'total_tests': 0
-                    }
-                    students_tree.insert_student(student_data)
+                # Añadir el usuario al árbol AVL de estudiantes si es alumno
+                if tipo_usuario == 'alumno':
+                    students_tree = get_students_tree()
+                    if students_tree:
+                        student_data = {
+                            'correo': user,
+                            'nombres': names,
+                            'apellidos': lastn,
+                            'promedio_general': 0.0,  # Inicial
+                            'nivel_dificultad': nivel_inicial,
+                            'tests_realizados': 0,
+                            'edad': age_int,
+                            'sexo': gender
+                        }
+                        students_tree.insert(student_data)
                 
-                flash('¡Registro exitoso! Ahora inicia sesión.', 'success')
+                flash(f'¡Registro exitoso como {tipo_usuario}! Ahora inicia sesión.', 'success')
                 return redirect(url_for('ui.login'))
             else:
                 flash('El usuario ya existe.', 'danger')
@@ -147,6 +195,7 @@ def register():
 # =====================
 # Muestra el dashboard del usuario con información personalizada y estadísticas de tests.
 @ui.route('/dashboard')
+@measure_response_time
 def dashboard():
     if 'user' not in session:
         return redirect(url_for('ui.login'))
@@ -168,7 +217,13 @@ def dashboard():
     
     # Leer recomendación general y tests del usuario
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
-    recomendacion_general = get_user_recommendations(user_folder)
+    recomendacion_general_raw = get_user_recommendations(user_folder)
+    
+    # Procesar la recomendación para mostrar correctamente
+    if recomendacion_general_raw:
+        recomendacion_general = markdown_to_html(str(recomendacion_general_raw))
+    else:
+        recomendacion_general = None
     
     historial_tests = []
     historial_tests_full = []
@@ -254,12 +309,15 @@ def logout():
 # =====================
 # Muestra el dashboard del administrador con la lista de usuarios y permite registrar nuevos usuarios.
 @ui.route('/admin', methods=['GET', 'POST'])
+@measure_response_time
 def admin_dashboard():
     if 'user' not in session or session['user'] != 'admin@unach.edu.ec':
         return redirect(url_for('ui.login'))
 
     usuarios = _cargar_usuarios()
     mensaje = None
+    mensaje_tipo = 'info'
+    
     if request.method == 'POST':
         # Registrar nuevo usuario desde el dashboard admin
         correo_parte = request.form.get('correo')
@@ -269,35 +327,306 @@ def admin_dashboard():
         apellidos = request.form.get('apellidos')
         edad = request.form.get('edad')
         sexo = request.form.get('sexo')
+        tipo_usuario = request.form.get('tipo_usuario', 'alumno')
+        nivel_inicial = request.form.get('nivel_inicial', '1')
         materias = request.form.getlist('materias')  # Lista de materias seleccionadas
+        
         if not all([correo_parte, pwd, nombres, apellidos, edad, sexo]):
             mensaje = 'Completa todos los campos.'
+            mensaje_tipo = 'danger'
         else:
             try:
                 edad_int = int(edad)
+                # Para maestros, el nivel inicial no es necesario
+                if tipo_usuario == 'maestro':
+                    nivel_int = None  # Los maestros no tienen nivel
+                else:
+                    nivel_int = int(nivel_inicial)
             except ValueError:
-                mensaje = 'Edad inválida.'
-                return render_template('admin_dashboard.html', usuarios=usuarios, mensaje=mensaje)
+                if tipo_usuario == 'alumno':
+                    mensaje = 'Edad o nivel inicial inválido.'
+                else:
+                    mensaje = 'Edad inválida.'
+                mensaje_tipo = 'danger'
+                return render_template('admin_dashboard_modern.html', 
+                                     usuarios=usuarios, 
+                                     mensaje=mensaje, 
+                                     mensaje_tipo=mensaje_tipo,
+                                     **_get_admin_stats())
+            
             # Registra el nuevo usuario usando la función correspondiente
-            ok = registrar_usuario(correo, pwd, nombres, apellidos, edad_int, sexo)
+            ok = registrar_usuario(correo, pwd, nombres, apellidos, edad_int, sexo, 
+                                 tipo_usuario=tipo_usuario, nivel_inicial=nivel_int)
             if ok:
                 # Guardar materias en el usuario
                 usuarios = _cargar_usuarios()
                 usuarios[correo]['materias'] = materias
+                usuarios[correo]['tipo_usuario'] = tipo_usuario
+                # Solo asignar nivel de dificultad a alumnos
+                if tipo_usuario == 'alumno' and nivel_int is not None:
+                    usuarios[correo]['nivel_dificultad'] = nivel_int
+                
                 from Modulos.auth.auth import _guardar_usuarios
                 _guardar_usuarios(usuarios)
-                mensaje = 'Usuario registrado exitosamente.'
+                
+                # Agregar al árbol AVL de estudiantes SOLO si es alumno
+                students_tree = get_students_tree()
+                if students_tree and tipo_usuario == 'alumno' and nivel_int is not None:
+                    student_data = {
+                        'correo': correo,
+                        'nombres': nombres,
+                        'apellidos': apellidos,
+                        'promedio_general': 0,
+                        'tests_realizados': 0,
+                        'nivel_dificultad': nivel_int
+                    }
+                    students_tree.insert(student_data)
+                
+                mensaje = f'Usuario {tipo_usuario} registrado exitosamente.'
+                mensaje_tipo = 'success'
             else:
                 mensaje = 'El usuario ya existe.'
+                mensaje_tipo = 'warning'
+        
         usuarios = _cargar_usuarios()  # Recargar lista
-    # Renderiza el template del dashboard admin con la lista de usuarios y mensajes
-    return render_template('admin_dashboard.html', usuarios=usuarios, mensaje=mensaje)
+    
+    # Obtener estadísticas para el dashboard moderno
+    admin_stats = _get_admin_stats()
+    
+    # Renderiza el template moderno del dashboard admin
+    return render_template('admin_dashboard_modern.html', 
+                         usuarios=usuarios, 
+                         mensaje=mensaje, 
+                         mensaje_tipo=mensaje_tipo,
+                         **admin_stats)
+
+# =====================
+# RUTA DEL DASHBOARD EXCLUSIVO PARA MAESTROS
+# =====================
+@ui.route('/teacher_dashboard')
+@measure_response_time
+def teacher_dashboard():
+    if 'user' not in session:
+        return redirect(url_for('ui.login'))
+    
+    usuario = session['user']
+    usuarios = _cargar_usuarios()
+    
+    # Verificar que el usuario sea realmente un maestro
+    if usuarios.get(usuario, {}).get('tipo_usuario', 'alumno') != 'maestro':
+        flash('Acceso denegado. Esta área es exclusiva para maestros.', 'danger')
+        return redirect(url_for('ui.dashboard'))
+    
+    # Obtener información del maestro
+    maestro_info = usuarios[usuario]
+    nombre = maestro_info.get("nombre", "")
+    apellido = maestro_info.get("apellido", "")
+    materias_asignadas = maestro_info.get("materias", [])
+    
+    # Obtener estadísticas de alumnos del maestro
+    teacher_stats = _get_teacher_stats(usuario, materias_asignadas)
+    
+    return render_template('teacher_dashboard.html',
+                         usuario=usuario,
+                         nombre=nombre,
+                         apellido=apellido,
+                         materias_asignadas=materias_asignadas,
+                         **teacher_stats)
+
+def _sort_by_fecha(item):
+    """Función auxiliar para ordenar por fecha"""
+    return item.get('fecha', '')
+
+def _sort_by_promedio(item):
+    """Función auxiliar para ordenar ranking por promedio"""
+    return item[1]['promedio']
+
+def _get_teacher_stats(teacher_email, materias_asignadas):
+    """
+    Obtiene estadísticas específicas para el dashboard del maestro
+    """
+    usuarios = _cargar_usuarios()
+    students_tree = get_students_tree()
+    
+    # Filtrar solo alumnos
+    alumnos = {email: data for email, data in usuarios.items() 
+               if data.get('tipo_usuario', 'alumno') == 'alumno'}
+    
+    # Estadísticas por materia
+    stats_por_materia = {}
+    todos_los_alumnos = []
+    
+    for materia in materias_asignadas:
+        # Obtener resultados de tests de esta materia
+        resultados_materia = []
+        niveles_distribucion = {'1': 0, '2': 0, '3': 0}
+        
+        # Recorrer carpetas de alumnos
+        for alumno_email in alumnos.keys():
+            alumno_folder = os.path.join('Datos', alumno_email.replace('@', '_at_'))
+            if os.path.isdir(alumno_folder):
+                # Buscar tests de esta materia
+                pattern = os.path.join(alumno_folder, f'test_{materia}_*.json')
+                test_files = glob.glob(pattern)
+                
+                for test_file in test_files:
+                    try:
+                        with open(test_file, 'r', encoding='utf-8') as f:
+                            test_data = json.load(f)
+                            resultados_materia.append({
+                                'alumno': alumno_email,
+                                'nombre': f"{alumnos[alumno_email].get('nombre', '')} {alumnos[alumno_email].get('apellido', '')}",
+                                'fecha': test_data.get('fecha', ''),
+                                'score': test_data.get('score', 0),
+                                'nivel_usado': test_data.get('nivel_usado', '1')
+                            })
+                            
+                            # Contar niveles
+                            nivel = str(test_data.get('nivel_usado', '1'))
+                            if nivel in niveles_distribucion:
+                                niveles_distribucion[nivel] += 1
+                    except:
+                        continue
+        
+        # Estadísticas de la materia
+        if resultados_materia:
+            scores = [r['score'] for r in resultados_materia]
+            # Crear resultados recientes sin objetos lambda
+            resultados_ordenados = []
+            for resultado in resultados_materia:
+                # Crear copia serializable del resultado
+                resultado_limpio = {
+                    'alumno': str(resultado['alumno']),
+                    'nombre': str(resultado['nombre']),
+                    'fecha': str(resultado.get('fecha', '')),
+                    'score': float(resultado['score']),
+                    'nivel_usado': str(resultado.get('nivel_usado', '1'))
+                }
+                resultados_ordenados.append(resultado_limpio)
+            
+            # Ordenar por fecha usando función auxiliar
+            try:
+                resultados_ordenados.sort(key=_sort_by_fecha, reverse=True)
+                resultados_recientes = resultados_ordenados[:10]
+            except:
+                # Si hay error en el ordenamiento, tomar los primeros 10
+                resultados_recientes = resultados_ordenados[:10]
+            
+            stats_por_materia[materia] = {
+                'total_tests': int(len(resultados_materia)),
+                'promedio': float(round(sum(scores) / len(scores), 2)),
+                'mejor_score': float(max(scores)),
+                'peor_score': float(min(scores)),
+                'alumnos_unicos': int(len(set(r['alumno'] for r in resultados_materia))),
+                'resultados_recientes': resultados_recientes,
+                'niveles_distribucion': {str(k): int(v) for k, v in niveles_distribucion.items()}
+            }
+        else:
+            stats_por_materia[materia] = {
+                'total_tests': 0,
+                'promedio': 0.0,
+                'mejor_score': 0.0,
+                'peor_score': 0.0,
+                'alumnos_unicos': 0,
+                'resultados_recientes': [],
+                'niveles_distribucion': {'1': 0, '2': 0, '3': 0}
+            }
+    
+    # Ranking de alumnos general (todos los que han hecho tests en materias del maestro)
+    ranking_alumnos = {}
+    
+    for materia in materias_asignadas:
+        for resultado in stats_por_materia[materia]['resultados_recientes']:
+            alumno = resultado['alumno']
+            if alumno not in ranking_alumnos:
+                ranking_alumnos[alumno] = {
+                    'nombre': resultado['nombre'],
+                    'scores': [],
+                    'total_tests': 0,
+                    'materias': set()
+                }
+            ranking_alumnos[alumno]['scores'].append(resultado['score'])
+            ranking_alumnos[alumno]['total_tests'] += 1
+            ranking_alumnos[alumno]['materias'].add(materia)
+    
+    # Calcular promedios para ranking y asegurar serialización
+    for alumno_data in ranking_alumnos.values():
+        if alumno_data['scores']:
+            alumno_data['promedio'] = round(sum(alumno_data['scores']) / len(alumno_data['scores']), 2)
+            # Convertir set a lista para serialización JSON
+            alumno_data['materias'] = list(alumno_data['materias'])
+        else:
+            alumno_data['promedio'] = 0.0
+            alumno_data['materias'] = []
+    
+    # Ordenar ranking por promedio y crear lista serializable
+    ranking_items = list(ranking_alumnos.items())
+    ranking_items.sort(key=_sort_by_promedio, reverse=True)
+    ranking_ordenado = ranking_items[:10]
+    
+    # Crear datos serializables para gráficos
+    charts_data = _create_teacher_charts(stats_por_materia, ranking_ordenado)
+    
+    # Limpiar todos los datos antes de retornar para asegurar serialización JSON
+    return {
+        'stats_por_materia': _clean_data_for_json(stats_por_materia),
+        'ranking_alumnos': _clean_data_for_json(ranking_ordenado),
+        'total_alumnos': int(len(ranking_alumnos)),
+        'total_tests': int(sum(stats['total_tests'] for stats in stats_por_materia.values())),
+        'promedio_general': float(round(sum(stats['promedio'] * stats['total_tests'] 
+                                          for stats in stats_por_materia.values()) / 
+                                       max(sum(stats['total_tests'] for stats in stats_por_materia.values()), 1), 2)),
+        'charts_data': charts_data
+    }
+
+def _create_teacher_charts(stats_por_materia, ranking_alumnos):
+    """
+    Crea datos para gráficos interactivos del dashboard del maestro
+    """
+    # Gráfico de ranking de alumnos - Verificar que los datos sean serializables
+    ranking_chart = {
+        'labels': [str(data[1]['nombre']) for data in ranking_alumnos[:10] if 'nombre' in data[1]],
+        'values': [float(data[1]['promedio']) for data in ranking_alumnos[:10] if 'promedio' in data[1]],
+        'colors': ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', 
+                  '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140']
+    }
+    
+    # Gráfico de distribución de niveles
+    niveles_totals = {'1': 0, '2': 0, '3': 0}
+    for materia, stats in stats_por_materia.items():
+        if 'niveles_distribucion' in stats:
+            for nivel, count in stats['niveles_distribucion'].items():
+                if nivel in niveles_totals:
+                    niveles_totals[nivel] += int(count)
+    
+    niveles_chart = {
+        'labels': ['Básico (Nivel 1)', 'Intermedio (Nivel 2)', 'Avanzado (Nivel 3)'],
+        'values': [int(niveles_totals['1']), int(niveles_totals['2']), int(niveles_totals['3'])],
+        'colors': ['#2ecc71', '#f39c12', '#e74c3c']
+    }
+    
+    # Gráfico de rendimiento por materia
+    materias_chart = {
+        'labels': [str(materia) for materia in stats_por_materia.keys()],
+        'values': [float(stats['promedio']) for stats in stats_por_materia.values() if 'promedio' in stats],
+        'colors': ['#9b59b6', '#1abc9c', '#f1c40f', '#e67e22', '#95a5a6']
+    }
+    
+    # Limpiar todos los datos para asegurar serialización JSON
+    charts_data = {
+        'ranking_chart': _clean_data_for_json(ranking_chart),
+        'niveles_chart': _clean_data_for_json(niveles_chart),
+        'materias_chart': _clean_data_for_json(materias_chart)
+    }
+    
+    return charts_data
 
 # =====================
 # RUTA PARA COMENZAR UN TEST
 # =====================
 # Inicia un test para el usuario en la materia seleccionada, usando AVL para selección inteligente de preguntas.
 @ui.route('/comenzar_test/<materia>', methods=['GET', 'POST'])
+@measure_response_time
 def comenzar_test(materia):
     if 'user' not in session:
         return redirect(url_for('ui.login'))
@@ -350,17 +679,18 @@ def comenzar_test(materia):
     preguntas_disponibles = preguntas_composite or []
     
     # Si no hay suficientes preguntas del nivel exacto, obtener de niveles cercanos
-    if len(preguntas_disponibles) < 10:
+    if len(preguntas_disponibles) < 3:
         print(f"   ⚠️ Solo {len(preguntas_disponibles)} preguntas de nivel {nivel_usuario}, mezclando niveles...")
-        preguntas_disponibles = questions_tree.get_questions_for_user_level(usuario, materia_key, count=15)
+        preguntas_disponibles = questions_tree.get_questions_for_user_level(materia_key, nivel_usuario, count=15)
     
-    if len(preguntas_disponibles) < 10:
-        flash(f'No hay suficientes preguntas para el nivel {nivel_usuario} en {materia}. Se requieren 10 preguntas mínimo.', 'danger')
+    if len(preguntas_disponibles) < 3:
+        flash(f'No hay suficientes preguntas para el nivel {nivel_usuario} en {materia}. Se requieren 3 preguntas mínimo.', 'danger')
         return redirect(url_for('ui.dashboard'))
     
-    # Seleccionar 10 preguntas aleatoriamente
+    # Seleccionar preguntas aleatoriamente (máximo 10, mínimo 3)
+    num_preguntas = min(10, len(preguntas_disponibles))
     random.shuffle(preguntas_disponibles)
-    preguntas_seleccionadas = preguntas_disponibles[:10]
+    preguntas_seleccionadas = preguntas_disponibles[:num_preguntas]
     
     print(f"   ✅ Seleccionadas {len(preguntas_seleccionadas)} preguntas para el test")
     
@@ -428,8 +758,20 @@ def _finalizar_test(materia):
     usuario = session.get('user')
     nivel_usado = state.get('nivel_usado', 'Principiante')
     
-    # Puntaje de 0 a 10
-    score = correctas
+    # Calcular duración del test
+    test_duration = time.time() - state.get('inicio', time.time())
+    
+    # Obtener número total de preguntas del test
+    total_preguntas = len(respuestas)
+    
+    # Puntaje escalado a base 10
+    score = round((correctas / total_preguntas) * 10, 1) if total_preguntas > 0 else 0
+    
+    # Registrar métricas del test
+    try:
+        metrics_collector.record_test_attempt(materia, score, test_duration)
+    except:
+        pass  # Evitar errores si no se puede registrar la métrica
     
     # Actualizar el nivel del usuario en el árbol AVL basado en el rendimiento
     update_user_level_after_test(usuario, score)
@@ -438,11 +780,11 @@ def _finalizar_test(materia):
     print(f"\n📊 RESULTADO DEL TEST PARA {usuario}")
     print(f"   Materia: {materia}")
     print(f"   Nivel usado: {nivel_usado}")
-    print(f"   Puntuación: {score}/10")
+    print(f"   Puntuación: {correctas}/{total_preguntas} = {score}/10")
     print(f"   Nuevo nivel: {nuevo_nivel}")
     
     # Evaluación difusa robusta (mantener para recomendación)
-    fuzzy_score = evaluate_performance(correctas, 10)
+    fuzzy_score = evaluate_performance(correctas, total_preguntas)
     
     # Extraer temas fallados si existen
     temas_fallados = [r.get('tema') for r in respuestas if not r.get('correcta') and r.get('tema')]
@@ -503,26 +845,20 @@ def _finalizar_test(materia):
     resultados_test['historial_materia'] = historial_materia
     
     try:
-        # Usar recomendación avanzada con Qwen3-4B
-        user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
-        recomendacion_path = os.path.join(user_folder, 'recomendacion_parcial.json')
-        rec = None
+        # Generar recomendación usando el sistema de lógica difusa existente
+        print(f"🤖 Generando recomendación para {usuario}...")
         
-        if os.path.exists(recomendacion_path):
-            with open(recomendacion_path, 'r', encoding='utf-8') as f:
-                data_rec = json.load(f)
-                rec = data_rec.get('recomendacion')
+        # Usar el sistema de recomendaciones existente del módulo fuzzy_evaluator
+        rec = recomendacion_fuzzy_con_qwen3(resultados_test)
         
-        if not rec:
-            rec = asyncio.run(recomendacion_fuzzy_con_qwen3(resultados_test, fuzzy_score, correctas, correctas + incorrectas, temas_fallados))
-        
-        # Limpiar archivo temporal después de usarlo
-        if os.path.exists(recomendacion_path):
-            os.remove(recomendacion_path)
+        if not rec or len(str(rec).strip()) < 10:
+            # Fallback a recomendación basada en reglas
+            rec = generar_recomendacion_respaldo(score, nivel_usado, len(preguntas_falladas))
             
     except Exception as e:
         print(f"❌ Error generando recomendación IA: {e}")
-        rec = f"[Recomendación basada en tu rendimiento: {score}/10 en nivel {nivel_usado}. Tu nuevo nivel es {nuevo_nivel}.]"
+        # Recomendación de respaldo basada en reglas
+        rec = generar_recomendacion_respaldo(score, nivel_usado, len(preguntas_falladas))
     
     # Guardar resultados en archivo
     user_folder = os.path.join('Datos', usuario.replace('@', '_at_'))
@@ -575,8 +911,8 @@ def resultados_test(materia):
     if 'user' not in session or 'test_resultados' not in session:
         return redirect(url_for('ui.dashboard'))
     data = session.pop('test_resultados')
-    # Renderiza la plantilla de resultados con los datos del test
-    return render_template('resultados.html',
+    # Renderiza la plantilla optimizada de resultados con recomendaciones inline
+    return render_template('resultados_optimized.html',
         usuario=session.get('user', ''),
         materia_nombre=data.get('materia_nombre', ''),
         fuzzy_message=data.get('recomendacion', ''),
@@ -703,15 +1039,33 @@ def api_chat_ai():
         f"\nMensaje del usuario: {mensaje}\n"
     )
     try:
-        import asyncio
-        import Modulos.fuzzylogic.fuzzy_evaluator as fe
-        # Usar LM Studio Qwen3-4B
-        respuesta = asyncio.run(fe.generar_recomendacion_qwen3({'materia': materia}, prompt_extra=prompt))
-        from .app import markdown_to_html
-        respuesta_html = markdown_to_html(respuesta)
+        # Usar función de recomendación disponible
+        respuesta = recomendacion_fuzzy_con_qwen3({'materia': materia}, prompt_extra=prompt)
+        respuesta_html = markdown_to_html(str(respuesta))
     except Exception as e:
         respuesta_html = "No se pudo obtener respuesta de la IA. Intenta nuevamente más tarde."
     return jsonify({'respuesta': respuesta_html})
+
+# =====================
+# API PARA MÉTRICAS EN TIEMPO REAL
+# =====================
+@ui.route('/api/metrics', methods=['GET'])
+def api_metrics():
+    """Obtiene métricas de rendimiento en tiempo real para el dashboard de admin"""
+    if 'user' not in session or session['user'] != 'admin@unach.edu.ec':
+        return jsonify({'error': 'Acceso denegado'}), 403
+    
+    try:
+        real_metrics = metrics_collector.get_performance_metrics()
+        return jsonify({
+            'success': True,
+            'metrics': real_metrics
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 # =====================
 # FUNCIONES AUXILIARES PARA OBTENER ÁRBOLES AVL
@@ -733,27 +1087,33 @@ def get_students_tree():
 
 def get_user_difficulty_level(user_email):
     """
-    Obtiene el nivel de dificultad actual del usuario basado en su promedio
-    - Principiante: 0-60
-    - Intermedio: 61-80  
-    - Avanzado: 81-100
+    Obtiene el nivel de dificultad actual del usuario basado en su promedio y configuración
+    - 1 (Básico): 0-60 puntos de promedio
+    - 2 (Intermedio): 61-80 puntos de promedio
+    - 3 (Avanzado): 81-100 puntos de promedio
     """
-    students_tree = get_students_tree()
-    if not students_tree:
-        return "Principiante" # Default
+    # Primero intentar obtener desde el registro de usuario
+    usuarios = _cargar_usuarios()
+    if user_email in usuarios:
+        nivel_guardado = usuarios[user_email].get('nivel_dificultad', 1)
+        # Si ya hay un promedio calculado, usar ese criterio
+        students_tree = get_students_tree()
+        if students_tree:
+            student = students_tree.search_student_by_email(user_email)
+            if student and student.get('promedio_general', 0) > 0:
+                promedio = student.get('promedio_general', 0)
+                if promedio >= 81:
+                    return 3  # Avanzado
+                elif promedio >= 61:
+                    return 2  # Intermedio
+                else:
+                    return 1  # Básico
+        
+        # Si no hay promedio, usar el nivel inicial configurado
+        return nivel_guardado
     
-    student = students_tree.search_student_by_email(user_email)
-    if not student:
-        return "Principiante" # Default para nuevos usuarios
-    
-    promedio = student.get('promedio_general', 0)
-    
-    if promedio >= 81:
-        return "Avanzado"
-    elif promedio >= 61:
-        return "Intermedio"
-    else:
-        return "Principiante"
+    # Default para usuarios no encontrados
+    return 1
 
 def update_user_level_after_test(user_email, test_score):
     """Actualiza el nivel del usuario después de completar un test"""
@@ -881,3 +1241,207 @@ def create_performance_evolution_chart(user_email):
     )
     
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+# =====================
+# FUNCIONES AUXILIARES PARA ESTADÍSTICAS ADMINISTRATIVAS
+# =====================
+
+def _get_admin_stats():
+    """
+    Obtiene estadísticas completas REALES para el dashboard de administrador
+    """
+    import glob
+    import os
+    
+    usuarios = _cargar_usuarios()
+    students_tree = get_students_tree()
+    questions_tree = get_questions_tree()
+    
+    # 1. CONTEO REAL DE USUARIOS
+    alumnos = {email: data for email, data in usuarios.items() 
+               if data.get('tipo_usuario', 'alumno') == 'alumno'}
+    maestros = {email: data for email, data in usuarios.items() 
+                if data.get('tipo_usuario', 'maestro') == 'maestro'}
+    admins = {email: data for email, data in usuarios.items() 
+              if data.get('tipo_usuario', 'admin') == 'admin'}
+    
+    total_usuarios = len(alumnos)
+    total_maestros = len(maestros)
+    
+    print(f"📊 ESTADÍSTICAS REALES DEL ADMIN:")
+    print(f"   👥 Alumnos: {total_usuarios}")
+    print(f"   👨‍🏫 Maestros: {total_maestros}")
+    print(f"   🛡️ Administradores: {len(admins)}")
+    
+    # 2. CONTEO REAL DE TESTS
+    total_tests = 0
+    materias_populares = {}
+    suma_scores = 0
+    
+    # Buscar todos los archivos de test
+    for usuario_email in alumnos.keys():
+        user_folder = os.path.join('Datos', usuario_email.replace('@', '_at_'))
+        if os.path.isdir(user_folder):
+            test_files = [f for f in os.listdir(user_folder) 
+                         if f.startswith('test_') and f.endswith('.json')]
+            
+            for test_file in test_files:
+                try:
+                    with open(os.path.join(user_folder, test_file), 'r', encoding='utf-8') as f:
+                        test_data = json.load(f)
+                        total_tests += 1
+                        suma_scores += test_data.get('score', 0)
+                        
+                        # Contar materias populares
+                        materia = test_data.get('materia', 'Desconocida')
+                        materias_populares[materia] = materias_populares.get(materia, 0) + 1
+                        
+                except:
+                    continue
+    
+    promedio_general = round(suma_scores / total_tests, 2) if total_tests > 0 else 0
+    
+    print(f"   📝 Tests realizados: {total_tests}")
+    print(f"   📊 Promedio general: {promedio_general}")
+    
+    # 3. DISTRIBUCIÓN REAL POR NIVELES
+    niveles_distribucion = {'Básico': 0, 'Intermedio': 0, 'Avanzado': 0}
+    
+    for email, data in alumnos.items():
+        nivel = data.get('nivel_dificultad', 1)
+        if nivel == 1:
+            niveles_distribucion['Básico'] += 1
+        elif nivel == 2:
+            niveles_distribucion['Intermedio'] += 1
+        else:
+            niveles_distribucion['Avanzado'] += 1
+    
+    print(f"   📈 Niveles - Básico: {niveles_distribucion['Básico']}, Intermedio: {niveles_distribucion['Intermedio']}, Avanzado: {niveles_distribucion['Avanzado']}")
+    
+    # 4. CONTEO REAL DE PREGUNTAS
+    total_preguntas = 0
+    preguntas_por_nivel = {'1': 0, '2': 0, '3': 0}
+    preguntas_por_materia = {}
+    
+    # Contar preguntas de Ciencia de Datos
+    try:
+        with open('Datos/Ciencia_Datos/preguntas_generadas/preguntas_generadas_ciencia_datos.json', 'r', encoding='utf-8') as f:
+            cd_questions = json.load(f)
+            total_preguntas += len(cd_questions)
+            preguntas_por_materia['Ciencia de Datos'] = len(cd_questions)
+            
+            for q in cd_questions:
+                nivel = str(q.get('dificultad', 2))
+                if nivel in preguntas_por_nivel:
+                    preguntas_por_nivel[nivel] += 1
+    except:
+        pass
+    
+    # Contar preguntas de Habilidades para la Vida
+    try:
+        with open('Datos/Habilidades_Vida/preguntas_generadas/preguntas_generadas_habilidades_vida.json', 'r', encoding='utf-8') as f:
+            hv_questions = json.load(f)
+            total_preguntas += len(hv_questions)
+            preguntas_por_materia['Habilidades para la Vida'] = len(hv_questions)
+            
+            for q in hv_questions:
+                nivel = str(q.get('dificultad', 2))
+                if nivel in preguntas_por_nivel:
+                    preguntas_por_nivel[nivel] += 1
+    except:
+        pass
+    
+    print(f"   ❓ Total preguntas: {total_preguntas}")
+    
+    # 5. OBTENER DATOS REALES DE ESTUDIANTES PARA RANKING
+    estudiantes_data = []
+    if students_tree:
+        # Recargar todos los estudiantes
+        students_tree.load_all_students()
+        ranking = students_tree.get_top_students(limit=10)
+        estudiantes_data = ranking
+    
+    # 6. DATOS PARA GRÁFICOS
+    charts_data = {
+        'niveles_chart': {
+            'labels': list(niveles_distribucion.keys()),
+            'values': list(niveles_distribucion.values()),
+            'colors': ['#3498db', '#f39c12', '#e74c3c']
+        },
+        'materias_chart': {
+            'labels': list(materias_populares.keys())[:5],
+            'values': list(materias_populares.values())[:5],
+            'colors': ['#9b59b6', '#1abc9c', '#f1c40f', '#e67e22', '#95a5a6']
+        },
+        'preguntas_chart': {
+            'labels': ['Básico', 'Intermedio', 'Avanzado'],
+            'values': [preguntas_por_nivel['1'], preguntas_por_nivel['2'], preguntas_por_nivel['3']],
+            'colors': ['#2ecc71', '#f39c12', '#e74c3c']
+        }
+    }
+    
+    # 7. MÉTRICAS DE RENDIMIENTO DEL SISTEMA
+    real_metrics = metrics_collector.get_performance_metrics()
+    
+    return {
+        'total_usuarios': total_usuarios,
+        'total_maestros': total_maestros,
+        'total_tests': total_tests,
+        'total_preguntas': total_preguntas,
+        'promedio_general': promedio_general,
+        'niveles_distribucion': niveles_distribucion,
+        'materias_populares': materias_populares,
+        'preguntas_por_nivel': preguntas_por_nivel,
+        'preguntas_por_materia': preguntas_por_materia,
+        'estudiantes_data': estudiantes_data,
+        'charts_data': charts_data,
+        'performance_metrics': {
+            'avg_search_time': real_metrics.get('avg_search_time', 0),
+            'avg_ai_time': real_metrics.get('avg_ai_time', 0),
+            'total_requests': real_metrics.get('total_requests', 0),
+            'avg_response_time': real_metrics.get('avg_response_time', 0)
+        }
+    }
+
+# =====================
+# FUNCIONES OPTIMIZADAS PARA GPU RTX 2050
+# =====================
+
+# =====================
+# FUNCIONES AUXILIARES PARA RECOMENDACIONES
+# =====================
+
+def generar_recomendacion_respaldo(score, nivel_usado, num_falladas):
+    """
+    Recomendación de respaldo sin IA (instantánea)
+    """
+    if score >= 8:
+        return f"🏆 ¡Excelente! Dominas el nivel {nivel_usado}. Considera avanzar al siguiente nivel."
+    elif score >= 6:
+        return f"👍 Buen trabajo en nivel {nivel_usado}. Repasa {num_falladas} temas específicos para perfeccionar."
+    elif score >= 4:
+        return f"📖 Progreso sólido. Dedica tiempo extra a los {num_falladas} conceptos que necesitan refuerzo."
+    else:
+        return f"💪 ¡No te rindas! Vuelve a estudiar los fundamentos. Práctica diaria de 20min mejorará tu rendimiento."
+
+def _clean_data_for_json(data):
+    """
+    Limpia recursivamente los datos para asegurar que sean serializables JSON
+    """
+    import copy
+    
+    if isinstance(data, dict):
+        cleaned = {}
+        for key, value in data.items():
+            cleaned[str(key)] = _clean_data_for_json(value)
+        return cleaned
+    elif isinstance(data, (list, tuple)):
+        return [_clean_data_for_json(item) for item in data]
+    elif hasattr(data, '__call__'):
+        # Es una función o método, convertir a string
+        return str(data)
+    elif isinstance(data, (int, float, str, bool)) or data is None:
+        return data
+    else:
+        # Cualquier otro tipo, convertir a string
+        return str(data)

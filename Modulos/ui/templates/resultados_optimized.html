@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FuzzMap – Resultados del Test</title>
+
+    <!-- Icono de la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Fondo moderno con degradado */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        /* Header de celebración */
+        .celebration-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .celebration-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .celebration-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Container principal */
+        .results-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Card principal de resultados */
+        .results-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            animation: slideUpFade 1s ease;
+        }
+
+        /* Header del card */
+        .card-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border: none;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Estadísticas rápidas */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Desglose de preguntas optimizado */
+        .questions-breakdown {
+            padding: 2rem;
+        }
+
+        .breakdown-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid #ddd;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-item.correct {
+            border-left-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        .question-item.incorrect {
+            border-left-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .question-text {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .answer-comparison {
+            background: rgba(248, 249, 250, 0.8);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-answer {
+            color: #dc3545;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .correct-answer {
+            color: #28a745;
+            font-size: 0.9rem;
+        }
+
+        /* Recomendación inline optimizada para GPU */
+        .recommendation-inline {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 1px solid #e1bee7;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #4a148c;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-inline::before {
+            content: "💡";
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .recommendation-inline .rec-text {
+            margin-left: 1.5rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .loading-rec {
+            background: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            padding: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transform: translateY(0);
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary-modern {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .celebration-title {
+                font-size: 2rem;
+            }
+
+            .score-display {
+                font-size: 3rem;
+            }
+
+            .results-container {
+                padding: 0 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-modern {
+                width: 100%;
+                justify-content: center;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="celebration-header">
+        <div class="celebration-title">¡Test Completado!</div>
+        <div class="celebration-subtitle">{{ materia_nombre }}</div>
+    </div>
+
+    <div class="results-container">
+        <div class="results-card">
+            <!-- Header con puntuación -->
+            <div class="card-header">
+                <div class="score-display">
+                    <span class="score-number">{{ correctas }}</span>/10
+                </div>
+                <div class="score-label">Preguntas Correctas</div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ correctas }}</div>
+                    <div class="stat-label">Correctas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ incorrectas }}</div>
+                    <div class="stat-label">Incorrectas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ (correctas * 10)|round|int }}%</div>
+                    <div class="stat-label">Porcentaje</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% if correctas >= 8 %}Excelente{% elif correctas >= 6 %}Muy Bien{% elif correctas >= 4 %}Bien{%
+                        else %}Mejorar{% endif %}
+                    </div>
+                    <div class="stat-label">Rendimiento</div>
+                </div>
+            </div>
+
+            <!-- Sección de recomendaciones de IA -->
+            {% if fuzzy_message %}
+            <div class="recommendation-section"
+                style="padding: 2rem; background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%); border-top: 3px solid #28a745;">
+                <div class="recommendation-title"
+                    style="display: flex; align-items: center; margin-bottom: 1rem; color: #2c3e50;">
+                    <i class="bi bi-robot" style="font-size: 1.5rem; margin-right: 0.5rem; color: #28a745;"></i>
+                    <h5 style="margin: 0; font-weight: 600;">Recomendaciones Personalizadas de IA</h5>
+                </div>
+                <div class="recommendation-text"
+                    style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); line-height: 1.6; color: #495057;">
+                    {{ fuzzy_message|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Desglose detallado de preguntas -->
+            <div class="questions-breakdown">
+                <div class="breakdown-title">
+                    <i class="bi bi-list-check"></i>
+                    Revisión Detallada
+                </div>
+
+                {% for pregunta in preguntas %}
+                <div class="question-item {{ 'correct' if pregunta.correcta else 'incorrect' }}">
+                    <div class="question-text">
+                        <i
+                            class="bi bi-{{ 'check-circle-fill text-success' if pregunta.correcta else 'x-circle-fill text-danger' }}"></i>
+                        {{ pregunta.pregunta }}
+                    </div>
+
+                    <div class="answer-comparison">
+                        <div class="user-answer">
+                            <strong>Tu respuesta:</strong> {{ pregunta.respuesta_usuario }}
+                        </div>
+                        <div class="correct-answer">
+                            <strong>Respuesta correcta:</strong> {{ pregunta.respuesta_correcta }}
+                        </div>
+                    </div>
+
+                    {% if pregunta.explicacion %}
+                    <div class="mt-2 p-2 bg-light rounded">
+                        <small><strong>Explicación:</strong> {{ pregunta.explicacion }}</small>
+                    </div>
+                    {% endif %}
+
+                    <!-- Recomendación inline solo para preguntas incorrectas -->
+                    {% if not pregunta.correcta %}
+                    <div class="recommendation-inline loading-rec" data-question-index="{{ loop.index0 }}">
+                        <div class="rec-text">⏳ Generando recomendación personalizada...</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <a href="{{ url_for('ui.dashboard') }}" class="btn btn-primary-modern">
+                    <i class="bi bi-house-fill"></i>
+                    Volver al Dashboard
+                </a>
+
+                <a href="{{ url_for('ui.estadisticas_usuario') }}" class="btn btn-secondary-modern">
+                    <i class="bi bi-graph-up"></i>
+                    Ver Estadísticas
+                </a>
+
+                <a href="{{ url_for('ui.comenzar_test', materia=materia_nombre) }}" class="btn btn-success-modern">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Repetir Test
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Animación de contador para la puntuación
+        document.addEventListener('DOMContentLoaded', function () {
+            const scoreNumber = document.querySelector('.score-number');
+            const finalScore = parseInt(scoreNumber.textContent);
+            let currentScore = 0;
+
+            const countUp = () => {
+                if (currentScore < finalScore) {
+                    currentScore++;
+                    scoreNumber.textContent = currentScore;
+                    setTimeout(countUp, 100);
+                }
+            };
+
+            setTimeout(countUp, 500);
+
+            // Animación de aparición progresiva de las preguntas
+            const questionItems = document.querySelectorAll('.question-item');
+            questionItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 100 * index);
+            });
+
+            // Generar recomendaciones individuales para preguntas incorrectas
+            generateInlineRecommendations();
+        });
+
+        async function generateInlineRecommendations() {
+            const failedQuestions = {{ preguntas | selectattr('correcta', 'equalto', false) | list | tojson
+        }};
+        const materia = "{{ materia_nombre }}";
+
+        if (failedQuestions.length === 0) return;
+
+        console.log('🤖 Generando recomendaciones optimizadas para RTX 2050...');
+
+        // Procesar recomendaciones de forma secuencial para optimizar memoria GPU
+        for (let i = 0; i < failedQuestions.length; i++) {
+            const question = failedQuestions[i];
+            const recContainer = document.querySelector(`[data-question-index="${getQuestionIndex(question)}"]`);
+
+            if (!recContainer) continue;
+
+            try {
+                // Generar prompt conciso para respuesta rápida
+                const prompt = `Pregunta fallada: "${question.pregunta}". Respuesta incorrecta: "${question.respuesta_usuario}". Correcta: "${question.respuesta_correcta}". 
+                    Da un consejo específico y breve (máximo 25 palabras) para recordar este concepto.`;
+
+                // Simular generación optimizada (en producción sería llamada a API)
+                const recommendation = await generateQuickRecommendation(prompt, question);
+
+                recContainer.className = 'recommendation-inline';
+                recContainer.innerHTML = `<div class="rec-text">${recommendation}</div>`;
+
+                // Pequeña pausa para evitar sobrecarga
+                await new Promise(resolve => setTimeout(resolve, 200));
+
+            } catch (error) {
+                console.error('Error generando recomendación:', error);
+                recContainer.innerHTML = '<div class="rec-text">💭 Revisa la explicación y practica este concepto.</div>';
+            }
+        }
+        }
+
+        function getQuestionIndex(question) {
+            const allQuestions = {{ preguntas | tojson
+        }};
+        return allQuestions.findIndex(q => q.pregunta === question.pregunta);
+        }
+
+        async function generateQuickRecommendation(prompt, question) {
+            // Recomendaciones rápidas basadas en patrones comunes para optimizar GPU
+            const quickTips = {
+                "definición": "📖 Repasa la definición clave y memoriza con ejemplos prácticos.",
+                "concepto": "🧠 Asocia este concepto con situaciones de la vida real.",
+                "proceso": "🔄 Practica los pasos del proceso con diagramas simples.",
+                "aplicación": "⚡ Busca ejemplos donde se aplique este conocimiento.",
+                "diferencia": "🔍 Compara las diferencias clave con conceptos similares.",
+                "causa": "🎯 Identifica las causas principales y sus efectos.",
+                "característica": "✨ Memoriza 2-3 características principales.",
+                "función": "⚙️ Comprende qué hace y por qué es importante.",
+                "tipo": "📝 Clasifica los tipos y sus diferencias clave.",
+                "método": "🛠️ Practica el método paso a paso con ejemplos."
+            };
+
+            // Detectar patrón en la pregunta para recomendación rápida
+            const questionText = question.pregunta.toLowerCase();
+
+            for (const [pattern, tip] of Object.entries(quickTips)) {
+                if (questionText.includes(pattern) || questionText.includes("qué es") ||
+                    questionText.includes("cuál") || questionText.includes("cómo")) {
+                    return tip;
+                }
+            }
+
+            // Recomendación genérica optimizada
+            return "🔥 Refuerza este tema con ejemplos prácticos y repaso activo.";
+        }
+    </script>
+</body>
+
+</html>

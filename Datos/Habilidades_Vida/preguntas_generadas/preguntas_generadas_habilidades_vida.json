@@ -9,7 +9,7 @@
     ],
     "respuesta_correcta": "A) Una situación difícil o desafiante",
     "explicacion": "El estrés se produce cuando nuestro cuerpo y mente son exigidos a cumplir con una demanda de trabajo que superan sus capacidades.",
-    "dificultad": "baja",
+    "dificultad": 2,
     "tema": "Definición, tipos de estrés y ansiedad"
   },
   {
@@ -22,7 +22,7 @@
     ],
     "respuesta_correcta": "B) Emocional",
     "explicacion": "El tipo de estrés emocional se refiere a los sentimientos intensos y dolorosos que pueden causar tensión, ansiedad o depresión.",
-    "dificultad": "media",
+    "dificultad": 3,
     "tema": "Estrés y ansiedad"
   },
   {
@@ -35,7 +35,7 @@
     ],
     "respuesta_correcta": "B) Participar en grupos de apoyo o comunidad.",
     "explicacion": "La respuesta correcta es participar en grupos de apoyo o comunidad. Esto se refiere al concepto de búsqueda de apoyo social, emocional y profesional.",
-    "dificultad": "media",
+    "dificultad": 1,
     "tema": "Búsqueda de apoyo social, emocional y profesional"
   },
   {
@@ -48,7 +48,7 @@
     ],
     "respuesta_correcta": "A) Asignando un nuevo objetivo y desarrollando estrategias para lograrlo.",
     "explicacion": "Cambios significativos en la vida personal o profesional pueden ser desconcertantes, pero adaptarse a ellos puede ser una manera de crecer y evolucionar.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Adaptación al cambio"
   },
   {
@@ -61,7 +61,7 @@
     ],
     "respuesta_correcta": "A) En relación con el manejo del estrés y la ansiedad.",
     "explicacion": "Resilencia se utiliza para describir la capacidad de un individuo para recuperarse rápidamente de adversidades o desafíos, en particular aquellos que involucran el manejo del estrés y la ansiedad. Se trata de una competencia importante para adaptarse a los cambios y sobrevivir y prosperar en los momentos difíciles.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "resilencia"
   },
   {
@@ -74,7 +74,7 @@
     ],
     "respuesta_correcta": "C) El proceso de adaptación al cambio involucra el uso de estrategias prácticas.",
     "explicacion": "El proceso de adaptación al cambio es una capacidad que se desarrolla con tiempo y experiencia. Los seres humanos pueden aprender a manejar los cambios en su entorno mediante la adopción de estrategias prácticas.",
-    "dificultad": "media",
+    "dificultad": 1,
     "tema": "Adaptación al cambio y resilencia"
   },
   {
@@ -87,7 +87,7 @@
     ],
     "respuesta_correcta": "D) Es una forma de establecer relaciones sociales con otras personas.",
     "explicacion": "El apoyo social se refiere a las interacciones y relaciones sociales que se desarrollan entre personas y que son esenciales para su bienestar y desarrollo personal. Estas relaciones proporcionan apoyo emocional, informacional, material y práctico, y ayudan a las personas a adaptarse al cambio y a superar los desafíos de la vida.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "apoyo social"
   },
   {
@@ -100,7 +100,7 @@
     ],
     "respuesta_correcta": "A) Uno que se define como una respuesta adaptativa al cambio.",
     "explicacion": "La unidad 2 se centra en la definición de un resumen que describe cómo ser adaptativo ante los cambios en la vida.",
-    "dificultad": "baja",
+    "dificultad": 1,
     "tema": "Resumen y adaptación al cambio"
   },
   {
@@ -113,7 +113,7 @@
     ],
     "respuesta_correcta": "B) Depresión",
     "explicacion": "La depresión es un trastorno mental caracterizado por una serie de síntomas como dificultad para dormir, pérdida de apetito y gusto, fatiga o pérdida de interés en las actividades que anteriormente gozaban. La ansiedad generalizada se refiere a un estado de ansiedad continuo o recurrente que puede ser debido a varios factores como la vida cotidiana, la educación o el trabajo.",
-    "dificultad": "media",
+    "dificultad": 3,
     "tema": "ansiedad"
   },
   {
@@ -126,7 +126,20 @@
     ],
     "respuesta_correcta": "D) La búsqueda de apoyo social, emocional y profesional es crucial para mejorar la adaptación al cambio.",
     "explicacion": "La búsqueda de apoyo social, emocional y profesional ayuda a las personas a desarrollar las habilidades necesarias para copiar con los cambios y mejorar su adaptación.",
-    "dificultad": "media",
+    "dificultad": 2,
     "tema": "Adaptación al cambio y aprendizaje"
+  },
+  {
+    "pregunta": "¿Cómo se puede desarrollar inteligencia emocional avanzada?",
+    "opciones": [
+      "A) Solo con práctica individual",
+      "B) Combinando autoconocimiento, autorregulación y empatía",
+      "C) Evitando emociones negativas",
+      "D) Solo estudiando teoría"
+    ],
+    "respuesta_correcta": "B) Combinando autoconocimiento, autorregulación y empatía",
+    "explicacion": "La inteligencia emocional avanzada requiere desarrollar múltiples competencias emocionales de forma integrada.",
+    "tema": "Inteligencia Emocional",
+    "dificultad": 3
   }
 ]

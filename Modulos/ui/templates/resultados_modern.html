@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FuzzMap – Resultados del Test</title>
+
+    <!-- Icono de la pestaña del navegador -->
+    <link rel="icon" type="image/png" href="{{ url_for('ui.static', filename='Logo.png') }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Fondo moderno con degradado */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        /* Header de celebración */
+        .celebration-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .celebration-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .celebration-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Tarjeta principal de resultados */
+        .results-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        /* Sección de puntuación */
+        .score-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 2s infinite;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .score-total {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .score-percentage {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Estadísticas rápidas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Sección de recomendaciones */
+        .recommendation-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 3s infinite reverse;
+        }
+
+        .recommendation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .recommendation-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Sección de desglose de preguntas */
+        .questions-breakdown {
+            margin-top: 2rem;
+        }
+
+        .breakdown-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-item {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .question-item.correct {
+            border-left-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .question-item.incorrect {
+            border-left-color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .answer-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .answer-box {
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .user-answer {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #721c24;
+        }
+
+        .correct-answer {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #155724;
+        }
+
+        .question-item.correct .user-answer {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #155724;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-modern {
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-secondary-modern {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary-modern:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-success-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(17, 153, 142, 0.4);
+            color: white;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(1deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .results-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .celebration-title {
+                font-size: 2rem;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-number {
+                font-size: 2rem;
+            }
+
+            .answer-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Efectos especiales para puntuaciones altas */
+        .excellent-score {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .good-score {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .fair-score {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .needs-improvement {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header de celebración -->
+        <div class="celebration-header">
+            <h1 class="celebration-title">
+                <i class="bi bi-trophy-fill"></i>
+                ¡Test Completado!
+            </h1>
+            <p class="celebration-subtitle">{{ materia_nombre }} • {{ usuario }}</p>
+        </div>
+
+        <!-- Tarjeta principal de resultados -->
+        <div class="results-card">
+            <!-- Sección de puntuación principal -->
+            <div
+                class="score-section {% if correctas >= 8 %}excellent-score{% elif correctas >= 6 %}good-score{% elif correctas >= 4 %}fair-score{% else %}needs-improvement{% endif %}">
+                <div class="score-circle">
+                    <div class="text-center">
+                        <div class="score-number">{{ correctas }}</div>
+                    </div>
+                </div>
+                <div class="score-total">de {{ correctas + incorrectas }} preguntas</div>
+                <div class="score-percentage">{{ ((correctas / (correctas + incorrectas)) * 100)|round(1) }}% de acierto
+                </div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="bi bi-check-circle-fill stat-icon" style="color: #28a745;"></i>
+                    <div class="stat-number">{{ correctas }}</div>
+                    <div class="stat-label">Respuestas Correctas</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-x-circle-fill stat-icon" style="color: #dc3545;"></i>
+                    <div class="stat-number">{{ incorrectas }}</div>
+                    <div class="stat-label">Respuestas Incorrectas</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-graph-up stat-icon" style="color: #667eea;"></i>
+                    <div class="stat-number">
+                        {% if correctas >= 8 %}A+{% elif correctas >= 7 %}A{% elif correctas >= 6 %}B+{% elif correctas
+                        >= 5 %}B{% elif correctas >= 4 %}C{% else %}D{% endif %}
+                    </div>
+                    <div class="stat-label">Calificación</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="bi bi-lightning-fill stat-icon" style="color: #f39c12;"></i>
+                    <div class="stat-number">
+                        {% if correctas >= 8 %}Excelente{% elif correctas >= 6 %}Muy Bien{% elif correctas >= 4 %}Bien{%
+                        else %}Mejorar{% endif %}
+                    </div>
+                    <div class="stat-label">Rendimiento</div>
+                </div>
+            </div>
+
+            <!-- Sección de recomendaciones de IA -->
+            {% if fuzzy_message %}
+            <div class="recommendation-section">
+                <div class="recommendation-title">
+                    <i class="bi bi-robot"></i>
+                    Recomendaciones Personalizadas de IA
+                </div>
+                <div class="recommendation-text" id="recomendacion-container">
+                    {{ fuzzy_message|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Desglose detallado de preguntas -->
+            <div class="questions-breakdown">
+                <div class="breakdown-title">
+                    <i class="bi bi-list-check"></i>
+                    Desglose Detallado
+                </div>
+
+                {% for pregunta in preguntas %}
+                <div class="question-item {{ 'correct' if pregunta.correcta else 'incorrect' }}">
+                    <div class="question-text">
+                        <i
+                            class="bi bi-{{ 'check-circle-fill text-success' if pregunta.correcta else 'x-circle-fill text-danger' }}"></i>
+                        {{ pregunta.pregunta }}
+                    </div>
+
+                    <div class="answer-comparison">
+                        <div class="user-answer">
+                            <strong>Tu respuesta:</strong> {{ pregunta.respuesta_usuario }}
+                        </div>
+                        <div class="correct-answer">
+                            <strong>Respuesta correcta:</strong> {{ pregunta.respuesta_correcta }}
+                        </div>
+                    </div>
+
+                    {% if pregunta.explicacion %}
+                    <div class="mt-2 p-2 bg-light rounded">
+                        <small><strong>Explicación:</strong> {{ pregunta.explicacion }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <a href="{{ url_for('ui.dashboard') }}" class="btn btn-primary-modern">
+                    <i class="bi bi-house-fill"></i>
+                    Volver al Dashboard
+                </a>
+
+                <a href="{{ url_for('ui.estadisticas_usuario') }}" class="btn btn-secondary-modern">
+                    <i class="bi bi-graph-up"></i>
+                    Ver Estadísticas
+                </a>
+
+                <a href="{{ url_for('ui.comenzar_test', materia=materia_nombre) }}" class="btn btn-success-modern">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Repetir Test
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Animación de contador para la puntuación
+        document.addEventListener('DOMContentLoaded', function () {
+            const scoreNumber = document.querySelector('.score-number');
+            const finalScore = parseInt(scoreNumber.textContent);
+            let currentScore = 0;
+
+            const countUp = () => {
+                if (currentScore < finalScore) {
+                    currentScore++;
+                    scoreNumber.textContent = currentScore;
+                    setTimeout(countUp, 100);
+                }
+            };
+
+            setTimeout(countUp, 500);
+
+            // Efectos de confeti para puntuaciones altas
+            if (finalScore >= 8) {
+                // Aquí se puede agregar una librería de confeti si se desea
+                console.log('¡Excelente puntuación! 🎉');
+            }
+        });
+
+        // Animación de aparición progresiva de las preguntas
+        const questionItems = document.querySelectorAll('.question-item');
+        questionItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateX(0)';
+            }, 100 * index);
+        });
+    </script>
+</body>
+
+</html>
