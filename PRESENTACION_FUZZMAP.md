@@ -80,7 +80,7 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 - **Python** con **Flask** (Framework web)
 - **Lógica Difusa** con bibliotecas especializadas
 - **Árboles AVL** para estructuras de datos eficientes
-- **IA Generativa** (Qwen3) para recomendaciones
+- **IA Generativa** (Mistral-7b-instruct) para recomendaciones
 
 #### 🎨 Frontend:
 - **HTML5** + **CSS3** + **JavaScript**
@@ -93,7 +93,36 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 - **Sistema de archivos** organizado por usuarios
 - **Métricas en tiempo real**
 
-### Arquitectura del Sistema
+### 🧠 Arquitectura Híbrida de Búsqueda
+
+#### **🌳 Núcleo: Árbol AVL + Índices Compuestos**
+
+```
+    ┌─────────────────────────────────────────────┐
+    │           ALGORITMOS DE BÚSQUEDA            │
+    └─────────────────┬───────────────────────────┘
+                      │
+    ┌─────────────────┼───────────────────────────┐
+    │                 │                           │
+┌───▼────┐    ┌──────▼──────┐    ┌──────────▼────┐
+│ O(1)   │    │   O(log n)  │    │    O(n)       │
+│Índice  │    │ Búsqueda    │    │ Búsqueda      │
+│Compuest│    │ Binaria     │    │ Lineal        │
+│⚡Instant│    │ 🔥Rápida    │    │ 🐌Baseline    │
+└────────┘    └─────────────┘    └───────────────┘
+     │               │                    │
+     └───────────────┼────────────────────┘
+                     │
+          ┌──────────▼──────────┐
+          │   ÁRBOL AVL CORE    │
+          │ (Autobalanceado)    │
+          │ • Factor Balance    │
+          │ • Rotaciones Auto   │
+          │ • Altura O(log n)   │
+          └─────────────────────┘
+```
+
+### Arquitectura General del Sistema
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -111,8 +140,8 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
           │                      │                      │
     ┌─────▼─────┐        ┌───────▼───────┐      ┌──────▼──────┐
     │ Lógica    │        │ Árboles AVL   │      │ Sistema IA  │
-    │ Difusa    │        │ (Preguntas &  │      │ (Mistral)   │
-    │           │        │ Estudiantes)  │      │             │
+    │ Difusa    │        │ (Híbridos)    │      │ (Mistral)   │
+    │           │        │ O(1)+O(log n) │      │             │
     └───────────┘        └───────────────┘      └─────────────┘
 ```
 
@@ -143,10 +172,53 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 - **Niveles Adaptativos**: Ajuste automático de dificultad
 - **Recomendaciones Precisas**: Basadas en patrones de error
 
-### 🌳 Optimización con AVL
-- **Búsqueda Eficiente**: O(log n) para miles de preguntas
-- **Gestión de Estudiantes**: Ranking y estadísticas optimizadas
-- **Rendimiento Superior**: 3x más rápido que búsqueda lineal
+### 🌳 Optimización con AVL: Arquitectura Híbrida Inteligente
+
+#### **Estructura Principal: Árbol AVL Autobalanceado**
+- **Factor de Balance**: Cada nodo mantiene equilibrio entre -1 y 1
+- **Autobalanceo**: Rotaciones automáticas (izquierda/derecha) al insertar
+- **Altura Garantizada**: O(log n) - búsquedas consistentemente rápidas
+- **Robustez**: Previene degradación a lista enlazada
+
+#### **🔍 Tres Algoritmos de Búsqueda Implementados**
+
+##### 1️⃣ **Búsqueda por Índice Compuesto - O(1)**
+```
+Complejidad: O(1) - Tiempo constante ⚡
+Estructura: Hash table con claves (dificultad, materia)
+Uso: Generación instantánea de exámenes
+Implementación: search_by_difficulty_and_subject_composite()
+```
+
+##### 2️⃣ **Búsqueda Binaria en Árbol - O(log n)**
+```
+Complejidad: O(log n) - Logarítmica 🔥
+Estructura: Árbol AVL + índice por dificultad
+Uso: Dashboards y estadísticas en tiempo real
+Implementación: search_by_difficulty_and_subject_binary()
+```
+
+##### 3️⃣ **Búsqueda Lineal - O(n)**
+```
+Complejidad: O(n) - Tiempo lineal 🐌
+Estructura: Recorrido completo de datos
+Uso: Baseline para comparación de rendimiento
+Implementación: search_by_difficulty_and_subject_linear()
+```
+
+#### **📊 Comparación de Rendimiento**
+
+| Algoritmo | Complejidad | Memoria | Velocidad | Caso de Uso |
+|-----------|-------------|---------|-----------|-------------|
+| **Índice Compuesto** | O(1) | Alta | ⚡ Instantánea | Exámenes críticos |
+| **Búsqueda Binaria** | O(log n) | Media | 🔥 Rápida | Dashboards |
+| **Búsqueda Lineal** | O(n) | Baja | 🐌 Lenta | Benchmarking |
+
+#### **🎯 Aplicación en Contexto Educativo**
+- **Exámenes**: O(1) para experiencia fluida del estudiante
+- **Análisis**: O(log n) para dashboards responsivos de profesores
+- **Escalabilidad**: Maneja desde cientos hasta miles de preguntas
+- **Adaptabilidad**: Sistema híbrido que elige el mejor algoritmo según la situación
 
 ---
 
@@ -169,9 +241,15 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 - Interface moderna
 
 #### 4. **Dashboard del Maestro** (15 segundos)
-- Estadísticas por materia
-- Gráficos interactivos
-- Análisis de rendimiento
+- Estadísticas por materia usando búsqueda O(log n)
+- Gráficos interactivos con datos optimizados
+- Análisis de rendimiento con algoritmos híbridos
+- Ranking de estudiantes usando estructuras AVL
+
+**🔧 Demostración de Algoritmos:**
+- **Generación de Examen**: Índice O(1) - instantáneo
+- **Carga de Dashboard**: Búsqueda O(log n) - fluida
+- **Comparación de Rendimiento**: Lineal O(n) vs AVL
 
 ---
 
@@ -182,9 +260,11 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 #### 🔧 Técnicos:
 - ✅ Sistema completo y funcional
 - ✅ Lógica difusa implementada
-- ✅ Estructuras AVL optimizadas
-- ✅ IA integrada para recomendaciones
+- ✅ **Arquitectura AVL híbrida**: O(1) + O(log n) + O(n)
+- ✅ **Tres algoritmos de búsqueda** optimizados
+- ✅ IA integrada para recomendaciones (Mistral-7b)
 - ✅ Interfaces modernas y responsivas
+- ✅ **Sistema escalable**: miles de preguntas y usuarios
 
 #### 📚 Educativos:
 - ✅ Evaluaciones personalizadas
@@ -223,9 +303,11 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
 - 🌍 **Soporte multiidioma**
 - 🔗 **API REST** para integraciones
 - 📊 **Machine Learning avanzado** para predicciones
+- ⚡ **Optimización de algoritmos**: Índices distributivos O(1) mejorados
+- 🧠 **IA multimodal**: Análisis de patrones de aprendizaje más complejos
 
 ### 🎯 Impacto Esperado
-> *"FuzzMap representa el futuro de la educación digital: **personalizada**, **inteligente** y **adaptativa**"*
+> *"FuzzMap representa el futuro de la educación digital: **personalizada**, **inteligente**, **escalable** y **algoritmo-optimizada**"*
 
 
 ---
@@ -240,13 +322,21 @@ Desarrollar un sistema web de exámenes universitarios que utilice lógica difus
    - Evalúa respuestas en espectro continuo, no binario
 
 2. **¿Qué tan escalable es el sistema?**
-   - Optimizado con AVL, soporta miles de usuarios
+   - Optimizado con AVL híbrido: O(1) para exámenes, O(log n) para análisis
 
-3. **¿Cómo se entrenan las recomendaciones de IA?**
-   - Basadas en patrones de respuesta y progreso histórico
+3. **¿Por qué usar tres algoritmos diferentes?**
+   - **O(1)**: Exámenes instantáneos - crítico para UX
+   - **O(log n)**: Dashboards eficientes - balance rendimiento/memoria  
+   - **O(n)**: Baseline para medir mejoras de rendimiento
 
-4. **¿Es seguro el sistema?**
+4. **¿Cómo se entrenan las recomendaciones de IA?**
+   - Basadas en patrones de respuesta y progreso histórico con Mistral-7b
+
+5. **¿Es seguro el sistema?**
    - Autenticación robusta, datos encriptados
+
+6. **¿Qué ventaja tiene el árbol AVL autobalanceado?**
+   - Previene degradación a O(n), mantiene O(log n) garantizado
 
 ---
 
