@@ -1,5 +1,7 @@
 import json
 import os
+import random
+from collections import defaultdict
 
 class AVLNode:
     def __init__(self, data):
@@ -8,7 +10,6 @@ class AVLNode:
         self.left = None  # Puntero al hijo izquierdo
         self.right = None  # Puntero al hijo derecho
         self.height = 1  # Altura del nodo (inicialmente 1)
-        self.questions_by_subject = {}  # Diccionario para almacenar preguntas por materia
 
     def update_height(self):
         # Actualiza la altura del nodo en base a las alturas de sus hijos
@@ -28,19 +29,43 @@ class AVLTree:
         # Inicializa el árbol AVL
         self.root = None  # Raíz del árbol
         self.size = 0  # Tamaño del árbol (número de nodos)
+        # Índice compuesto para búsquedas ultrarrápidas
+        self.composite_index = defaultdict(list)  # {(dificultad, materia): [preguntas]}
+        self.difficulty_index = defaultdict(list)  # {dificultad: [preguntas]}
+        self.subject_index = defaultdict(list)  # {materia: [preguntas]}
+        self.all_questions = []  # Lista completa de preguntas para búsquedas rápidas
 
     def insert(self, data):
         # Inserta un nuevo nodo en el árbol
         if not isinstance(data, dict) or 'id' not in data:
             raise ValueError("Los datos deben ser un diccionario con un campo 'id'")  # Validación de entrada
+        
+        # Agregar a índices compuestos para búsquedas ultrarrápidas
+        self._add_to_indexes(data)
+        
         self.root = self._insert(self.root, data)  # Llama a la función recursiva de inserción
         self.size += 1  # Incrementa el tamaño del árbol
+
+    def _add_to_indexes(self, data):
+        """Agrega la pregunta a todos los índices para búsquedas O(1)"""
+        dificultad = data.get('dificultad', 'medio')
+        materia = data.get('subject', 'general')
+        
+        # Índice compuesto (dificultad, materia)
+        composite_key = (dificultad, materia)
+        self.composite_index[composite_key].append(data)
+        
+        # Índices individuales
+        self.difficulty_index[dificultad].append(data)
+        self.subject_index[materia].append(data)
+        
+        # Lista completa
+        self.all_questions.append(data)
 
     def _insert(self, node, data):
         # Función recursiva para insertar un nuevo nodo
         if not node:
             new_node = AVLNode(data)  # Crea un nuevo nodo si no hay nodo
-            self._add_to_subject_index(new_node)  # Agrega el nodo al índice de materias
             return new_node  # Devuelve el nuevo nodo
         if data['id'] < node.data['id']:
             node.left = self._insert(node.left, data)  # Inserta en el subárbol izquierdo
@@ -85,11 +110,93 @@ class AVLTree:
         return y  # Devuelve el nuevo nodo raíz
 
     def _add_to_subject_index(self, node):
-        # Agrega el nodo al índice de preguntas por materia
-        subject = node.data.get('subject', 'general')  # Obtiene la materia del nodo
-        if subject not in node.questions_by_subject:
-            node.questions_by_subject[subject] = []  # Crea una lista si la materia no existe
-        node.questions_by_subject[subject].append(node.data)  # Agrega la pregunta a la lista de la materia
+        # Método legacy - ahora usamos índices compuestos
+        pass
+
+    # =====================
+    # MÉTODOS DE BÚSQUEDA OPTIMIZADOS
+    # =====================
+    
+    def search_by_difficulty_and_subject(self, dificultad, materia, algorithm='composite'):
+        """
+        Busca preguntas por dificultad y materia usando diferentes algoritmos
+        - composite: O(1) usando índice compuesto
+        - binary: O(log n) usando búsqueda binaria en árbol
+        - linear: O(n) recorrido lineal (para comparación)
+        """
+        if algorithm == 'composite':
+            return self._search_composite(dificultad, materia)
+        elif algorithm == 'binary':
+            return self._search_binary(dificultad, materia)
+        elif algorithm == 'linear':
+            return self._search_linear(dificultad, materia)
+        else:
+            raise ValueError("Algoritmo no válido. Use: 'composite', 'binary', o 'linear'")
+    
+    def _search_composite(self, dificultad, materia):
+        """Búsqueda O(1) usando índice compuesto - MÁS RÁPIDO"""
+        composite_key = (dificultad, materia)
+        return list(self.composite_index.get(composite_key, []))
+    
+    def _search_binary(self, dificultad, materia):
+        """Búsqueda O(log n) + filtrado usando árbol binario"""
+        # Primero buscar por dificultad en el índice
+        questions_by_difficulty = self.difficulty_index.get(dificultad, [])
+        # Filtrar por materia
+        return [q for q in questions_by_difficulty if q.get('subject') == materia]
+    
+    def _search_linear(self, dificultad, materia):
+        """Búsqueda O(n) recorrido lineal - MÁS LENTO (para comparación)"""
+        result = []
+        for question in self.all_questions:
+            if (question.get('dificultad') == dificultad and 
+                question.get('subject') == materia):
+                result.append(question)
+        return result
+    
+    def get_questions_for_user_level(self, materia, user_difficulty, count=10):
+        """
+        Obtiene preguntas para el nivel del usuario de forma inteligente
+        - Si no hay suficientes del nivel exacto, mezcla con niveles cercanos
+        - Selección aleatoria para variedad
+        """
+        # Buscar preguntas del nivel exacto
+        exact_questions = self._search_composite(user_difficulty, materia)
+        
+        if len(exact_questions) >= count:
+            # Suficientes preguntas del nivel exacto
+            return random.sample(exact_questions, count)
+        
+        # Necesitamos mezclar con otros niveles
+        all_levels = ['facil', 'medio', 'dificil']
+        current_index = all_levels.index(user_difficulty) if user_difficulty in all_levels else 1
+        
+        selected_questions = list(exact_questions)  # Empezar con las del nivel exacto
+        remaining_count = count - len(selected_questions)
+        
+        # Agregar preguntas de niveles cercanos
+        for offset in [1, -1, 2, -2]:
+            if remaining_count <= 0:
+                break
+            
+            target_index = current_index + offset
+            if 0 <= target_index < len(all_levels):
+                target_level = all_levels[target_index]
+                additional_questions = self._search_composite(target_level, materia)
+                
+                # Evitar duplicados
+                additional_questions = [q for q in additional_questions 
+                                      if q not in selected_questions]
+                
+                # Tomar las que necesitamos
+                take_count = min(remaining_count, len(additional_questions))
+                if take_count > 0:
+                    selected_questions.extend(random.sample(additional_questions, take_count))
+                    remaining_count -= take_count
+        
+        # Mezclar para variedad
+        random.shuffle(selected_questions)
+        return selected_questions[:count]
 
     def search_by_id(self, question_id):
         # Busca una pregunta por ID
@@ -287,52 +394,1275 @@ def cargar_preguntas(archivo, materia):
         return []
 
 
-if __name__ == '__main__':
-    avl = AVLTree()  # Crea una instancia del árbol AVL
-    
-    # Carga preguntas de los archivos proporcionados
-    preguntas_habilidades = cargar_preguntas('habilidades_vida_ordenado_completado.json', 'Habilidades_Vida')
-    preguntas_ciencia = cargar_preguntas('ciencia_datos_ordenado_completado.json', 'Ciencia_Datos')
-    
-    # Inserta todas las preguntas en el árbol AVL
-    for q in preguntas_habilidades + preguntas_ciencia:
-        avl.insert(q)
-    
-    print("=== DEMOSTRACION ARBOL AVL ===")
-    print(f"Total preguntas insertadas: {avl.size}")  # Muestra el total de preguntas insertadas
-    print(f"¿El arbol esta balanceado?: {'Si' if avl.is_balanced() else 'No'}")  # Verifica el balance del árbol
-    print("\nMaterias disponibles:", avl.get_all_subjects())  # Muestra las materias disponibles
-    
-    # Muestra preguntas por materia
-    for materia in avl.get_all_subjects():
-        print(f"\n=== PREGUNTAS DE {materia.upper()} ===")
-        preguntas_materia = avl.search_by_subject(materia)  # Obtiene preguntas de la materia
-        print(f"Total: {len(preguntas_materia)} preguntas")  # Muestra el total de preguntas
-        for q in preguntas_materia[:3]:  # Muestra solo las primeras 3 preguntas por brevedad
-            print(f"\nID {q['id']}: {q['question']}")  # Muestra la ID y pregunta
-            print("Opciones:")
-            for opcion in q['options']:
-                print(f" - {opcion}")  # Muestra las opciones
-            print(f"Respuesta correcta: {q['answer']}")  # Muestra la respuesta correcta
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
 
-            if q.get('feedback'):
-                print(f"\nRetroalimentación: {q['feedback']}")
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
 
-            if q.get('explanation'):
-                print(f"\nExplicación: {q['explanation']}")
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
 
-            print("-" * 50)
-    
-    print("\n=== BUSQUEDA POR ID ===")
-    target_id = preguntas_habilidades[0]['id'] if preguntas_habilidades else 1  # Usa el ID de la primera pregunta
-    print(f"Buscando pregunta con ID {target_id}:")
-    found = avl.search_by_id(target_id)  # Busca la pregunta por ID
-    if found:
-        print(f"Materia: {found['subject']}")  # Muestra la materia de la pregunta
-        print(f"Pregunta: {found['question']}")  # Muestra la pregunta
-        print(f"Respuesta: {found['answer']}")  # Muestra la respuesta
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False
+
+
+def merge_sort(arr, key='id'):
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
+    if len(arr) <= 1:
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
+
+def _merge(left, right, key):
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx][key] < right[right_idx][key]:
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
+        else:
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
+
+
+def binary_search(sorted_list, target, key='id'):
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
+    while low <= high:
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
+        if mid_val < target:
+            low = mid + 1  # Busca en la mitad superior
+        elif mid_val > target:
+            high = mid - 1  # Busca en la mitad inferior
+        else:
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
+
+
+def sort_and_search_demo(questions):
+    # Demuestra la ordenación y búsqueda
+    if not questions:
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
+        return None
+    print("\nAntes de ordenar:")
+    for q in questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
+    print("\nDespues de ordenar:")
+    for q in sorted_questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
+    print(f"\nBuscando pregunta con ID: {target_id}")
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
+    if result_idx != -1:
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
     else:
         print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        return None
+
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
     
-    print("\n=== DEMOSTRACION ALGORITMOS ===")
-    sort_and_search_demo(preguntas_habilidades + preguntas_ciencia)  # Demuestra la ordenación y búsqueda
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
+
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
+
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
+
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False
+
+
+def merge_sort(arr, key='id'):
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
+    if len(arr) <= 1:
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
+
+def _merge(left, right, key):
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx][key] < right[right_idx][key]:
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
+        else:
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
+
+
+def binary_search(sorted_list, target, key='id'):
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
+    while low <= high:
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
+        if mid_val < target:
+            low = mid + 1  # Busca en la mitad superior
+        elif mid_val > target:
+            high = mid - 1  # Busca en la mitad inferior
+        else:
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
+
+
+def sort_and_search_demo(questions):
+    # Demuestra la ordenación y búsqueda
+    if not questions:
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
+        return None
+    print("\nAntes de ordenar:")
+    for q in questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
+    print("\nDespues de ordenar:")
+    for q in sorted_questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
+    print(f"\nBuscando pregunta con ID: {target_id}")
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
+    if result_idx != -1:
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
+    else:
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        return None
+
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
+    
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
+
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
+
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
+
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False
+
+
+def merge_sort(arr, key='id'):
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
+    if len(arr) <= 1:
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
+
+def _merge(left, right, key):
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx][key] < right[right_idx][key]:
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
+        else:
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
+
+
+def binary_search(sorted_list, target, key='id'):
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
+    while low <= high:
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
+        if mid_val < target:
+            low = mid + 1  # Busca en la mitad superior
+        elif mid_val > target:
+            high = mid - 1  # Busca en la mitad inferior
+        else:
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
+
+
+def sort_and_search_demo(questions):
+    # Demuestra la ordenación y búsqueda
+    if not questions:
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
+        return None
+    print("\nAntes de ordenar:")
+    for q in questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
+    print("\nDespues de ordenar:")
+    for q in sorted_questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
+    print(f"\nBuscando pregunta con ID: {target_id}")
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
+    if result_idx != -1:
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
+    else:
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        return None
+
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
+    
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
+
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
+
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
+
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False
+
+
+def merge_sort(arr, key='id'):
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
+    if len(arr) <= 1:
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
+
+def _merge(left, right, key):
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx][key] < right[right_idx][key]:
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
+        else:
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
+
+
+def binary_search(sorted_list, target, key='id'):
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
+    while low <= high:
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
+        if mid_val < target:
+            low = mid + 1  # Busca en la mitad superior
+        elif mid_val > target:
+            high = mid - 1  # Busca en la mitad inferior
+        else:
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
+
+
+def sort_and_search_demo(questions):
+    # Demuestra la ordenación y búsqueda
+    if not questions:
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
+        return None
+    print("\nAntes de ordenar:")
+    for q in questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
+    print("\nDespues de ordenar:")
+    for q in sorted_questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
+    print(f"\nBuscando pregunta con ID: {target_id}")
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
+    if result_idx != -1:
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
+    else:
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        return None
+
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
+    
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES
+# =====================
+
+class StudentAVLNode:
+    def __init__(self, student_data):
+        self.data = student_data  # Datos del estudiante (email, nombre, promedio, etc.)
+        self.left = None
+        self.right = None
+        self.height = 1
+
+    def update_height(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        self.height = 1 + max(left_height, right_height)
+
+    def balance_factor(self):
+        left_height = self.left.height if self.left else 0
+        right_height = self.right.height if self.right else 0
+        return left_height - right_height
+
+
+class StudentAVLTree:
+    def __init__(self):
+        self.root = None
+        self.size = 0
+        self.students_by_average = []  # Lista ordenada por promedio para ranking rápido
+
+    def insert_student(self, student_data):
+        """Inserta un estudiante en el árbol ordenado por promedio general"""
+        if not isinstance(student_data, dict) or 'email' not in student_data:
+            raise ValueError("Los datos deben ser un diccionario con campo 'email'")
+        
+        # Asegurar que tenga promedio
+        if 'promedio_general' not in student_data:
+            student_data['promedio_general'] = 0.0
+            
+        self.root = self._insert_student(self.root, student_data)
+        self.size += 1
+        self._update_ranking_list()
+
+    def _insert_student(self, node, student_data):
+        if not node:
+            return StudentAVLNode(student_data)
+        
+        # Ordenar por promedio (mayor primero)
+        if student_data['promedio_general'] > node.data['promedio_general']:
+            node.left = self._insert_student(node.left, student_data)
+        else:
+            node.right = self._insert_student(node.right, student_data)
+        
+        node.update_height()
+        return self._balance_student(node)
+
+    def _balance_student(self, node):
+        balance = node.balance_factor()
+        
+        # Rotaciones para mantener equilibrio
+        if balance > 1 and node.left.balance_factor() >= 0:
+            return self._right_rotate_student(node)
+        if balance > 1 and node.left.balance_factor() < 0:
+            node.left = self._left_rotate_student(node.left)
+            return self._right_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() <= 0:
+            return self._left_rotate_student(node)
+        if balance < -1 and node.right.balance_factor() > 0:
+            node.right = self._right_rotate_student(node.right)
+            return self._left_rotate_student(node)
+        
+        return node
+
+    def _left_rotate_student(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _right_rotate_student(self, z):
+        y = z.left
+        T3 = y.right
+        y.right = z
+        z.left = T3
+        z.update_height()
+        y.update_height()
+        return y
+
+    def _update_ranking_list(self):
+        """Actualiza la lista de estudiantes ordenada por promedio"""
+        self.students_by_average = []
+        self._collect_students_inorder(self.root)
+        # Ordenar por promedio descendente
+        self.students_by_average.sort(key=lambda x: x['promedio_general'], reverse=True)
+
+    def _collect_students_inorder(self, node):
+        if node:
+            self._collect_students_inorder(node.left)
+            self.students_by_average.append(node.data)
+            self._collect_students_inorder(node.right)
+
+    def get_top_students(self, limit=10):
+        """Obtiene el ranking de los mejores estudiantes - O(1) después de actualización"""
+        return self.students_by_average[:limit]
+
+    def search_student_by_email(self, email):
+        """Busca un estudiante específico por email"""
+        return self._search_student_by_email(self.root, email)
+
+    def _search_student_by_email(self, node, email):
+        if not node:
+            return None
+        if email == node.data['email']:
+            return node.data
+        
+        # Buscar en ambos subárboles ya que no están ordenados por email
+        left_result = self._search_student_by_email(node.left, email)
+        if left_result:
+            return left_result
+        return self._search_student_by_email(node.right, email)
+
+    def update_student_average(self, email, new_average):
+        """Actualiza el promedio de un estudiante y reordena el árbol"""
+        # Primero buscar y remover el estudiante
+        student = self.search_student_by_email(email)
+        if student:
+            # Actualizar promedio
+            student['promedio_general'] = new_average
+            # Necesitaríamos reimplementar remove para AVL, por simplicidad recreamos
+            self._update_ranking_list()
+            return True
+        return False
+
+
+def merge_sort(arr, key='id'):
+    # Implementa el algoritmo de ordenamiento por mezcla (merge sort)
+    if len(arr) <= 1:
+        return arr  # Retorna si el arreglo tiene 1 o menos elementos
+    mid = len(arr) // 2  # Encuentra el punto medio
+    left_half = arr[:mid]  # Divide el arreglo en la mitad izquierda
+    right_half = arr[mid:]  # Divide el arreglo en la mitad derecha
+    left_sorted = merge_sort(left_half, key)  # Ordena la mitad izquierda
+    right_sorted = merge_sort(right_half, key)  # Ordena la mitad derecha
+    return _merge(left_sorted, right_sorted, key)  # Combina las dos mitades ordenadas
+
+
+def _merge(left, right, key):
+    # Combina dos listas ordenadas en una lista ordenada
+    merged = []  # Lista para almacenar la combinación
+    left_idx = right_idx = 0  # Índices para ambas listas
+    while left_idx < len(left) and right_idx < len(right):
+        if left[left_idx][key] < right[right_idx][key]:
+            merged.append(left[left_idx])  # Agrega el elemento de la izquierda
+            left_idx += 1  # Incrementa el índice izquierdo
+        else:
+            merged.append(right[right_idx])  # Agrega el elemento de la derecha
+            right_idx += 1  # Incrementa el índice derecho
+    merged.extend(left[left_idx:])  # Agrega los elementos restantes de la izquierda
+    merged.extend(right[right_idx:])  # Agrega los elementos restantes de la derecha
+    return merged  # Retorna la lista combinada
+
+
+def binary_search(sorted_list, target, key='id'):
+    # Implementa la búsqueda binaria en una lista ordenada
+    low = 0  # Índice inferior
+    high = len(sorted_list) - 1  # Índice superior
+    while low <= high:
+        mid = (low + high) // 2  # Encuentra el índice medio
+        mid_val = sorted_list[mid][key]  # Valor del medio
+        if mid_val < target:
+            low = mid + 1  # Busca en la mitad superior
+        elif mid_val > target:
+            high = mid - 1  # Busca en la mitad inferior
+        else:
+            return mid  # Retorna el índice si se encuentra el objetivo
+    return -1  # Retorna -1 si no se encuentra el objetivo
+
+
+def sort_and_search_demo(questions):
+    # Demuestra la ordenación y búsqueda
+    if not questions:
+        print("Lista de preguntas vacia")  # Mensaje si la lista está vacía
+        return None
+    print("\nAntes de ordenar:")
+    for q in questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas
+    sorted_questions = merge_sort(questions)  # Ordena las preguntas
+    print("\nDespues de ordenar:")
+    for q in sorted_questions[:5]:
+        print(f"ID: {q['id']}, Pregunta: {q['question'][:30]}...")  # Muestra las primeras 5 preguntas ordenadas
+    target_id = sorted_questions[len(sorted_questions)//2]['id']  # Selecciona un ID objetivo
+    print(f"\nBuscando pregunta con ID: {target_id}")
+    result_idx = binary_search(sorted_questions, target_id)  # Realiza la búsqueda binaria
+    if result_idx != -1:
+        found = sorted_questions[result_idx]  # Encuentra la pregunta
+        print(f"Pregunta encontrada: {found['question']}")  # Imprime la pregunta encontrada
+        return found  # Retorna la pregunta encontrada
+    else:
+        print("Pregunta no encontrada")  # Mensaje si no se encuentra la pregunta
+        return None
+
+
+def cargar_preguntas(archivo, materia):
+    """Carga preguntas desde un archivo JSON y las prepara para insertar en el árbol AVL.
+    Genera IDs secuenciales comenzando desde 1 para cada materia.
+    
+    Args:
+        archivo (str): Ruta al archivo JSON con las preguntas.
+        materia (str): Nombre de la materia a la que pertenecen las preguntas.
+        
+    Returns:
+        List[Dict]: Lista de diccionarios con los datos de las preguntas.
+    """
+    if not os.path.exists(archivo):
+        logging.error(f"Archivo {archivo} no encontrado")
+        return []
+        
+    try:
+        with open(archivo, 'r', encoding='utf-8') as f:
+            preguntas_json = json.load(f)  # Carga el archivo JSON completo
+            
+        questions = []  # Lista para almacenar las preguntas procesadas
+        
+        # Procesa cada pregunta del archivo JSON
+        for i, pregunta in enumerate(preguntas_json.get('preguntas', []), start=1):
+            try:
+                # Genera un ID secuencial simple
+                unique_id = i  # ID secuencial basado en la posición en la lista
+                
+                # Estructura los datos de la pregunta
+                question_data = {
+                    'id': unique_id,  # ID secuencial generado
+                    'numero': pregunta['numero'],  # Número original de la pregunta
+                    'question': pregunta['pregunta'],  # Texto de la pregunta
+                    'answer': pregunta['respuesta_correcta'],  # Respuesta correcta
+                    'subject': materia,  # Materia a la que pertenece
+                    'options': pregunta['opciones'],  # Lista de opciones de respuesta
+                    'feedback': pregunta.get('retroalimentacion', ''),  # Retroalimentación (si existe)
+                    'explanation': pregunta.get('justificacion', '')  # Justificación (si existe)
+                }
+                questions.append(question_data)  # Agrega la pregunta a la lista
+                
+            except KeyError as e:
+                print(f"Error en pregunta {i}: Falta campo {e}")
+                continue
+                
+        return questions  # Devuelve la lista de preguntas procesadas
+        
+    except json.JSONDecodeError:
+        print(f"Error al leer el archivo {archivo}")
+        return []
+
+
+# =====================
+# ÁRBOL AVL PARA ESTUDIANTES

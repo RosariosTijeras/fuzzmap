@@ -40,3 +40,13 @@ plotly[express]  # Extensión para gráficos rápidos y sencillos con plotly
 
 # Cálculos científicos y matemáticos avanzados
 scipy
+
+# Componentes de UI modernos y responsivos
+dash
+dash-bootstrap-components
+
+# Manejo de fechas y tiempos
+python-dateutil
+
+# Utilidades para formateo de datos
+humanize

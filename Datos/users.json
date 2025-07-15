@@ -18,5 +18,20 @@
       "Fundamentos de ciencia de datos",
       "Habilidades para la vida"
     ]
+  },
+  "estudiante1@unach.edu.ec": {
+    "usuario": "estudiante1@unach.edu.ec",
+    "contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "nombre": "Ana Maria",
+    "apellido": "Apolo",
+    "edad": 26,
+    "sexo": "F",
+    "materias": [
+      "Estructura de datos",
+      "Fundamentos de ciencia de datos",
+      "Habilidades para la vida",
+      "Probabilidad y estadística",
+      "Programación 2"
+    ]
   }
 }
