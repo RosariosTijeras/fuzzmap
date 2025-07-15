@@ -6,5 +6,13 @@
     "apellido": "Camacho Monar",
     "edad": 22,
     "sexo": "M"
+  },
+  "leninf.lopez@unach.edu.ec": {
+    "usuario": "leninf.lopez@unach.edu.ec",
+    "contrasena": "99d9712e93a7f515bb3911bfab26028337f938b4316f0c15dd183d345717a536",
+    "nombre": "Lenin",
+    "apellido": "Lopez",
+    "edad": 45,
+    "sexo": "M"
   }
 }
