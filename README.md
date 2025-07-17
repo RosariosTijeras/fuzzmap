@@ -1,225 +1,374 @@
-# FuzzMap
+# 🧠 FuzzMap - Sistema Universitario de Exámenes Inteligente
 
-> **Asistente de Estudio Inteligente** para estudiantes universitarios, que automatiza la organización, evaluación y recomendación de contenido educativo utilizando árboles AVL, lógica difusa y técnicas de PLN.
+> **Plataforma moderna de exámenes universitarios** con dashboards diferenciados, algoritmos de búsqueda avanzados, evaluación con lógica difusa y recomendaciones personalizadas con IA.
+
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.3+-green.svg)](https://flask.palletsprojects.com)
+[![License](https://img.shields.io/badge/License-Propietaria-red.svg)](LICENSE)
 
 ---
 
 ## 📋 Tabla de Contenidos
 
-- [Tema de Investigación](https://github.com/RosariosTijeras/FuzzMap#-tema-de-investigaci%C3%B3n)
-- [Descripción del Proyecto](https://github.com/RosariosTijeras/FuzzMap#-descripci%C3%B3n-del-proyecto)
-- [Equipo de Desarrollo](https://github.com/RosariosTijeras/FuzzMap#-equipo-de-desarrollo)
-- [Diagrama de Flujo](https://github.com/RosariosTijeras/FuzzMap#-diagrama-de-flujo)
-- [Características Principales](https://github.com/RosariosTijeras/FuzzMap#-caracter%C3%ADsticas-principales)
-- [Estructura de Carpetas](https://github.com/RosariosTijeras/FuzzMap#-estructura-de-carpetas)
-- [Cómo Empezar](https://github.com/RosariosTijeras/FuzzMap#%EF%B8%8F-c%C3%B3mo-empezar)
-<!-- [Asignación de Tareas](#asignación-de-tareas)
-- [Tecnologías y Librerías](#tecnologías-y-librerías) --> 
-
-
----
-
-## 🎓 Tema de Investigación
-
-**Diseño de un asistente inteligente para el estudio universitario mediante árboles AVL, lógica difusa y procesamiento de lenguaje natural**
+- [🎯 Descripción del Proyecto](#-descripción-del-proyecto)
+- [✨ Características Principales](#-características-principales)
+- [🔄 Flujo de Trabajo](#-flujo-de-trabajo)
+- [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
+- [ Algoritmos de Búsqueda](#-algoritmos-de-búsqueda)
+- [🧠 Inteligencia Artificial](#-inteligencia-artificial)
+- [🗂️ Estructura del Proyecto](#️-estructura-del-proyecto)
+- [🚀 Instalación y Uso](#-instalación-y-uso)
+- [👨‍💻 Equipo de Desarrollo](#-equipo-de-desarrollo)
 
 ---
 
-## 🧩 Descripción del Proyecto
+## 🎯 Descripción del Proyecto
 
-**FuzzMap** es una aplicación modular desarrollada en Python que tiene como objetivo asistir a estudiantes universitarios en su proceso de aprendizaje. El sistema realiza las siguientes tareas:
+**FuzzMap** es un sistema avanzado de exámenes universitarios que combina algoritmos eficientes de búsqueda con inteligencia artificial para proporcionar una experiencia de evaluación personalizada.
 
-1. **Leer documentos PDF** para extraer preguntas y respuestas.  
-2. **Procesar el contenido** usando técnicas de procesamiento de lenguaje natural (PLN) para clasificar las preguntas según la materia.  
-3. **Organizar y almacenar las preguntas** en un **árbol AVL**, permitiendo búsquedas eficientes y ordenadas.  
-4. **Evaluar respuestas del usuario** utilizando **lógica difusa**, lo cual permite una calificación más flexible y contextual.  
-5. **Generar recomendaciones personalizadas** de estudio a través de una interfaz web interactiva construida con **Flask**.
+### 🌟 **Sistema Multi-Rol**
+- **Estudiantes**: Exámenes adaptados al nivel de cada usuario
+- **Maestros**: Análisis detallado del rendimiento académico
+- **Administradores**: Control completo del sistema
 
-Este enfoque permite un aprendizaje guiado y adaptativo, ofreciendo una herramienta útil y eficiente para estudiantes universitarios.
+### 🧮 **Búsqueda Híbrida**
+- **Árbol AVL**: O(log n) para organización jerárquica de preguntas
+- **Índices Compuestos**: O(1) para consultas específicas
+- **Búsqueda Binaria/Lineal**: Complementos para casos específicos
 
----
-
-## 👥 Equipo de Desarrollo
-
-| Integrante | Rol                                    |
-|------------|----------------------------------------|
-| Mario      | Interfaz (Flask) y Lógica Difusa   |
-| Lenin      | Extracción de PDFs y Preprocesamiento  |
-| Yoryhi     | Procesamiento de Lenguaje Natural (PLN)|
-| Héctor     | Estructuras de Datos (Árbol AVL, Algoritmos) |
+### 🧠 **IA Integrada**
+- **Lógica Difusa**: Evaluación contextualizada de respuestas
+- **Modelo Mistral**: Recomendaciones personalizadas de estudio
 
 ---
 
-## 📊 Diagrama de Flujo
+## ✨ Características Principales
+
+### 🎓 **Sistema Educativo**
+- ✅ **Exámenes Adaptativos**: Dificultad ajustada al nivel del estudiante
+- ✅ **Evaluación Difusa**: Análisis multi-criterio de respuestas
+- ✅ **Recomendaciones IA**: Sugerencias personalizadas de estudio
+
+### 📊 **Dashboards Especializados**
+- ✅ **Estudiante**: Progreso personal y análisis de rendimiento
+- ✅ **Maestro**: Métricas por materia y estudiante con visualización
+- ✅ **Admin**: Gestión completa de usuarios y sistema
+
+### 🔍 **Algoritmos Optimizados**
+- ✅ **AVL O(log n)**: Estructura jerárquica auto-balanceada
+- ✅ **Hash O(1)**: Acceso inmediato para consultas frecuentes
+- ✅ **Estructuras Híbridas**: Combinación según caso de uso
+
+### 🤖 **IA y Análisis de Datos**
+- ✅ **Lógica Difusa**: Evaluación contextualizada no binaria
+- ✅ **Mistral 7B**: Recomendaciones de estudio personalizadas
+- ✅ **Métricas Avanzadas**: Análisis predictivo de rendimiento
+
+---
+
+## 🔄 Flujo de Trabajo
 
 ```mermaid
-flowchart TD
-  subgraph Roles
-    R1["Lenin:
-      - Leer PDFs y extraer texto
-      - Guardar contenido en JSON/BD"]
-    R2["Yoryhi:
-      - Extraer pares pregunta-respuesta
-      - Clasificar preguntas por materia"]
-    R3["Héctor:
-      - Construir Árbol AVL
-      - Aplicar MergeSort y Búsqueda Binaria"]
-    R4["Mario:
-      - Desarrollar UI en Flask
-      - Registrar respuestas
-      - Analizar con lógica difusa"]
-  end
+    graph TD
+        Start((🚀 Inicio)) --> Login{🔐 Login}
+        
+        Login -->|Estudiante| EstDash[👨‍🎓 Dashboard Estudiante]
+        Login -->|Maestro| TeaDash[👨‍🏫 Dashboard Maestro]
+        Login -->|Admin| AdmDash[👨‍💼 Dashboard Admin]
+        
+        EstDash --> SelMat[📚 Seleccionar Materia]
+        SelMat --> TakeTest[📝 Responder 10 Preguntas]
+        TakeTest --> FuzzyEval[🔀 Evaluación Difusa]
+        FuzzyEval --> AIRec[🤖 Recomendaciones IA]
+        AIRec --> Results[📊 Ver Resultados]
+        Results --> History[📈 Historial Personal]
+        
+        TeaDash --> ViewSubj[📋 Ver Materias Asignadas]
+        ViewSubj --> StudMetrics[📊 Métricas Estudiantes]
+        StudMetrics --> Charts[📈 Gráficos Interactivos]
+        Charts --> Reports[📄 Reportes Exportables]
+        
+        AdmDash --> ManageUsers[👥 Gestionar Usuarios]
+        ManageUsers --> AssignSubj[📚 Asignar Materias]
+        AssignSubj --> SysMetrics[🎯 Métricas Sistema]
+        SysMetrics --> Config[⚙️ Configuración Global]
+        
+        Results --> EstDash
+        Reports --> TeaDash
+        Config --> AdmDash
+```
 
-  R1 -.-> Start
-  R2 -.-> Start
-  R3 -.-> Start
-  R4 -.-> Start
+## 🏗️ Arquitectura del Sistema
 
-  Start((Inicio)) --> A["Leer PDFs y extraer texto
-(Módulo Extracción – Lenin)"]
-  A --> B["Guardar texto en JSON/BD
-(Módulo Extracción – Lenin)"]
-  B --> C["Extraer pares pregunta-respuesta
-(Módulo PLN – Yoryhi)"]
-  C --> D["Clasificar preguntas por materia
-(Módulo PLN – Yoryhi)"]
-  D --> E["Construir Árbol AVL
-(Módulo Estructuras – Héctor)"]
-  E --> F["Ordenar con MergeSort y Búsqueda Binaria
-(Módulo Algoritmos – Héctor)"]
-  F --> G["Mostrar materias disponibles
-(Módulo UI – Mario)"]
-  G --> H["Usuario selecciona materia
-(Módulo UI – Mario)"]
-  H --> I["Mostrar y responder 10 preguntas
-(Módulo UI – Mario)"]
-  I --> J["Registrar respuestas del usuario
-(Módulo UI – Mario)"]
-  J --> K["Analizar respuestas con lógica difusa
-(Módulo Difusa – Mario)"]
-  K --> L["Generar recomendaciones personalizadas
-(Módulo Difusa – Mario)"]
-  L --> M["Mostrar recomendaciones al usuario
-(Módulo UI – Mario)"]
-  M --> End((Fin))
+```mermaid
+graph TB
+    subgraph "🎯 Frontend - Dashboards"
+        A[👨‍🎓 Dashboard Estudiante]
+        B[👨‍🏫 Dashboard Maestro] 
+        C[👨‍💼 Dashboard Admin]
+    end
+    
+    subgraph "⚡ Backend - Flask API"
+        D[🔐 Sistema Auth]
+        E[📊 Controlador Tests]
+        F[📈 Metrics Collector]
+        G[🤖 AI Recommendations]
+    end
+    
+    subgraph "🗄️ Capa de Datos"
+        H[🌳 Árbol AVL Questions]
+        I[🏆 Árbol AVL Students]
+        J[📋 Índices Compuestos]
+        K[📄 Archivos JSON]
+    end
+    
+    subgraph "🧠 Módulos de IA"
+        L[🔀 Lógica Difusa]
+        M[🤖 Mistral AI]
+        N[📊 Pattern Analysis]
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    E --> G
+    F --> H
+    F --> I
+    F --> J
+    G --> L
+    G --> M
+    G --> N
+    H --> K
+    I --> K
+    J --> K
 ```
 
 ---
 
-## 🚀 Características Principales
+## 🏆 Roles y Dashboards
 
-1. **Extracción de Contenido PDF**  
-   - Utilizamos `PyMuPDF` o `pdfminer.six` para leer archivos PDF y extraer texto útil para el análisis.
+### 👨‍🎓 **Estudiante**
+- **Exámenes Personalizados**: 10 preguntas adaptadas a su nivel
+- **Progreso Visual**: Gráficos de rendimiento histórico
+- **Recomendaciones IA**: Sugerencias específicas de estudio
+- **Historial Completo**: Registro de todos los exámenes realizados
 
-2. **Procesamiento de Lenguaje Natural (PLN)**  
-   - Clasificamos preguntas por materia con herramientas como `spaCy` y `NLTK`.  
-   - Se identifican preguntas y respuestas usando heurísticas de formato y contexto.
+### 👨‍🏫 **Maestro**
+- **Vista por Materia**: Métricas detalladas de las materias asignadas
+- **Análisis de Estudiantes**: Rendimiento individual y grupal
+- **Gráficos Interactivos**: Visualizaciones con Plotly.js
+- **Exportación de Datos**: Reportes en tiempo real
 
-3. **Estructura de Datos: Árbol AVL**  
-   - Cada pregunta se inserta en un árbol AVL balanceado, lo que permite acceder rápidamente por tema o tipo.
-
-4. **Evaluación con Lógica Difusa**  
-   - A través de `scikit-fuzzy`, analizamos el rendimiento del estudiante no sólo por exactitud, sino por cercanía o calidad de sus respuestas.
-
-5. **Interfaz Web (Flask)**  
-   - El usuario puede elegir una materia, responder preguntas y recibir recomendaciones desde una aplicación web simple e intuitiva.
+### 👨‍💼 **Administrador**
+- **Gestión de Usuarios**: Crear, editar, eliminar usuarios
+- **Configuración de Materias**: Asignar materias a maestros
+- **Monitoreo del Sistema**: Métricas globales y estado del sistema
+- **Backup y Mantenimiento**: Herramientas de administración
 
 ---
 
-## 🗂 Estructura de Carpetas
+## 🔍 Algoritmos de Búsqueda
 
-```text
+### 🌳 **Árbol AVL (O(log n))**
+```python
+# Búsqueda principal para preguntas organizadas jerárquicamente
+def buscar_pregunta_avl(materia, dificultad):
+    # Auto-balanceado, garantiza O(log n) en el peor caso
+    return avl_tree.search(materia, dificultad)
+```
+
+### ⚡ **Índice Compuesto (O(1))**
+```python
+# Acceso directo para consultas específicas materia-dificultad
+def acceso_directo(materia, dificultad):
+    # Hash table: acceso inmediato O(1)
+    return indices_compuestos[f"{materia}_{dificultad}"]
+```
+
+### 🎯 **Búsqueda Binaria (O(log n))**
+```python
+# Optimización en rankings ordenados de estudiantes
+def buscar_en_ranking(estudiante_id):
+    # Lista ordenada: búsqueda binaria O(log n)
+    return binary_search(ranking_ordenado, estudiante_id)
+```
+
+### 🔄 **Búsqueda Lineal (O(n))**
+```python
+# Fallback robusto para casos especiales
+def busqueda_exhaustiva(criterio_especial):
+    # Recorrido completo: garantiza encontrar cualquier elemento O(n)
+    return linear_search(dataset, criterio_especial)
+```
+
+### 📊 **Comparación de Rendimiento**
+
+| Algoritmo | Complejidad | Caso de Uso | Ventajas |
+|-----------|-------------|-------------|----------|
+| **Árbol AVL** | O(log n) | Organización jerárquica | Auto-balanceado, búsqueda rápida |
+| **Índice Compuesto** | O(1) | Consultas específicas | Acceso inmediato |
+| **Búsqueda Binaria** | O(log n) | Rankings ordenados | Eficiente en listas grandes |
+| **Búsqueda Lineal** | O(n) | Casos especiales | Garantiza encontrar cualquier elemento |
+
+---
+
+## 🧠 Inteligencia Artificial
+
+### 🔀 **Lógica Difusa**
+- **Evaluación Contextual**: Más allá de respuestas exactas
+- **Múltiples Criterios**: Considera tiempo, precisión, dificultad
+- **Adaptación Dinámica**: Ajuste automático de parámetros
+
+### 🤖 **Modelos de IA**
+- **Mistral 7B**: Recomendaciones personalizadas de estudio
+- **LM Studio**: Integración local de modelos
+
+### 📈 **Análisis Predictivo**
+- **Detección de Patrones**: Identificación automática de fortalezas/debilidades
+- **Recomendaciones Específicas**: Sugerencias por materia y tema
+- **Predicción de Rendimiento**: Estimación de resultados futuros
+
+---
+
+## 📊 Métricas y Analytics
+
+### 📈 **Métricas por Estudiante**
+- Promedio de calificaciones por materia
+- Tiempo promedio de respuesta
+- Progresión de dificultad
+- Temas de mayor y menor rendimiento
+
+### 📊 **Métricas por Maestro**
+- Rendimiento grupal de estudiantes
+- Distribución de calificaciones
+- Análisis comparativo por materia
+- Tendencias temporales
+
+### 🏢 **Métricas del Sistema**
+- Usuarios activos por rol
+- Exámenes realizados por día/semana
+- Rendimiento general del sistema
+- Uso de recursos y optimización
+
+---
+
+## 🗂️ Estructura del Proyecto
+
+```
 FuzzMap/
-├── Ejemplo/
-├── Datos/
-│   ├── Habilidades_Vida/
-│   └── Ciencia_Datos/
-├── Modulos/
-│   ├── extraction/
-│   │   ├── __init__.py
-│   │   └── pdf_extractor.py
-│   ├── nlp/
-│   │   ├── __init__.py
-│   │   └── text_classifier.py
-│   ├── avltree/
-│   │   ├── __init__.py
-│   │   └── avl_tree.py
-│   ├── fuzzylogic/
-│   │   ├── __init__.py
-│   │   └── fuzzy_evaluator.py
-│   └── ui/
-│       ├── __init__.py
-│       └── app.py
-├── Notebooks/
-├── main.py
-├── requirements.txt
-└── README.md
+├── 📁 Datos/                      # Banco de datos y métricas
+│   ├── 📄 users.json              # Usuarios y roles
+│   ├── 📄 metrics.json            # Métricas del sistema
+│   ├── 📁 Ciencia_Datos/          # Materia 1
+│   └── 📁 Habilidades_Vida/       # Materia 2
+├── 📁 Modulos/                    # Core del sistema
+│   ├── 📁 auth/                   # Autenticación
+│   ├── 📁 avltree/                # Árboles AVL
+│   ├── 📁 extraction/             # Extractor PDF
+│   ├── 📁 fuzzylogic/             # Lógica difusa
+│   ├── 📁 generate_questions/     # Generador IA
+│   ├── 📁 metrics/                # Sistema métricas
+│   ├──  nlp/                    # Procesamiento lenguaje
+│   └── 📁 ui/                     # Interfaz Flask
+│       ├── 📄 app.py              # Backend principal
+│       ├── 📁 templates/          # Dashboards HTML
+│       └── 📁 src/                # Assets frontend
+├── 📁 Notebooks/                  # Tests y desarrollo
+├── 📄 main.py                     # Punto de entrada
+└── 📄 requirements.txt            # Dependencias
 ```
 
 ---
 
-## 🛠️ Cómo Empezar
+## 🚀 Instalación y Uso
 
-1. **Clonar el repositorio**  
-   ```bash
-   git clone https://github.com/RosariosTijeras/fuzzmap.git
-   cd fuzzmap
-   ```
+### 📋 **Prerrequisitos**
+- **Python 3.12+** instalado en el sistema
+- **Git** para clonar el repositorio
+- **Navegador web moderno** (Chrome, Firefox, Edge, Safari)
 
----
+### ⚡ **Instalación Rápida**
 
-
-2. **Crear y activar un entorno virtual**
-
-Tienes dos opciones: usar Python venv o Conda.
-
-
----
-
-#### Opción A: Usar Python venv (nativo de Python)
-
-**Crear entorno:**
 ```bash
+# 1. Clonar repositorio
+git clone https://github.com/RosariosTijeras/fuzzmap.git
+cd fuzzmap
+
+# 2. Crear entorno virtual (Python 3.12+)
 python -m venv .venv
-```
-
-#### Activar entorno:
-
-- **En Linux/macOS:**
-```bash
-source .venv/bin/activate
-```
-
-- **En Windows (CMD o PowerShell):**
-```bash
 .\.venv\Scripts\activate
-```
 
----
-
-### Opción B: Usar Conda
-
-**Crear entorno con nombre personalizado (por ejemplo fuzzmap):**
-```bash
-conda create -n fuzzmap python=3.11
-```
-
-**Activar entorno:**
-```bash
-conda activate fuzzmap
-```
-
-
----
-
-3. **Instalar dependencias desde `requirements.txt`**
-
-Con el entorno virtual activado (ya sea venv o conda), ejecuta:
-```bash
+# 3. Instalar dependencias
 pip install -r requirements.txt
+
+# 4. Ejecutar aplicación
+python main.py
 ```
 
-> Asegúrate de estar ubicado dentro de la carpeta fuzzmap/ al momento de ejecutar este comando.
+### 🔑 **Acceso al Sistema**
 
+Abrir `http://localhost:5000` y usar:
+
+| **Rol** | **Usuario** | **Contraseña** |
+|---------|-------------|----------------|
+| 👨‍🎓 Estudiante | mario.camacho@unach.edu.ec | 123456 |
+| 👨‍🏫 Maestro | ana.garcia@unach.edu.ec | profesor123 |
+| 👨‍💼 Admin | admin@unach.edu.ec | admin123 |
+
+### ⚙️ **Configuración IA (Opcional)**
+
+1. Instalar [LM Studio](https://lmstudio.ai)
+2. Cargar modelo Mistral 7B
+3. Iniciar servidor en puerto 1234
+
+### 🐛 **Solución Problemas**
+
+```bash
+# Puerto ocupado: Editar main.py
+app.run(debug=True, port=5001)
+
+# Módulo no encontrado
+pip install -r requirements.txt --force-reinstall
+```
 
 ---
+
+## 👨‍💻 Equipo de Desarrollo
+
+| 👤 **Desarrollador** | 🎯 **Área** | 🛠️ **Contribuciones** |
+|---------------------|-------------|----------------------|
+| **Mario Camacho** | Frontend & IA | • Dashboards Flask<br>• Lógica difusa<br>• Integración Mistral AI |
+| **Lenin Arias** | Data Processing | • Extracción PDF<br>• Preprocesamiento<br>• Optimización datasets |
+| **Yoryhi Rojas** | NLP | • Clasificación texto<br>• Análisis semántico<br>• Coincidencia patrones |
+| **Héctor Quilumba** | Estructuras de Datos | • Árboles AVL<br>• Algoritmos búsqueda<br>• Complejidad algorítmica |
+
+### 🎓 **Institución**
+- **Universidad**: Universidad Nacional de Chimborazo (UNACH)
+- **Facultad**: Ingeniería
+- **Carrera**: Ingeniería en Ciencia de Datos e Inteligencia Artificial
+- **Materias**: Estructura de Datos, Programación 2
+- **Periodo**: Segundo Semestre 2025
+
+---
+
+## 📜 **Licencia**
+
+Este proyecto está licenciado bajo una Licencia Propietaria. Todos los derechos reservados.
+
+**Aviso Legal**: Este software y su código fuente son propiedad exclusiva del equipo FuzzMap. Queda estrictamente prohibida cualquier forma de uso, reproducción, modificación o distribución sin el consentimiento expreso por escrito de los autores. El uso no autorizado está sujeto a acciones legales.
+
+---
+
+<div align="center">
+
+**🧠 Desarrollado con ❤️ por el Equipo FuzzMap**
+
+*Sistema Universitario de Exámenes Inteligente*
+
+[![Universidad UNACH](https://img.shields.io/badge/Universidad-UNACH-blue.svg)](https://www.unach.edu.ec)
+[![Hecho en Ecuador](https://img.shields.io/badge/Hecho%20en-Ecuador-yellow.svg)](https://github.com/RosariosTijeras/FuzzMap)
+[![Licencia Propietaria](https://img.shields.io/badge/Licencia-Propietaria-red.svg)](LICENSE)
+
+</div>
