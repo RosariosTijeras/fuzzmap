@@ -24,9 +24,9 @@
         "timestamp": "2025-07-15T17:03:14.566727"
       }
     ],
-    "total_requests": 165,
-    "avg_response_time": 0.7804475642695572,
-    "last_updated": "2025-07-15T18:33:51.044582"
+    "total_requests": 169,
+    "avg_response_time": 0.762959693592681,
+    "last_updated": "2025-07-16T21:43:28.850037"
   },
   "user_activity": {
     "total_users": 6,
@@ -34,7 +34,7 @@
     "students": 0,
     "teachers": 0,
     "last_login_times": {
-      "admin@unach.edu.ec": "2025-07-15T18:28:51.904782",
+      "admin@unach.edu.ec": "2025-07-16T20:23:41.496021",
       "mario.camacho@unach.edu.ec": "2025-07-15T18:33:50.653609",
       "profesor@unach.edu.ec": "2025-07-15T18:25:19.111997",
       "profesor2@unach.edu.ec": "2025-07-15T18:26:15.636282",
