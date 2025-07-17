@@ -8,20 +8,6 @@
     "sexo": "Otro",
     "tipo_usuario": "admin"
   },
-  "mario.camacho@unach.edu.ec": {
-    "usuario": "mario.camacho@unach.edu.ec",
-    "contrasena": "f1aa3bc6b10b82a8c44954772f4ab225090c0591c5c2bd1987d61a92d8177ac6",
-    "nombre": "Jose Mario",
-    "apellido": "Camacho Monar",
-    "edad": 22,
-    "sexo": "M",
-    "tipo_usuario": "alumno",
-    "nivel_dificultad": 2,
-    "materias": [
-      "Fundamentos de ciencia de datos",
-      "Habilidades para la vida"
-    ]
-  },
   "ciencia@unach.edu.ec": {
     "usuario": "ciencia@unach.edu.ec",
     "contrasena": "7d15e9a98e05254594dd8d69b3028c0af90abb1dbb6c4b8567fee28858321632",

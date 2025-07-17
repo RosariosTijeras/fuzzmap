@@ -313,7 +313,7 @@ Abrir `http://localhost:5000` y usar:
 
 | **Rol** | **Usuario** | **Contraseña** |
 |---------|-------------|----------------|
-| 👨‍🎓 Estudiante | mario.camacho@unach.edu.ec | soy mario .-. |
+| 👨‍🎓 Estudiante | ana@unach.edu.ec | ana |
 | 👨‍🏫 Maestro | habilidades@unach.edu.ec | habilidades |
 | 👨‍💼 Admin | admin@unach.edu.ec | admin |
 

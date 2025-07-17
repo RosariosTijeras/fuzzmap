@@ -24,9 +24,9 @@
         "timestamp": "2025-07-15T17:03:14.566727"
       }
     ],
-    "total_requests": 169,
-    "avg_response_time": 0.762959693592681,
-    "last_updated": "2025-07-16T21:43:28.850037"
+    "total_requests": 175,
+    "avg_response_time": 0.7398344451359341,
+    "last_updated": "2025-07-17T11:50:22.717384"
   },
   "user_activity": {
     "total_users": 6,
@@ -39,7 +39,7 @@
       "profesor@unach.edu.ec": "2025-07-15T18:25:19.111997",
       "profesor2@unach.edu.ec": "2025-07-15T18:26:15.636282",
       "habilidades@unach.edu.ec": "2025-07-15T18:33:34.385194",
-      "ana@unach.edu.ec": "2025-07-15T18:30:12.860805"
+      "ana@unach.edu.ec": "2025-07-17T11:50:19.297679"
     },
     "test_attempts_today": 3
   },
