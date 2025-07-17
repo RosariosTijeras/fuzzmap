@@ -270,7 +270,7 @@ FuzzMap/
 │   ├── 📁 fuzzylogic/             # Lógica difusa
 │   ├── 📁 generate_questions/     # Generador IA
 │   ├── 📁 metrics/                # Sistema métricas
-│   ├──  nlp/                    # Procesamiento lenguaje
+│   ├── 📁 nlp/                    # Procesamiento lenguaje
 │   └── 📁 ui/                     # Interfaz Flask
 │       ├── 📄 app.py              # Backend principal
 │       ├── 📁 templates/          # Dashboards HTML
@@ -313,9 +313,9 @@ Abrir `http://localhost:5000` y usar:
 
 | **Rol** | **Usuario** | **Contraseña** |
 |---------|-------------|----------------|
-| 👨‍🎓 Estudiante | mario.camacho@unach.edu.ec | 123456 |
-| 👨‍🏫 Maestro | ana.garcia@unach.edu.ec | profesor123 |
-| 👨‍💼 Admin | admin@unach.edu.ec | admin123 |
+| 👨‍🎓 Estudiante | mario.camacho@unach.edu.ec | soy mario .-. |
+| 👨‍🏫 Maestro | habilidades@unach.edu.ec | habilidades |
+| 👨‍💼 Admin | admin@unach.edu.ec | admin |
 
 ### ⚙️ **Configuración IA (Opcional)**
 
