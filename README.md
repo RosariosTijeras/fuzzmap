@@ -340,9 +340,9 @@ pip install -r requirements.txt --force-reinstall
 | 👤 **Desarrollador** | 🎯 **Área** | 🛠️ **Contribuciones** |
 |---------------------|-------------|----------------------|
 | **Mario Camacho** | Frontend & IA | • Dashboards Flask<br>• Lógica difusa<br>• Integración Mistral AI |
-| **Lenin Arias** | Data Processing | • Extracción PDF<br>• Preprocesamiento<br>• Optimización datasets |
-| **Yoryhi Rojas** | NLP | • Clasificación texto<br>• Análisis semántico<br>• Coincidencia patrones |
-| **Héctor Quilumba** | Estructuras de Datos | • Árboles AVL<br>• Algoritmos búsqueda<br>• Complejidad algorítmica |
+| **Lenin López** | Data Processing | • Extracción PDF<br>• Preprocesamiento<br>• Optimización datasets |
+| **Yoryhi Cadena** | NLP | • Clasificación texto<br>• Análisis semántico<br>• Coincidencia patrones |
+| **Héctor Morales** | Estructuras de Datos | • Árboles AVL<br>• Algoritmos búsqueda<br>• Complejidad algorítmica |
 
 ### 🎓 **Institución**
 - **Universidad**: Universidad Nacional de Chimborazo (UNACH)
